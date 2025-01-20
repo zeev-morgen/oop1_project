@@ -9,7 +9,7 @@ Player::Player(const sf::Texture& texture, const sf::Vector2f& position)
     setOrigin();
 }
 
-void Player::update(float deltaTime) override {
+void Player::update(float deltaTime){
     // קבלת קלט מהמקלדת
     m_velocity = sf::Vector2f(0.0f, 0.0f);
 

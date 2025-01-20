@@ -13,7 +13,7 @@ public:
 
     void setOrigin();
 
-    virtual void update(float deltaTime) = 0;
+    //virtual void update(float deltaTime) = 0;
     virtual void draw(sf::RenderWindow& window)const;
     virtual bool checkCollision(const GameObject& other) const;
 

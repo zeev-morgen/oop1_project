@@ -12,7 +12,7 @@ public:
 		const sf::Vector2f& position,
 		float speed);
 
-	virtual void move(float deltaTime);
+	virtual void move(const sf::Vector2f& movement);
 	virtual void setDirection(sf::Vector2f direction);
 	virtual bool isValidPosition(const sf::Vector2f& pos) const;
 	virtual void stop();

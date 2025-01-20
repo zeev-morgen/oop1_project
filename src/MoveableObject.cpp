@@ -8,13 +8,9 @@ MoveableObject::MoveableObject(const sf::Texture& texture, const sf::Vector2f& p
 	m_direction = {0.f, 0.f};
 }
 
-void MoveableObject::move(float deltaTime) {
-    if (m_isMoving) {
-        sf::Vector2f movement = m_direction * m_speed * deltaTime;
-        sf::Vector2f newPos = getPosition() + movement;
-
-        setPosition(newPos);
-    }
+void MoveableObject::move(const sf::Vector2f& movement) {
+	sf::Vector2f currentPos = getPosition();
+	setPosition(currentPos + movement);
 }
 
 void MoveableObject::setDirection(sf::Vector2f direction) {
