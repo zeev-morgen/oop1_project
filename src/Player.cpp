@@ -1,36 +1,29 @@
 #include "Player.h"
 #include <iostream>
+#include "Config.h"
 
 Player::Player(const sf::Texture& texture, const sf::Vector2f& position)
-    : MoveableObject(texture, position, PLAYER_SPEED)
+    : MoveableObject(texture, position, Config::PLAYER_SPEED)
+    , m_moveSpeed(Config::PLAYER_SPEED), m_velocity(0.0f, 0.0f)
 {
     setOrigin();
 }
 
-void Player::handleInput() {
-    sf::Vector2f direction(0.f, 0.f);
+void Player::update(float deltaTime) override {
+    // קבלת קלט מהמקלדת
+    m_velocity = sf::Vector2f(0.0f, 0.0f);
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-        direction.x = -1.f;
-        std::cout << "Moving Left\n"; // הדפסת דיבאג
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-        direction.x = 1.f;
-        std::cout << "Moving Right\n";
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-        direction.y = -1.f;
-        std::cout << "Moving Up\n";
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-        direction.y = 1.f;
-        std::cout << "Moving Down\n";
-    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        m_velocity.x = -1.0f;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        m_velocity.x = 1.0f;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        m_velocity.y = -1.0f;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        m_velocity.y = 1.0f;
 
-    setDirection(direction);
-}
 
-void Player::update(float deltaTime) {
-    handleInput();
-    move(deltaTime);
+    // חישוב התנועה לפי הזמן שעבר
+    sf::Vector2f movement = m_velocity * m_moveSpeed * deltaTime;
+    move(movement);
 }

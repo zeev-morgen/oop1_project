@@ -1,0 +1,8 @@
+#pragma once
+
+namespace Config {
+	const int WINDOW_HEIGHT = 800; 
+	const int WINDOW_WIDTH = 1000;
+	const int NUM_BUTTONS_MENU = 3;
+	const int PLAYER_SPEED = 200.F;
+}

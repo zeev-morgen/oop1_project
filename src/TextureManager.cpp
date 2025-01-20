@@ -24,12 +24,13 @@ sf::Texture* TextureManager::getTexture(char id) {
 
 void TextureManager::loadGameTextures() {
     
-    loadTexture('#', "wall.jpg");    // 
-    loadTexture('@', "rock.jpg");   // 
-    loadTexture('!', "enemy.jpg");  // 
-    loadTexture('*', "explode.jpg");    // 
-    loadTexture('%', "boomb.jpg");    // 
-    loadTexture('/', "player.jpg");//
-    loadTexture('$', "gift.jpg");//
-
+    loadTexture('#', "wall.jpg");    
+    loadTexture('@', "rock.jpg");    
+    loadTexture('!', "enemy.jpg");   
+    loadTexture('*', "explode.jpg");  
+    loadTexture('%', "boomb.jpg");  
+    loadTexture('/', "player.jpg");
+    loadTexture('$', "gift.jpg");
+	loadTexture('^', "backgraund.jpg");
+    loadTexture('D', "door.jpg");
 }
