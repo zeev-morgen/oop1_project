@@ -1,4 +1,8 @@
 #include "MoveableObject.h"
+#include "LevelManager.h"
+#include <iostream>
+
+class LevelManager;
 
 MoveableObject::MoveableObject(const sf::Texture& texture, const sf::Vector2f& position, float speed)
 	: GameObject(texture, position),
@@ -15,7 +19,7 @@ void MoveableObject::move(const sf::Vector2f& movement) {
 
 void MoveableObject::setDirection(sf::Vector2f direction) {
 	m_direction = direction;
-	m_isMoving = (direction.x != 0.f || direction.y != 0.f);  // הוסף שורה זו
+	m_isMoving = (direction.x != 0.f || direction.y != 0.f);  
 }
 
 void MoveableObject::stop() {
@@ -30,13 +34,45 @@ void MoveableObject::setSpeed(float speed){
 float MoveableObject::getSpeed()const {
 	return m_speed;
 }
+//===============================================
+bool MoveableObject::isValidPosition(const sf::Vector2f& newPosition, LevelManager& levelManager)  {
+    
+    return (newPosition.x <= levelManager.getCols() * Config::TILE_HEIGHT - Config::TILE_HEIGHT
+        && newPosition.x >= 0 
+        && newPosition.y <= levelManager.getRows() * Config::TILE_HEIGHT - Config::TILE_HEIGHT
+        && newPosition.y >= 0);
+}
 
-bool MoveableObject::isValidPosition(const sf::Vector2f& pos) const{
-    if (pos.x < 0.f || pos.x > 800.f - 32.f ||
-        pos.y < 0.f || pos.y > 600.f - 32.f) {
-        return false;
+//===============================================
+void MoveableObject::tryMove(const sf::Vector2f& movement, LevelManager& levelManager) {
+    sf::Vector2f newPosition = getPosition() + movement;
+
+    if (newPosition.x < 0) {
+        newPosition.x = 0;
     }
 
-    //צריך להוסיף בדיקה עם מכשולים
-    return true;
+    else if (newPosition.x > (levelManager.getCols() - 1) * Config::TILE_HEIGHT) {
+        newPosition.x = (levelManager.getCols() - 1) * Config::TILE_HEIGHT;
+    }
+
+    if (newPosition.y < 0) {
+        newPosition.y = 0;
+    }
+
+    else if (newPosition.y > (levelManager.getRows() - 1) * Config::TILE_HEIGHT) {
+        newPosition.y = (levelManager.getRows() - 1) * Config::TILE_HEIGHT;
+    }
+
+
+    if (newPosition != getPosition()) {
+        m_prevPosition = getPosition();  
+        setPosition(newPosition);           
+
+    }
 }
+//===============================================
+
+void MoveableObject::collide(GameObject& other) {
+    other.collide(*this);
+}
+

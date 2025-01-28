@@ -65,7 +65,7 @@ int MenuManager::handleInput() {
 				case sf::Keyboard::Enter:
 					switch (m_selectedButton) {
 					case 0:  // Start Game
-						return 0;  // 0 - התחלת משחק
+						return 0; 
 
 					case 1:  // Help
 						m_showHelp = true;

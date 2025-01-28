@@ -4,3 +4,12 @@ StaticObject::StaticObject(const sf::Texture& texture, const sf::Vector2f& posit
 	: GameObject(texture, position), m_isCollidable(true) {
 }
 
+//void StaticObject::collide(GameObject& other) {
+//	other.collide(*this);
+//}
+
+void StaticObject::update(float deltaTime, LevelManager& levelManager) {
+
+}
+
+

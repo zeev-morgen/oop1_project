@@ -49,23 +49,23 @@ bool LevelManager::loadFromFile(const std::string& filename) {
     std::vector<std::string> levelData;
     readLevelData(filename, levelData);
 
-    // חישוב גודל האריחים
-    calcTileSize();
-
-    // ניקוי האובייקטים הקיימים
+    //calcTileSize();
     clear();
 
-    // יצירת האובייקטים
     for (size_t row = 0; row < m_rows; ++row) {
         for (size_t col = 0; col < m_cols; ++col) {
             char symbol = levelData[row][col];
             if (symbol != ' ') {
-                float x = col * m_tileWidth;
-                float y = row * m_tileHeight;
+                float x = col * Config::TILE_WIDTH;
+                float y = row * Config::TILE_HEIGHT;
                 createObject(symbol, x, y);
+                //std::cout << x << "," << y << "\n";
+
             }
         }
     }
+
+    setToTile();
 
     return true;
 }
@@ -95,20 +95,8 @@ int LevelManager::getLevel()const {
 
 void LevelManager::draw(sf::RenderWindow& window) {
 
-
     for (const auto& object : m_gameObjects) {
         if (object && object->isActive()) {
-            sf::Sprite& sprite = object->getSprite();
-            const sf::Texture* texture = sprite.getTexture();
-
-            if (texture) {
-                sf::Vector2u textureSize = texture->getSize();
-                float scaleX = m_tileWidth / static_cast<float>(textureSize.x);
-                float scaleY = m_tileHeight / static_cast<float>(textureSize.y);
-
-                sprite.setScale(scaleX, scaleY);
-            }
-
             object->draw(window);
         }
     }
@@ -124,55 +112,54 @@ void LevelManager::clear() {
 void LevelManager::createObject(char symbol, float x, float y) {
     TextureManager& textureManager = TextureManager::instance();
     textureManager.loadGameTextures();
-    sf::Texture* texture = textureManager.getTexture(symbol);;
+    sf::Texture* texture = textureManager.getTexture(symbol);
     if (!texture) {
         std::cerr << "Failed to get texture for symbol: " << symbol << std::endl;
         return;
     }
 
-    std::unique_ptr<GameObject> newObject = nullptr;
     sf::Vector2f position(x, y);
-    
+
     switch (symbol) {
     case '@':  // rock
-        newObject = std::make_unique<Rock>(*texture, position);
-        break;
+    {
+        m_gameObjects.push_back(std::make_unique<Rock>(*texture, position));
+    }
+    break;
 
-    case '!':  // enemy
-        newObject = std::make_unique<Enemy>(*texture, position);
-        break;
+    case '!':
+    {
+        //m_enemies.push_back(std::make_unique<Enemy>(*texture, position));
+        m_gameObjects.push_back(std::make_unique<Enemy>(*texture, position));
+    }
+    break;
+
+    case '/':
+    {
+        //m_player = std::make_unique<Player>(*texture, position);
+        m_gameObjects.push_back(std::make_unique<Player>(*texture, position));
+    }
+    break;
 
     case '#':  // wall
-        newObject = std::make_unique<Wall>(*texture, position);
-        break;
-
-    case '/':  // player
     {
-        auto player = std::make_unique<Player>(*texture, position);
-        m_player = player.get();  // שמירת המצביע לשחקן
-        newObject = std::move(player);
+        m_gameObjects.push_back(std::make_unique<Wall>(*texture, position));
     }
     break;
 
     case 'D':  // door
     {
-        auto door = std::make_unique<Door>(*texture, position);
-        m_door = door.get();  // שמירת המצביע לדלת
-        newObject = std::move(door);
+        m_gameObjects.push_back(std::make_unique<Door>(*texture, position));
     }
     break;
     }
-
-    if (newObject) {
-        m_gameObjects.push_back(std::move(newObject));
-    }
 }
 //===============================================
-
-void LevelManager::calcTileSize() {
-    m_tileHeight = Config::WINDOW_HEIGHT / m_rows;
-    m_tileWidth = Config::WINDOW_WIDTH / m_cols;
-}
+//
+//void LevelManager::calcTileSize() {
+//    m_tileHeight = Config::WINDOW_HEIGHT / m_rows;
+//    m_tileWidth = Config::WINDOW_WIDTH / m_cols;
+//}
 //===============================================
 
 void LevelManager::readLevelData(const std::string& filename, std::vector<std::string>& levelData) {
@@ -204,14 +191,33 @@ float LevelManager::getTileHeight() const {
     return m_tileHeight;
 }
 //===============================================
-size_t LevelManager::getRows() const {
+ size_t LevelManager::getRows()  {
     return m_rows; 
 }
 //===============================================
-size_t LevelManager::getCols() const {
+float LevelManager::getCols()  {
     return m_cols;
 }
 //===============================================
-void LevelManager::update(float deltaTime) {
-    m_player->update(deltaTime);
+//void LevelManager::update(float deltaTime) {
+//    m_player->update(deltaTime);
+//}
+//===============================================
+std::vector<std::unique_ptr<GameObject>>& LevelManager::getGameObjects()  {
+    return m_gameObjects;
+}
+//===============================================
+const std::unique_ptr<Player>& LevelManager::getPlayer() const {
+    return m_player;
+}
+//===============================================
+const std::vector<std::unique_ptr<Enemy>>& LevelManager::getEnemies() const {
+    return m_enemies;
+}
+//===============================================
+void LevelManager::setToTile() {
+    auto &obj = getGameObjects();
+    for (const auto& object : obj) {
+        object->setToTile(Config::TILE_HEIGHT, Config::TILE_HEIGHT);
+    }
 }

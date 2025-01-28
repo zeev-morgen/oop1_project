@@ -1,7 +1,7 @@
 #include "GameObject.h"
 
 GameObject::GameObject(const sf::Texture& texture, const sf::Vector2f& position)
-	: m_sprite(), m_position(position), m_isActive(true)
+	: m_sprite(), m_position(position), m_isActive(true), m_prevPosition(position)
 {
 	m_sprite.setTexture(texture);
 	m_sprite.setPosition(position);
@@ -43,3 +43,22 @@ const sf::Sprite& GameObject::getSprite()const {
 	return m_sprite;
 }
 
+sf::FloatRect GameObject::getGlobalBounds() const {
+	return m_sprite.getGlobalBounds();
+}
+
+void GameObject::setToTile(float tileHeight, float tileWidth) {
+	sf::FloatRect bounds = m_sprite.getGlobalBounds();
+	float scaleX = tileWidth / bounds.width;
+	float scaleY = tileHeight / bounds.height;
+	m_sprite.setScale(scaleX, scaleY);
+}
+
+void GameObject::undoMove() {
+	m_position = m_prevPosition;
+	m_sprite.setPosition(m_position);
+}
+
+sf::FloatRect GameObject::getBounds() const {
+	return m_sprite.getGlobalBounds();
+}

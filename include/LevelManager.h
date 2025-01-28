@@ -23,30 +23,35 @@ private:
     float m_tileWidth;
     float m_tileHeight;
 
-    Player* m_player;
+    std::unique_ptr<Player> m_player;
+    std::vector<std::unique_ptr <Enemy>> m_enemies;
     Door* m_door;
 
 public:
     LevelManager();
 
     //void init();
+    void setToTile();
     void loadPlaylist(const std::string& filename);
     bool loadLevel();
     bool loadFromFile(const std::string& filename);
     bool nextLevel();
-    void update(float deltaTime);
+    std::vector<std::unique_ptr<GameObject>>& getGameObjects() ;
+    const std::unique_ptr<Player>& getPlayer() const;
+    const std::vector<std::unique_ptr <Enemy>>& getEnemies() const;
 
     int getLevel() const;
     float getTileWidth() const;
     float getTileHeight() const;
-    size_t getRows() const;
-    size_t getCols() const;
+
+    float getCols();
+    size_t getRows();
 
     void draw(sf::RenderWindow& window);
 
 private:
     void clear();
     void createObject(char symbol, float x, float y);
-    void calcTileSize();
+    //void calcTileSize();
     void readLevelData(const std::string& filename, std::vector<std::string>& levelData);
 };

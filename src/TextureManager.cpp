@@ -31,6 +31,6 @@ void TextureManager::loadGameTextures() {
     loadTexture('%', "boomb.jpg");  
     loadTexture('/', "player.jpg");
     loadTexture('$', "gift.jpg");
-	loadTexture('^', "backgraund.jpg");
+	//loadTexture('^', "backgraund.jpg");
     loadTexture('D', "door.jpg");
 }
