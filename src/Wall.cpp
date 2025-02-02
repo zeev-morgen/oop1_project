@@ -24,3 +24,11 @@ void Wall::collide(Enemy& enemy)  {
 void Wall::collide(Explosion& explosion)  {
     // קירות לא מושפעים מפיצוצים
 }
+
+void Wall::update(float deltaTime, LevelManager& levelManager) {
+
+}
+
+void Wall::draw(sf::RenderWindow& window) const  {
+    window.draw(m_sprite);
+}

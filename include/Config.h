@@ -7,4 +7,5 @@ namespace Config {
 	const int PLAYER_SPEED = 150;
 	const int TILE_HEIGHT = 50;
 	const int TILE_WIDTH = 50;
+	const int EXPLOSION_TIME = 4;
 }

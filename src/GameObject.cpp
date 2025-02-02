@@ -1,10 +1,12 @@
 #include "GameObject.h"
+#include "Config.h"
 
 GameObject::GameObject(const sf::Texture& texture, const sf::Vector2f& position)
 	: m_sprite(), m_position(position), m_isActive(true), m_prevPosition(position)
 {
 	m_sprite.setTexture(texture);
 	m_sprite.setPosition(position);
+	setToTile(Config::TILE_HEIGHT, Config::TILE_HEIGHT);
 }
 
 void GameObject::draw(sf::RenderWindow& window)const {
@@ -62,3 +64,4 @@ void GameObject::undoMove() {
 sf::FloatRect GameObject::getBounds() const {
 	return m_sprite.getGlobalBounds();
 }
+

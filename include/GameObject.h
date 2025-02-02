@@ -26,7 +26,7 @@ public:
     void setOrigin();
     void setToTile(float tileHeight, float tileWidth);
 
-    virtual void draw(sf::RenderWindow& window)const;
+    //virtual void draw(sf::RenderWindow& window)const;
     virtual bool checkCollision(const GameObject& other) const;
     sf::FloatRect getGlobalBounds()const;
     const sf::Vector2f& getPosition() const;
@@ -46,7 +46,10 @@ public:
     virtual void collide(Door& other) = 0;
     virtual void collide(Explosion& other) = 0;
 
+    virtual void draw(sf::RenderWindow& window) const = 0;
+
     virtual void update(float deltaTime, LevelManager& levelManager) = 0;
+    //virtual void drawSpecific(sf::RenderWindow& window) const = 0;
 
     void undoMove();
 };

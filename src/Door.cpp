@@ -22,3 +22,11 @@ void Door::collide(Player& other) {
 void Door::collide(Explosion& other) {
     undoMove();  // נתקע באבן
 }
+
+void Door::update(float deltaTime, LevelManager& levelManager) {
+
+}
+
+void Door::draw(sf::RenderWindow& window) const {
+	window.draw(m_sprite);
+}

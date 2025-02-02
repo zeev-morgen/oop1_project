@@ -12,6 +12,10 @@
 #include "Rock.h"
 #include "Wall.h"
 #include "Door.h"
+#include "Bomb.h"
+#include "Explosion.h"
+#include <iostream>
+
 
 class LevelManager {
 private:
@@ -22,16 +26,18 @@ private:
     int m_level;
     float m_tileWidth;
     float m_tileHeight;
+    //TextureManager* m_bobmTexture;
 
     std::unique_ptr<Player> m_player;
     std::vector<std::unique_ptr <Enemy>> m_enemies;
+    std::vector<std::unique_ptr <GameObject>> m_tempExplosion;
     Door* m_door;
 
 public:
     LevelManager();
 
     //void init();
-    void setToTile();
+    //void setToTile(GameObject* object);
     void loadPlaylist(const std::string& filename);
     bool loadLevel();
     bool loadFromFile(const std::string& filename);
@@ -39,19 +45,28 @@ public:
     std::vector<std::unique_ptr<GameObject>>& getGameObjects() ;
     const std::unique_ptr<Player>& getPlayer() const;
     const std::vector<std::unique_ptr <Enemy>>& getEnemies() const;
-
+    void addBomb(sf::Vector2f position);
+    void addExplosion(sf::Vector2f position);
     int getLevel() const;
+    std::unique_ptr<GameObject>& getTempBomb();
     float getTileWidth() const;
     float getTileHeight() const;
+    void addTheBomb(sf::Vector2f position);
+    void addTheExplosion(sf::Vector2f position);
+    std::vector<std::unique_ptr<GameObject>>& getTempExplosion();
+    void removeExp();
 
     float getCols();
     size_t getRows();
+    sf::Font& getFont();
 
     void draw(sf::RenderWindow& window);
 
 private:
+    sf::Font m_font;
     void clear();
-    void createObject(char symbol, float x, float y);
+    void createObject(char symbol, float x, float y, sf::Font font);
     //void calcTileSize();
     void readLevelData(const std::string& filename, std::vector<std::string>& levelData);
+    std::unique_ptr<GameObject> m_tempBomb;
 };

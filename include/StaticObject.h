@@ -18,7 +18,9 @@ public:
 	virtual void collide(Door& door) override {}
 	virtual void collide(Explosion& explosion) override {}
 
-	virtual void update(float deltaTime, LevelManager& levelManager) override;
+	virtual void update(float deltaTime, LevelManager& levelManager) = 0;
+	virtual void draw(sf::RenderWindow& window) const = 0;
+
 
 protected:
 	bool m_isCollidable;

@@ -11,5 +11,8 @@ public:
     //void collide(Wall& wall) override;
     //void collide(Door& door) override;
     void collide(Explosion& explosion) override;
+    void draw(sf::RenderWindow& window) const override;
+
+    void update(float deltaTime, LevelManager& levelManager) override;
 };
 

@@ -8,8 +8,5 @@ StaticObject::StaticObject(const sf::Texture& texture, const sf::Vector2f& posit
 //	other.collide(*this);
 //}
 
-void StaticObject::update(float deltaTime, LevelManager& levelManager) {
-
-}
 
 

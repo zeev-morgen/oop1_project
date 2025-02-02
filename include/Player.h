@@ -16,7 +16,12 @@ public:
     virtual void collide(Door& other) override;
     virtual void collide(Explosion& other) override;
 
+    void draw(sf::RenderWindow& window) const override;
+
+
 private:
 	float m_moveSpeed;
 	sf::Vector2f m_direction;
+    bool m_canPlaceBomb = true;
+	bool m_isMoving = false;
 };

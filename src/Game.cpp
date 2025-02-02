@@ -11,8 +11,8 @@ Game::Game()
 void Game::run() {
 	openMenu();
 	sf::Clock clock;
+	loadTextures();
 	while (m_window.isOpen()) {
-		loadTextures();
 		float deltaTime = clock.restart().asSeconds();
 		handleEvents();
 		update(deltaTime, m_levelManager);
@@ -47,31 +47,32 @@ void Game::draw() {
 			object->draw(m_window);
 		}
 	}
-
-	/*for (const auto& enemie : m_levelManager.getEnemies()) {
-		if (enemie) {
-			enemie->draw(m_window);
-		}
-	}
-
-	m_levelManager.getPlayer()->draw(m_window);*/
 }
 //===============================================
 void Game::update(float deltaTime, LevelManager& levelManager) {
-	/*m_levelManager.getPlayer()->update(deltaTime);
-
-	for (const auto& enemie : m_levelManager.getEnemies()) {
-		if (enemie) {
-			enemie->update(deltaTime);
-		}
-	}*/
-
+	
 	for (const auto& object : m_levelManager.getGameObjects()) {
 		if (object) {
 			object->update(deltaTime, levelManager);
 		}
 	}
 
+	if (auto& tempBomb = m_levelManager.getTempBomb()) {
+		m_levelManager.addTheBomb(tempBomb->getPosition());
+	}
+
+
+	const auto& tempExplosion = m_levelManager.getTempExplosion();
+
+	for (const auto& exp : tempExplosion) {
+		if (exp) {
+			m_levelManager.addTheExplosion(exp->getPosition());
+		}
+	}
+	m_levelManager.getTempExplosion().clear();
+
+	m_levelManager.removeExp();
+	
 	handleCollisions();
 }
 //===============================================
@@ -115,3 +116,4 @@ void Game::handleCollisions() {
 //		std::cerr << "Error: Background texture not found!" << std::endl;
 //	}
 //}
+//===============================================

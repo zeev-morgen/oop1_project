@@ -17,6 +17,8 @@ public:
 
 	void update(float deltaTime, LevelManager& levelManager) override;
 
+	void draw(sf::RenderWindow& window) const override;
+
 private:
 	sf::Vector2f m_currentDirection;
 	void changeDirection(float deltaTime);

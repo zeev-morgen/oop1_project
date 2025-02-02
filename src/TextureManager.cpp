@@ -28,7 +28,7 @@ void TextureManager::loadGameTextures() {
     loadTexture('@', "rock.jpg");    
     loadTexture('!', "enemy.jpg");   
     loadTexture('*', "explode.jpg");  
-    loadTexture('%', "boomb.jpg");  
+    loadTexture('%', "bomb.jpg");  
     loadTexture('/', "player.jpg");
     loadTexture('$', "gift.jpg");
 	//loadTexture('^', "backgraund.jpg");

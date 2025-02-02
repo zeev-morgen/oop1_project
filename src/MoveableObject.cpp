@@ -63,11 +63,18 @@ void MoveableObject::tryMove(const sf::Vector2f& movement, LevelManager& levelMa
         newPosition.y = (levelManager.getRows() - 1) * Config::TILE_HEIGHT;
     }
 
-
     if (newPosition != getPosition()) {
-        m_prevPosition = getPosition();  
-        setPosition(newPosition);           
-
+        m_prevPosition = getPosition();
+        setPosition(newPosition);
+        m_isMoving = true;  // השחקן בתנועה
+    }
+    else {
+        // אם השחקן לא זז (אין תנועה חדשה)
+        if (m_isMoving) {
+            // השחקן הפסיק לנוע - נבצע יישור למשבצת
+            alignToTile();
+            m_isMoving = false;
+        }
     }
 }
 //===============================================
@@ -75,4 +82,14 @@ void MoveableObject::tryMove(const sf::Vector2f& movement, LevelManager& levelMa
 void MoveableObject::collide(GameObject& other) {
     other.collide(*this);
 }
+//===============================================
+void MoveableObject::alignToTile() {
+    sf::Vector2f currentPos = getPosition();
 
+    // חישוב המשבצת הקרובה ביותר
+    float tileX = std::round(currentPos.x / Config::TILE_HEIGHT) * Config::TILE_HEIGHT;
+    float tileY = std::round(currentPos.y / Config::TILE_HEIGHT) * Config::TILE_HEIGHT;
+
+    // יישור למשבצת
+    setPosition({ tileX, tileY });
+}

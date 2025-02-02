@@ -73,21 +73,21 @@ void Enemy::collide(Enemy& other)  {
 
 void Enemy::collide(Wall& other) {
     // מציאת הקיר הקרוב ביותר לאויב ו הצמדה אליו
-    sf::FloatRect enemyBounds = getBounds();
-    sf::FloatRect wallBounds = other.getBounds();
+    //sf::FloatRect enemyBounds = getBounds();
+    //sf::FloatRect wallBounds = other.getBounds();
 
-    // אם האויב נמצא בצמוד לקיר בציר X
-    if (enemyBounds.left + enemyBounds.width > wallBounds.left && enemyBounds.left < wallBounds.left + wallBounds.width) {
-        if (enemyBounds.top + enemyBounds.height > wallBounds.top && enemyBounds.top < wallBounds.top + wallBounds.height) {
-            // הצמד את האויב לקיר בצד המתאים (למשל, אם הוא בא מימין או משמאל)
-            if (enemyBounds.left < wallBounds.left) {  // אויב מצדו השמאלי של הקיר
-                setPosition(sf::Vector2f(wallBounds.left - enemyBounds.width, enemyBounds.top));  // העטף את X ו-Y ב- sf::Vector2f
-            }
-            else {  // אויב מצדו הימני של הקיר
-                setPosition(sf::Vector2f(wallBounds.left + wallBounds.width, enemyBounds.top));  // העטף את X ו-Y ב- sf::Vector2f
-            }
-        }
-    }
+    //// אם האויב נמצא בצמוד לקיר בציר X
+    //if (enemyBounds.left + enemyBounds.width > wallBounds.left && enemyBounds.left < wallBounds.left + wallBounds.width) {
+    //    if (enemyBounds.top + enemyBounds.height > wallBounds.top && enemyBounds.top < wallBounds.top + wallBounds.height) {
+    //        // הצמד את האויב לקיר בצד המתאים (למשל, אם הוא בא מימין או משמאל)
+    //        if (enemyBounds.left < wallBounds.left) {  // אויב מצדו השמאלי של הקיר
+    //            setPosition(sf::Vector2f(wallBounds.left - enemyBounds.width, enemyBounds.top));  // העטף את X ו-Y ב- sf::Vector2f
+    //        }
+    //        else {  // אויב מצדו הימני של הקיר
+    //            setPosition(sf::Vector2f(wallBounds.left + wallBounds.width, enemyBounds.top));  // העטף את X ו-Y ב- sf::Vector2f
+    //        }
+    //    }
+    //}
 }
 
 
@@ -101,4 +101,8 @@ void Enemy::collide(Door& other)  {
 
 void Enemy::collide(Explosion& other)  {
     //setActive(false);  // נהרס מפיצוץ
+}
+
+void Enemy::draw(sf::RenderWindow& window) const  {
+    window.draw(m_sprite);
 }
