@@ -6,7 +6,7 @@ class Player : public MoveableObject {
 public:
 	Player(const sf::Texture& texture, const sf::Vector2f& position);
 	void update(float deltaTime, LevelManager& levelManager) override;
-
+    bool getFinish();
     virtual void collide(GameObject& other) override;
 
     virtual void collide(Player& other) override;
@@ -21,7 +21,13 @@ public:
 
 private:
 	float m_moveSpeed;
-	sf::Vector2f m_direction;
     bool m_canPlaceBomb = true;
 	bool m_isMoving = false;
+	int m_lives = 3;
+	int m_score = 0;
+	bool m_finishLevel = false;
+    
+
+	sf::Vector2f m_startPosition;
+    sf::Vector2f m_direction;
 };

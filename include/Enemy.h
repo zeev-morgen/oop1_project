@@ -1,5 +1,7 @@
 #pragma once
 #include "MoveableObject.h"
+#include "Player.h"
+
 
 class Enemy : public MoveableObject {
 public:
@@ -18,13 +20,15 @@ public:
 	void update(float deltaTime, LevelManager& levelManager) override;
 
 	void draw(sf::RenderWindow& window) const override;
-
+	//~Enemy();
 private:
+	static std::vector<Enemy*> allEnemies;
 	sf::Vector2f m_currentDirection;
 	void changeDirection(float deltaTime);
 	void randomLocation();
 	static constexpr float ENEMY_SPEED = 60.0f;
-
+	sf::Vector2f m_startPosition;
 	bool isExplode();
+	static void resetLocation();
 };
 

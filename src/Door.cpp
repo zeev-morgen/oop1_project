@@ -11,12 +11,12 @@ void Door::collide(GameObject& other) {
 
 
 void Door::collide(Enemy& other) {
-    undoMove();  // נתקע באויב
-    // טיפול בפגיעה
+    undoMove();  
 }
 
 void Door::collide(Player& other) {
-    undoMove();  // נתקע בקיר
+    undoMove();
+	//other.m_finishLevel = true;
 }
 
 void Door::collide(Explosion& other) {

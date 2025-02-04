@@ -65,3 +65,6 @@ sf::FloatRect GameObject::getBounds() const {
 	return m_sprite.getGlobalBounds();
 }
 
+void GameObject::setActive(bool active) {
+	m_isActive = active;
+}

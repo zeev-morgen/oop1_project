@@ -5,7 +5,7 @@
 
 Player::Player(const sf::Texture& texture, const sf::Vector2f& position)
     : MoveableObject(texture, position, Config::PLAYER_SPEED)
-    , m_moveSpeed(Config::PLAYER_SPEED), m_direction(0.0f, 0.0f)
+	, m_moveSpeed(Config::PLAYER_SPEED), m_direction(0.0f, 0.0f), m_startPosition(position)
 {
     //setOrigin();
 }
@@ -64,11 +64,15 @@ void Player::collide(GameObject& other)  {
     other.collide(*this);  // Double dispatch
 }
 
+bool Player::getFinish() {
+	return m_finishLevel;
+}
 
 void Player::collide(Enemy& other)  {
 
-    undoMove();  // נתקע באויב
-    // טיפול בפגיעה
+    undoMove();
+	m_isActive = false;
+	std::cout << "player is :"<< isActive() << std::endl;
 }
 
 void Player::collide(Wall& other)  {
@@ -77,21 +81,27 @@ void Player::collide(Wall& other)  {
 }
 
 void Player::collide(Rock& other)  {
-    undoMove();  // נתקע באבן
+    undoMove(); 
 }
 
 void Player::collide(Door& other)  {
-    undoMove();  // נתקע בדלת
+    undoMove();
+	m_finishLevel = true;
 }
 
 void Player::collide(Explosion& other)  {
-    // טיפול בפגיעה מפיצוץ
+	undoMove();
+    setActive(false);
+	std::cout << "collision" << std::endl;
+	//m_position = m_startPosition;
 }
 
 void Player::collide(Player& other) {
-   
+	//not implemented can not exist
 }
 
 void Player::draw(sf::RenderWindow& window) const {
     window.draw(m_sprite);
 }
+
+

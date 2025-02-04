@@ -173,13 +173,6 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
     }
 }
 //===============================================
-//
-//void LevelManager::calcTileSize() {
-//    m_tileHeight = Config::WINDOW_HEIGHT / m_rows;
-//    m_tileWidth = Config::WINDOW_WIDTH / m_cols;
-//}
-//===============================================
-
 void LevelManager::readLevelData(const std::string& filename, std::vector<std::string>& levelData) {
     std::ifstream file(filename);
     if (!file) {
@@ -217,15 +210,11 @@ float LevelManager::getCols()  {
     return m_cols;
 }
 //===============================================
-//void LevelManager::update(float deltaTime) {
-//    m_player->update(deltaTime);
-//}
-//===============================================
 std::vector<std::unique_ptr<GameObject>>& LevelManager::getGameObjects()  {
     return m_gameObjects;
 }
 //===============================================
-const std::unique_ptr<Player>& LevelManager::getPlayer() const {
+const std::unique_ptr<GameObject>& LevelManager::getPlayer() const {
     return m_player;
 }
 //===============================================
@@ -233,14 +222,9 @@ const std::vector<std::unique_ptr<Enemy>>& LevelManager::getEnemies() const {
     return m_enemies;
 }
 //===============================================
-//void LevelManager::setToTile(GameObject* object) {
-//    object->setToTile(Config::TILE_HEIGHT, Config::TILE_HEIGHT);
-//}
-//===============================================
+
 void LevelManager::addBomb(sf::Vector2f position) {
     createObject('%', position.x, position.y, m_font);
-    //std::cout << "Adding bomb at " << &m_gameObjects.back() << std::endl;
-
 }
 //===============================================
 
@@ -289,12 +273,14 @@ void LevelManager::addTheExplosion(sf::Vector2f position) {
 
 }
 //===============================================
-void LevelManager::removeExp() {
+void LevelManager::removeInactiveObjects() {
     auto& objects = m_gameObjects;
+
+    // מחיקת כל האובייקטים הלא פעילים
     objects.erase(
         std::remove_if(objects.begin(), objects.end(),
             [](const std::unique_ptr<GameObject>& obj) {
-                return !obj->isActive();
+                return obj && !obj->isActive();
             }),
         objects.end()
     );

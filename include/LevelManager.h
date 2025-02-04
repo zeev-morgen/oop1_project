@@ -28,7 +28,7 @@ private:
     float m_tileHeight;
     //TextureManager* m_bobmTexture;
 
-    std::unique_ptr<Player> m_player;
+    std::unique_ptr<GameObject> m_player;
     std::vector<std::unique_ptr <Enemy>> m_enemies;
     std::vector<std::unique_ptr <GameObject>> m_tempExplosion;
     Door* m_door;
@@ -43,7 +43,7 @@ public:
     bool loadFromFile(const std::string& filename);
     bool nextLevel();
     std::vector<std::unique_ptr<GameObject>>& getGameObjects() ;
-    const std::unique_ptr<Player>& getPlayer() const;
+    const std::unique_ptr<GameObject>& getPlayer() const;
     const std::vector<std::unique_ptr <Enemy>>& getEnemies() const;
     void addBomb(sf::Vector2f position);
     void addExplosion(sf::Vector2f position);
@@ -54,13 +54,12 @@ public:
     void addTheBomb(sf::Vector2f position);
     void addTheExplosion(sf::Vector2f position);
     std::vector<std::unique_ptr<GameObject>>& getTempExplosion();
-    void removeExp();
-
     float getCols();
     size_t getRows();
     sf::Font& getFont();
 
     void draw(sf::RenderWindow& window);
+    void removeInactiveObjects();
 
 private:
     sf::Font m_font;

@@ -2,9 +2,12 @@
 #include "Wall.h"
 #include <iostream>
 
+std::vector<Enemy*> Enemy::allEnemies;
+
 Enemy::Enemy(const sf::Texture& texture, const sf::Vector2f& position)
-    : MoveableObject(texture, position, ENEMY_SPEED)
+	: MoveableObject(texture, position, ENEMY_SPEED), m_startPosition(position)
 {
+    allEnemies.push_back(this);
     //setOrigin();
     randomLocation();
 }
@@ -64,7 +67,10 @@ void Enemy::collide(GameObject& other) {
 }
 
 void Enemy::collide(Player& other)  {
-    // תקיפת שחקן
+    //resetLocation();
+	/*other.undoMove();
+	other.setActive(false);*/
+	other.setActive(false);
 }
 
 void Enemy::collide(Enemy& other)  {
@@ -88,6 +94,8 @@ void Enemy::collide(Wall& other) {
     //        }
     //    }
     //}
+	undoMove();
+    //changeDirection();
 }
 
 
@@ -100,9 +108,26 @@ void Enemy::collide(Door& other)  {
 }
 
 void Enemy::collide(Explosion& other)  {
-    //setActive(false);  // נהרס מפיצוץ
+    this->setActive(false);  // נהרס מפיצוץ
 }
 
 void Enemy::draw(sf::RenderWindow& window) const  {
     window.draw(m_sprite);
 }
+
+//פונקצייה להחזרת שומרים למיקום התחלתי
+void Enemy::resetLocation() {
+    for (Enemy* enemy : allEnemies) {
+        if (enemy->isActive()) {
+            enemy->setPosition(enemy->m_startPosition);
+        }
+    }
+}
+
+//Enemy::~Enemy() {
+//    // הסרת האויב מהרשימה כשהוא נהרס
+//    auto it = std::find(allEnemies.begin(), allEnemies.end(), this);
+//    if (it != allEnemies.end()) {
+//        allEnemies.erase(it);
+//    }
+//}

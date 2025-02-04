@@ -28,6 +28,7 @@ void Bomb::update(float deltaTime, LevelManager& levelManager) {
             levelManager.addExplosion(this->getPosition());
 			
             m_exploded = true;
+			m_isActive = false;
         }
     }
 }

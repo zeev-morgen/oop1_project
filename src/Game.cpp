@@ -1,11 +1,13 @@
 #include "Game.h"
 
 Game::Game()
-	: m_window(sf::VideoMode(m_levelManager.getCols() * Config::TILE_HEIGHT, m_levelManager.getRows() * Config::TILE_HEIGHT), "SFML Game")
+	: m_window(sf::VideoMode(m_levelManager.getCols() * Config::TILE_HEIGHT, m_levelManager.getRows() * Config::TILE_HEIGHT + Config::UI_HEIGHT), "SFML Game")
 	, m_isRunning(true)
 	, m_gameObjects(m_levelManager.getGameObjects())
+
 {
 	m_window.setFramerateLimit(60);
+	saveInitialPositions();
 }
 //===============================================
 void Game::run() {
@@ -57,6 +59,21 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 		}
 	}
 
+	auto& gameObjects = m_levelManager.getGameObjects();
+	auto playerIt = std::find_if(gameObjects.begin(), gameObjects.end(),
+		[](const std::unique_ptr<GameObject>& obj) {
+			return dynamic_cast<Player*>(obj.get()) != nullptr;
+		});
+
+	if (playerIt != gameObjects.end()) {
+		auto* player = dynamic_cast<Player*>((*playerIt).get());
+
+		if (!player->isActive()) {
+			player->setActive(true);
+			resetPositions();
+		}
+	}
+
 	if (auto& tempBomb = m_levelManager.getTempBomb()) {
 		m_levelManager.addTheBomb(tempBomb->getPosition());
 	}
@@ -69,11 +86,25 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 			m_levelManager.addTheExplosion(exp->getPosition());
 		}
 	}
-	m_levelManager.getTempExplosion().clear();
 
-	m_levelManager.removeExp();
+	m_levelManager.getTempExplosion().clear();
+	m_levelManager.removeInactiveObjects();
 	
 	handleCollisions();
+
+	auto& gameObjects2 = m_levelManager.getGameObjects();
+	auto playerIt2 = std::find_if(gameObjects.begin(), gameObjects.end(),
+		[](const std::unique_ptr<GameObject>& obj) {
+			return dynamic_cast<Player*>(obj.get()) != nullptr;
+		});
+
+	if (playerIt2 != gameObjects.end()) {
+		auto* player = dynamic_cast<Player*>((*playerIt2).get());
+	
+		if (player->getFinish()) {
+			levelManager.nextLevel();
+		}
+	}
 }
 //===============================================
 void Game::render() {
@@ -106,14 +137,24 @@ void Game::handleCollisions() {
 	}
 }
 //===============================================
-//void Game::setBackgraund() {
-//	sf::Texture* backgroundTexture = TextureManager::instance().getTexture('^');
-//	if (backgroundTexture) {
-//		m_backgraund.setTexture(*backgroundTexture);
-//	}
-//	else {
-//		// Handle the error, e.g., log it or set a default texture
-//		std::cerr << "Error: Background texture not found!" << std::endl;
-//	}
-//}
+void Game::saveInitialPositions() {
+	// שמירת מיקומים של כל האובייקטים
+	for (const auto& obj : m_gameObjects) {
+		if (obj) {
+			m_initialPositions[obj.get()] = obj->getPosition();
+		}
+	}
+}
 //===============================================
+void Game::resetPositions() {
+	// החזרת כל האובייקטים למיקומם ההתחלתי
+	for (const auto& obj : m_gameObjects) {
+		if (obj && obj->isActive()) {
+			auto it = m_initialPositions.find(obj.get());
+			if (it != m_initialPositions.end()) {
+				obj->setPosition(it->second);
+			}
+		}
+	}
+}
+
