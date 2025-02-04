@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Config.h"
 
+
 class LevelManager;
 
 class MoveableObject : public GameObject {
@@ -27,7 +28,7 @@ public:
 
 
 
-	void collide(GameObject& other) override;
+	void collide(GameObject& other, float deltaTime, LevelManager& levelManager) override;
 
 	virtual void update(float deltaTime, LevelManager& levelManager) = 0;
 	virtual void draw(sf::RenderWindow& window) const = 0;

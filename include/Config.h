@@ -8,5 +8,5 @@ namespace Config {
 	const int TILE_HEIGHT = 50;
 	const int TILE_WIDTH = 50;
 	const int EXPLOSION_TIME = 4;
-	const int UI_HEIGHT = 50.f;
+	const int UI = 100;
 }

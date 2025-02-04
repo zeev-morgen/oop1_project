@@ -42,13 +42,13 @@ void Player::update(float deltaTime, LevelManager& levelManager){
                 std::round(m_position.x / 50) * 50,
                 std::round(m_position.y / 50) * 50
             );
-            levelManager.addBomb(bombPosition);  // äåñôú ôööä
-            m_canPlaceBomb = false; // ğåòì ìçéöä çåæøú
+            levelManager.addBomb(bombPosition);  // Ã¤Ã¥Ã±Ã´Ãº Ã´Ã¶Ã¶Ã¤
+            m_canPlaceBomb = false; // Ã°Ã¥Ã²Ã¬ Ã¬Ã§Ã©Ã¶Ã¤ Ã§Ã¥Ã¦Ã¸Ãº
 
         }
     }
     else {
-        m_canPlaceBomb = true; // îùçøø àú äğòéìä ëùäëôúåø ìà ìçåõ
+        m_canPlaceBomb = true; // Ã®Ã¹Ã§Ã¸Ã¸ Ã Ãº Ã¤Ã°Ã²Ã©Ã¬Ã¤ Ã«Ã¹Ã¤Ã«Ã´ÃºÃ¥Ã¸ Ã¬Ã  Ã¬Ã§Ã¥Ãµ
     }
     sf::Vector2f movement = m_direction * m_moveSpeed * deltaTime;
 
@@ -60,48 +60,65 @@ void Player::update(float deltaTime, LevelManager& levelManager){
 }
 
 
-void Player::collide(GameObject& other)  {
-    other.collide(*this);  // Double dispatch
+void Player::collide(GameObject& other, float deltaTime, LevelManager& levelManager)  {
+    other.collide(*this, deltaTime, levelManager);  // Double dispatch
 }
 
 bool Player::getFinish() {
 	return m_finishLevel;
 }
 
-void Player::collide(Enemy& other)  {
+void Player::collide(Enemy& other, float deltaTime, LevelManager& levelManager)  {
 
     undoMove();
 	m_isActive = false;
 	std::cout << "player is :"<< isActive() << std::endl;
 }
 
-void Player::collide(Wall& other)  {
+void Player::collide(Wall& other, float deltaTime, LevelManager& levelManager)  {
     undoMove(); 
-    std::cout << "collision" << std::endl;// ğú÷ò á÷éø
+    std::cout << "collision" << std::endl;// Ã°ÃºÃ·Ã² Ã¡Ã·Ã©Ã¸
 }
 
-void Player::collide(Rock& other)  {
+void Player::collide(Rock& other float deltaTime, LevelManager& levelManager) {
     undoMove(); 
 }
 
-void Player::collide(Door& other)  {
+void Player::collide(Door& other, float deltaTime, LevelManager& levelManager)  {
     undoMove();
 	m_finishLevel = true;
 }
 
-void Player::collide(Explosion& other)  {
+void Player::collide(Explosion& other, float deltaTime, LevelManager& levelManager)  {
 	undoMove();
     setActive(false);
 	std::cout << "collision" << std::endl;
 	//m_position = m_startPosition;
 }
 
-void Player::collide(Player& other) {
+void Player::collide(Player& other, float deltaTime, LevelManager& levelManager) {
 	//not implemented can not exist
+
 }
 
 void Player::draw(sf::RenderWindow& window) const {
     window.draw(m_sprite);
 }
 
+
+void Player::setScore(int score) {
+	playerScore = score;
+}
+
+int Player::getScore() const{
+    return playerScore;
+}
+
+void Player::setLives(int lives) {
+	playerLives = lives;
+}
+
+int Player::getLives() const{
+	return playerLives;
+}
 

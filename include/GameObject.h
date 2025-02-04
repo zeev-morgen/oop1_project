@@ -38,14 +38,14 @@ public:
     sf::FloatRect getBounds() const;
 	void setActive(bool active);
 
-    virtual void collide(GameObject& other) = 0;
+    virtual void collide(GameObject& other, float deltaTime, LevelManager& levelManager) = 0;
 
-    virtual void collide(Player& other) = 0;
-    virtual void collide(Enemy& other) = 0;
-    virtual void collide(Wall& other) = 0;
-    virtual void collide(Rock& other) = 0;
-    virtual void collide(Door& other) = 0;
-    virtual void collide(Explosion& other) = 0;
+    virtual void collide(Player& other, float deltaTime, LevelManager& levelManager) = 0;
+    virtual void collide(Enemy& other,float deltaTime, LevelManager& levelManager) = 0;
+    virtual void collide(Wall& other, float deltaTime, LevelManager& levelManager) = 0;
+    virtual void collide(Rock& other, float deltaTime, LevelManager& levelManager) = 0;
+    virtual void collide(Door& other, float deltaTime, LevelManager& levelManager) = 0;
+    virtual void collide(Explosion& other, float deltaTime, LevelManager& levelManager) = 0;
 
     virtual void draw(sf::RenderWindow& window) const = 0;
 

@@ -1,9 +1,12 @@
 #include "Game.h"
 
 Game::Game()
-	: m_window(sf::VideoMode(m_levelManager.getCols() * Config::TILE_HEIGHT, m_levelManager.getRows() * Config::TILE_HEIGHT + Config::UI_HEIGHT), "SFML Game")
+
+	: m_window(sf::VideoMode(m_levelManager.getCols()* Config::TILE_HEIGHT, m_levelManager.getRows()* Config::TILE_HEIGHT+ Config::UI), "SFML Game")
 	, m_isRunning(true)
 	, m_gameObjects(m_levelManager.getGameObjects())
+	, m_start(false) // Initialize m_start // addition - check if needed
+	, uiManager()
 
 {
 	m_window.setFramerateLimit(60);
@@ -33,8 +36,8 @@ void Game::openMenu() {
 
 		m_window.clear();
 		int menuChoice = menu.handleInput();
-		if (menuChoice == 0) { 
-			return;                  
+		if (menuChoice == 0) {
+			return;
 		}
 
 		menu.draw();
@@ -52,12 +55,18 @@ void Game::draw() {
 }
 //===============================================
 void Game::update(float deltaTime, LevelManager& levelManager) {
-	
+	if (m_player) { // Ensure m_player is not null
+		m_player->update(deltaTime, levelManager);
+	}
+
 	for (const auto& object : m_levelManager.getGameObjects()) {
 		if (object) {
 			object->update(deltaTime, levelManager);
 		}
 	}
+		uiManager.update(60, 3, 7);
+		//uiManager.update(60, m_player->getScore(), m_player->getLives());
+	
 
 	auto& gameObjects = m_levelManager.getGameObjects();
 	auto playerIt = std::find_if(gameObjects.begin(), gameObjects.end(),
@@ -78,7 +87,6 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 		m_levelManager.addTheBomb(tempBomb->getPosition());
 	}
 
-
 	const auto& tempExplosion = m_levelManager.getTempExplosion();
 
 	for (const auto& exp : tempExplosion) {
@@ -90,6 +98,7 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 	m_levelManager.getTempExplosion().clear();
 	m_levelManager.removeInactiveObjects();
 	
+
 	handleCollisions();
 
 	auto& gameObjects2 = m_levelManager.getGameObjects();
@@ -114,12 +123,18 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 		}
 	}
 }
+
+
 //===============================================
 void Game::render() {
 	m_window.clear(sf::Color::Black);
 	draw();
+
+	uiManager.drawUI(m_window);
+
 	m_window.display();
 }
+
 //===============================================
 void Game::handleEvents() {
 	sf::Event event;
@@ -130,23 +145,22 @@ void Game::handleEvents() {
 		}
 	}
 }
-//===============================================
 void Game::handleCollisions() {
-	for (size_t i = 0; i < m_gameObjects.size(); ++i) {
-		for (size_t j = i + 1; j < m_gameObjects.size(); ++j) {
-			
-			if (m_gameObjects[i]->getBounds().intersects(m_gameObjects[j]->getBounds())) {
+    float deltaTime = 0.016f; // Assuming a fixed deltaTime for simplicity
+    LevelManager& levelManager = m_levelManager; // Reference to the level manager
 
-				m_gameObjects[i]->collide(*m_gameObjects[j]);
-				m_gameObjects[j]->collide(*m_gameObjects[i]);
-			}
-
-		}
-	}
+    for (size_t i = 0; i < m_gameObjects.size(); ++i) {
+        for (size_t j = i + 1; j < m_gameObjects.size(); ++j) {
+            if (m_gameObjects[i]->getBounds().intersects(m_gameObjects[j]->getBounds())) {
+                m_gameObjects[i]->collide(*m_gameObjects[j], deltaTime, levelManager);
+                m_gameObjects[j]->collide(*m_gameObjects[i], deltaTime, levelManager);
+            }
+        }
+    }
 }
 //===============================================
 void Game::saveInitialPositions() {
-	// ùîéøú îé÷åîéí ùì ëì äàåáéé÷èéí
+	// Ã¹Ã®Ã©Ã¸Ãº Ã®Ã©Ã·Ã¥Ã®Ã©Ã­ Ã¹Ã¬ Ã«Ã¬ Ã¤Ã Ã¥Ã¡Ã©Ã©Ã·Ã¨Ã©Ã­
 	for (const auto& obj : m_gameObjects) {
 		if (obj) {
 			m_initialPositions[obj.get()] = obj->getPosition();
@@ -155,7 +169,7 @@ void Game::saveInitialPositions() {
 }
 //===============================================
 void Game::resetPositions() {
-	// äçæøú ëì äàåáéé÷èéí ìîé÷åîí ääúçìúé
+	// Ã¤Ã§Ã¦Ã¸Ãº Ã«Ã¬ Ã¤Ã Ã¥Ã¡Ã©Ã©Ã·Ã¨Ã©Ã­ Ã¬Ã®Ã©Ã·Ã¥Ã®Ã­ Ã¤Ã¤ÃºÃ§Ã¬ÃºÃ©
 	for (const auto& obj : m_gameObjects) {
 		if (obj && obj->isActive()) {
 			auto it = m_initialPositions.find(obj.get());
@@ -174,5 +188,6 @@ void Game::recreateWindow() {
 	m_window.create(sf::VideoMode(newWidth, newHeight), "SFML Game");
 	m_window.setFramerateLimit(60);
 }
-//===============================================
+
+
 

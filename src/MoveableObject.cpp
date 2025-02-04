@@ -39,7 +39,7 @@ bool MoveableObject::isValidPosition(const sf::Vector2f& newPosition, LevelManag
     
     return (newPosition.x <= levelManager.getCols() * Config::TILE_HEIGHT - Config::TILE_HEIGHT
         && newPosition.x >= 0 
-        && newPosition.y <= levelManager.getRows() * Config::TILE_HEIGHT - Config::TILE_HEIGHT
+        && newPosition.y <= levelManager.getRows() * Config::TILE_HEIGHT - Config::TILE_HEIGHT// - Config::UI
         && newPosition.y >= 0);
 }
 
@@ -79,8 +79,8 @@ void MoveableObject::tryMove(const sf::Vector2f& movement, LevelManager& levelMa
 }
 //===============================================
 
-void MoveableObject::collide(GameObject& other) {
-    other.collide(*this);
+void MoveableObject::collide(GameObject& other,float deltaTime, LevelManager& levelManager) {
+    other.collide(*this,deltaTime,levelManager);
 }
 //===============================================
 void MoveableObject::alignToTile() {
