@@ -21,12 +21,4 @@ private:
     bool m_exploded = false;
     sf::Text m_timerText;
     sf::Font m_font;
-    //sf::Font m_font;
 };
-//    void collide(GameObject& other) override;
-//    void collide(Player& player) override;
-//    void collide(Enemy& enemy) override;
-//    //void collide(Wall& wall) override;
-//    //void collide(Door& door) override;
-//    void collide(Explosion& explosion) override;
-//};

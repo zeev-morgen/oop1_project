@@ -3,6 +3,9 @@
 LevelManager::LevelManager()
     : m_level(0), m_rows(0), m_cols(0), m_player(nullptr), m_door(nullptr), m_tempBomb(nullptr)//, m_tempExplosion(null)
 {
+    TextureManager& textureManager = TextureManager::instance();
+    textureManager.loadGameTextures();
+
     loadPlaylist("Playlist.txt");
     m_font.loadFromFile("ARIAL.TTF");
     loadLevel();
@@ -106,7 +109,7 @@ void LevelManager::clear() {
 
 void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
     TextureManager& textureManager = TextureManager::instance();
-    textureManager.loadGameTextures();
+    
     sf::Texture* texture = textureManager.getTexture(symbol);
     if (!texture) {
         std::cerr << "Failed to get texture for symbol: " << symbol << std::endl;

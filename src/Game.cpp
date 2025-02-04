@@ -102,7 +102,15 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 		auto* player = dynamic_cast<Player*>((*playerIt2).get());
 	
 		if (player->getFinish()) {
-			levelManager.nextLevel();
+			if (levelManager.nextLevel()) {
+				recreateWindow();
+				m_initialPositions.clear();
+				saveInitialPositions();
+			}
+			else {
+				m_isRunning = false;
+				m_window.close();
+			}
 		}
 	}
 }
@@ -157,4 +165,14 @@ void Game::resetPositions() {
 		}
 	}
 }
+//===============================================
+void Game::recreateWindow() {
+	float newWidth = m_levelManager.getCols() * Config::TILE_WIDTH;
+	float newHeight = m_levelManager.getRows() * Config::TILE_HEIGHT;
+
+	m_window.close();
+	m_window.create(sf::VideoMode(newWidth, newHeight), "SFML Game");
+	m_window.setFramerateLimit(60);
+}
+//===============================================
 

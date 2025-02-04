@@ -24,6 +24,7 @@ private:
 	void draw();
 	void handleCollisions();
 	void resetLevel();
+	void recreateWindow();
 
 	std::vector<std::unique_ptr<GameObject>>& m_gameObjects;
 	std::map<std::string, sf::Texture> m_textures;
