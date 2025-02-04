@@ -1,6 +1,7 @@
 #pragma once
 #include "Door.h"
 #include "StaticObject.h"
+#include "Player.h"
 
 class Door : public StaticObject {
 public:

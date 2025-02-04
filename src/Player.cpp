@@ -5,7 +5,7 @@
 
 Player::Player(const sf::Texture& texture, const sf::Vector2f& position)
     : MoveableObject(texture, position, Config::PLAYER_SPEED)
-    , m_moveSpeed(Config::PLAYER_SPEED), m_direction(0.0f, 0.0f)
+	, m_moveSpeed(Config::PLAYER_SPEED), m_direction(0.0f, 0.0f), m_startPosition(position)
 {
     //setOrigin();
 }
@@ -42,13 +42,13 @@ void Player::update(float deltaTime, LevelManager& levelManager){
                 std::round(m_position.x / 50) * 50,
                 std::round(m_position.y / 50) * 50
             );
-            levelManager.addBomb(bombPosition);  // הוספת פצצה
-            m_canPlaceBomb = false; // נועל לחיצה חוזרת
+            levelManager.addBomb(bombPosition);  // ֳ₪ֳ¥ֳ±ֳ´ֳ÷ ֳ´ֳ¶ֳ¶ֳ₪
+            m_canPlaceBomb = false; // ֳ°ֳ¥ֳ²ֳ¬ ֳ¬ֳ§ֳ©ֳ¶ֳ₪ ֳ§ֳ¥ֳ¦ֳ¸ֳ÷
 
         }
     }
     else {
-        m_canPlaceBomb = true; // משחרר את הנעילה כשהכפתור לא לחוץ
+        m_canPlaceBomb = true; // ֳ®ֳ¹ֳ§ֳ¸ֳ¸ ֳ ֳ÷ ֳ₪ֳ°ֳ²ֳ©ֳ¬ֳ₪ ֳ«ֳ¹ֳ₪ֳ«ֳ´ֳ÷ֳ¥ֳ¸ ֳ¬ֳ  ֳ¬ֳ§ֳ¥ֳµ
     }
     sf::Vector2f movement = m_direction * m_moveSpeed * deltaTime;
 
@@ -64,37 +64,47 @@ void Player::collide(GameObject& other, float deltaTime, LevelManager& levelMana
     other.collide(*this, deltaTime, levelManager);  // Double dispatch
 }
 
+bool Player::getFinish() {
+	return m_finishLevel;
+}
 
 void Player::collide(Enemy& other, float deltaTime, LevelManager& levelManager)  {
 
-    undoMove();  // נתקע באויב
-    // טיפול בפגיעה
+    undoMove();
+	m_isActive = false;
+	std::cout << "player is :"<< isActive() << std::endl;
 }
 
 void Player::collide(Wall& other, float deltaTime, LevelManager& levelManager)  {
     undoMove(); 
-    std::cout << "collision" << std::endl;// נתקע בקיר
+    std::cout << "collision" << std::endl;// ֳ°ֳ÷ֳ·ֳ² ֳ¡ֳ·ֳ©ֳ¸
 }
 
-void Player::collide(Rock& other, float deltaTime, LevelManager& levelManager)  {
-    undoMove();  // נתקע באבן
+void Player::collide(Rock& other float deltaTime, LevelManager& levelManager) {
+    undoMove(); 
 }
 
 void Player::collide(Door& other, float deltaTime, LevelManager& levelManager)  {
-    undoMove();  // נתקע בדלת
+    undoMove();
+	m_finishLevel = true;
 }
 
 void Player::collide(Explosion& other, float deltaTime, LevelManager& levelManager)  {
-    // טיפול בפגיעה מפיצוץ
+	undoMove();
+    setActive(false);
+	std::cout << "collision" << std::endl;
+	//m_position = m_startPosition;
 }
 
 void Player::collide(Player& other, float deltaTime, LevelManager& levelManager) {
-   
+	//not implemented can not exist
+
 }
 
 void Player::draw(sf::RenderWindow& window) const {
     window.draw(m_sprite);
 }
+
 
 void Player::setScore(int score) {
 	playerScore = score;
@@ -111,3 +121,4 @@ void Player::setLives(int lives) {
 int Player::getLives() const{
 	return playerLives;
 }
+

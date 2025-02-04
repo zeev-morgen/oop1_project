@@ -1,13 +1,16 @@
 #include "Game.h"
 
 Game::Game()
+
 	: m_window(sf::VideoMode(m_levelManager.getCols()* Config::TILE_HEIGHT, m_levelManager.getRows()* Config::TILE_HEIGHT+ Config::UI), "SFML Game")
 	, m_isRunning(true)
 	, m_gameObjects(m_levelManager.getGameObjects())
-	, m_start(false) // Initialize m_start
+	, m_start(false) // Initialize m_start // addition - check if needed
 	, uiManager()
+
 {
 	m_window.setFramerateLimit(60);
+	saveInitialPositions();
 }
 //===============================================
 void Game::run() {
@@ -65,6 +68,21 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 		//uiManager.update(60, m_player->getScore(), m_player->getLives());
 	
 
+	auto& gameObjects = m_levelManager.getGameObjects();
+	auto playerIt = std::find_if(gameObjects.begin(), gameObjects.end(),
+		[](const std::unique_ptr<GameObject>& obj) {
+			return dynamic_cast<Player*>(obj.get()) != nullptr;
+		});
+
+	if (playerIt != gameObjects.end()) {
+		auto* player = dynamic_cast<Player*>((*playerIt).get());
+
+		if (!player->isActive()) {
+			player->setActive(true);
+			resetPositions();
+		}
+	}
+
 	if (auto& tempBomb = m_levelManager.getTempBomb()) {
 		m_levelManager.addTheBomb(tempBomb->getPosition());
 	}
@@ -76,11 +94,34 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 			m_levelManager.addTheExplosion(exp->getPosition());
 		}
 	}
-	m_levelManager.getTempExplosion().clear();
 
-	m_levelManager.removeExp();
+	m_levelManager.getTempExplosion().clear();
+	m_levelManager.removeInactiveObjects();
+	
 
 	handleCollisions();
+
+	auto& gameObjects2 = m_levelManager.getGameObjects();
+	auto playerIt2 = std::find_if(gameObjects.begin(), gameObjects.end(),
+		[](const std::unique_ptr<GameObject>& obj) {
+			return dynamic_cast<Player*>(obj.get()) != nullptr;
+		});
+
+	if (playerIt2 != gameObjects.end()) {
+		auto* player = dynamic_cast<Player*>((*playerIt2).get());
+	
+		if (player->getFinish()) {
+			if (levelManager.nextLevel()) {
+				recreateWindow();
+				m_initialPositions.clear();
+				saveInitialPositions();
+			}
+			else {
+				m_isRunning = false;
+				m_window.close();
+			}
+		}
+	}
 }
 
 
@@ -118,37 +159,35 @@ void Game::handleCollisions() {
     }
 }
 //===============================================
-//void Game::setBackgraund() {
-//	sf::Texture* backgroundTexture = TextureManager::instance().getTexture('^');
-//	if (backgroundTexture) {
-//		m_backgraund.setTexture(*backgroundTexture);
-//	}
-//	else {
-//		// Handle the error, e.g., log it or set a default texture
-//		std::cerr << "Error: Background texture not found!" << std::endl;
-//	}
-//}
-//===============================================
-Player* Game::GetPlayer() {
-	Player* playerPtr = nullptr;
-	for (const auto& object : m_gameObjects) {
-		// îðñéí ìäîéø àú äàåáéé÷è ìñåâ Player
-		playerPtr = dynamic_cast<Player*>(object.get());
-		if (playerPtr != nullptr) {
-			// îöàðå îåôò îäñåâ Player, ðéúï ìòöåø àú äçéôåù
-			break;
+void Game::saveInitialPositions() {
+	// Ã¹Ã®Ã©Ã¸Ãº Ã®Ã©Ã·Ã¥Ã®Ã©Ã­ Ã¹Ã¬ Ã«Ã¬ Ã¤Ã Ã¥Ã¡Ã©Ã©Ã·Ã¨Ã©Ã­
+	for (const auto& obj : m_gameObjects) {
+		if (obj) {
+			m_initialPositions[obj.get()] = obj->getPosition();
 		}
 	}
-
-	if (playerPtr != nullptr) {
-		// òëùéå ðéúï ìäùúîù á-playerPtr, ìîùì:
-		std::cout << "Player score: " << playerPtr->getScore() << std::endl;
-	}
-	else {
-		std::cout << "Player not found!" << std::endl;
-	}
-
-	return playerPtr;
 }
+//===============================================
+void Game::resetPositions() {
+	// Ã¤Ã§Ã¦Ã¸Ãº Ã«Ã¬ Ã¤Ã Ã¥Ã¡Ã©Ã©Ã·Ã¨Ã©Ã­ Ã¬Ã®Ã©Ã·Ã¥Ã®Ã­ Ã¤Ã¤ÃºÃ§Ã¬ÃºÃ©
+	for (const auto& obj : m_gameObjects) {
+		if (obj && obj->isActive()) {
+			auto it = m_initialPositions.find(obj.get());
+			if (it != m_initialPositions.end()) {
+				obj->setPosition(it->second);
+			}
+		}
+	}
+}
+//===============================================
+void Game::recreateWindow() {
+	float newWidth = m_levelManager.getCols() * Config::TILE_WIDTH;
+	float newHeight = m_levelManager.getRows() * Config::TILE_HEIGHT;
+
+	m_window.close();
+	m_window.create(sf::VideoMode(newWidth, newHeight), "SFML Game");
+	m_window.setFramerateLimit(60);
+}
+
 
 

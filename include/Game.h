@@ -7,6 +7,7 @@
 #include "MenuManager.h"
 #include "UIManager.h"
 
+
 class Game {
 public:
 	Game();
@@ -27,16 +28,21 @@ private:
 	void openMenu();
 	void draw();
 	void handleCollisions();
-	Player* GetPlayer();
+
+	void resetLevel();
+	void recreateWindow();
+
 
 	std::vector<std::unique_ptr<GameObject>>& m_gameObjects;
 	std::map<std::string, sf::Texture> m_textures;
 	std::unique_ptr<Player> m_player;
 	
 
-	sf::Sprite m_backgraund;
 	sf::RenderWindow m_window;
 
 	bool m_isRunning;
-	bool m_start;
+
+	std::map<const GameObject*, sf::Vector2f> m_initialPositions; // îé÷åîéí äúçìúééí
+	void saveInitialPositions();    // ùîéøú îé÷åîéí äúçìúééí
+	void resetPositions();
 };

@@ -36,6 +36,7 @@ public:
     const sf::Sprite& getSprite()const;
     virtual ~GameObject() = default;
     sf::FloatRect getBounds() const;
+	void setActive(bool active);
 
     virtual void collide(GameObject& other, float deltaTime, LevelManager& levelManager) = 0;
 

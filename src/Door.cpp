@@ -10,17 +10,19 @@ void Door::collide(GameObject& other, float deltaTime, LevelManager& levelManage
 }
 
 
+
 void Door::collide(Enemy& other, float deltaTime, LevelManager& levelManager) {
-    undoMove();  // ğú÷ò áàåéá
-    // èéôåì áôâéòä
+    undoMove();  // Ã°ÃºÃ·Ã² Ã¡Ã Ã¥Ã©Ã¡
+    // Ã¨Ã©Ã´Ã¥Ã¬ Ã¡Ã´Ã¢Ã©Ã²Ã¤
 }
 
 void Door::collide(Player& other, float deltaTime, LevelManager& levelManager) {
-    undoMove();  // ğú÷ò á÷éø
+    undoMove();  // Ã°ÃºÃ·Ã² Ã¡Ã·Ã©Ã¸
+
 }
 
 void Door::collide(Explosion& other, float deltaTime, LevelManager& levelManager) {
-    undoMove();  // ğú÷ò áàáï
+    undoMove();  // Ã°ÃºÃ·Ã² Ã¡Ã Ã¡Ã¯
 }
 
 void Door::update(float deltaTime, LevelManager& levelManager) {
