@@ -1,12 +1,13 @@
 #include "LevelManager.h"
 
 LevelManager::LevelManager()
-    : m_level(0), m_rows(0), m_cols(0), m_player(nullptr), m_door(nullptr), m_tempBomb(nullptr)//, m_tempExplosion(null)
+    : m_level(0), m_rows(0), m_cols(0), m_player(nullptr), m_door(nullptr), m_tempBomb(nullptr)
 {
     loadPlaylist("Playlist.txt");
     m_font.loadFromFile("ARIAL.TTF");
     loadLevel();
 }
+
 //===============================================
 
 void LevelManager::loadPlaylist(const std::string& filename) {
@@ -56,7 +57,7 @@ bool LevelManager::loadFromFile(const std::string& filename) {
             char symbol = levelData[row][col];
             if (symbol != ' ') {
                 float x = col * Config::TILE_WIDTH;
-                float y = row * Config::TILE_HEIGHT;
+                float y = row * Config::TILE_HEIGHT + Config::UI;
                 createObject(symbol, x, y, m_font);
             }
         }
@@ -99,7 +100,7 @@ void LevelManager::draw(sf::RenderWindow& window) {
 //===============================================
 void LevelManager::clear() {
     m_gameObjects.clear();
-    m_player = nullptr; 
+    m_player = nullptr;
     m_door = nullptr;
 }
 //===============================================
@@ -140,7 +141,7 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
 
     case '/':
     {
-        //m_player = std::make_unique<Player>(*texture, position);
+        m_player = std::make_unique<Player>(*texture, position);
         m_gameObjects.push_back(std::make_unique<Player>(*texture, position));
     }
     break;
@@ -298,4 +299,26 @@ void LevelManager::removeExp() {
             }),
         objects.end()
     );
+}
+//==============================================
+Player* LevelManager::GetPlayer() {
+    Player* playerPtr = nullptr;
+    for (const auto& object : m_gameObjects) {
+        // מנסים להמיר את האובייקט לסוג Player
+        playerPtr = dynamic_cast<Player*>(object.get());
+        if (playerPtr != nullptr) {
+            // מצאנו מופע מהסוג Player, ניתן לעצור את החיפוש
+            break;
+        }
+    }
+
+    if (playerPtr != nullptr) {
+        // עכשיו ניתן להשתמש ב-playerPtr, למשל:
+        std::cout << "Player score: " << playerPtr->getScore() << std::endl;
+    }
+    else {
+        std::cout << "Player not found!" << std::endl;
+    }
+
+    return playerPtr;
 }

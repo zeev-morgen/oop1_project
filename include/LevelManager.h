@@ -32,6 +32,7 @@ private:
     std::vector<std::unique_ptr <Enemy>> m_enemies;
     std::vector<std::unique_ptr <GameObject>> m_tempExplosion;
     Door* m_door;
+    Player* GetPlayer();
 
 public:
     LevelManager();

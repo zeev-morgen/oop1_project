@@ -5,21 +5,21 @@ Door::Door(const sf::Texture& texture, const sf::Vector2f& position)
 {
 }
 
-void Door::collide(GameObject& other) {
-    other.collide(*this);  // Double dispatch
+void Door::collide(GameObject& other, float deltaTime, LevelManager& levelManager) {
+    other.collide(*this, deltaTime,levelManager);  // Double dispatch
 }
 
 
-void Door::collide(Enemy& other) {
+void Door::collide(Enemy& other, float deltaTime, LevelManager& levelManager) {
     undoMove();  // נתקע באויב
     // טיפול בפגיעה
 }
 
-void Door::collide(Player& other) {
+void Door::collide(Player& other, float deltaTime, LevelManager& levelManager) {
     undoMove();  // נתקע בקיר
 }
 
-void Door::collide(Explosion& other) {
+void Door::collide(Explosion& other, float deltaTime, LevelManager& levelManager) {
     undoMove();  // נתקע באבן
 }
 

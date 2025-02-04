@@ -60,38 +60,54 @@ void Player::update(float deltaTime, LevelManager& levelManager){
 }
 
 
-void Player::collide(GameObject& other)  {
-    other.collide(*this);  // Double dispatch
+void Player::collide(GameObject& other, float deltaTime, LevelManager& levelManager)  {
+    other.collide(*this, deltaTime, levelManager);  // Double dispatch
 }
 
 
-void Player::collide(Enemy& other)  {
+void Player::collide(Enemy& other, float deltaTime, LevelManager& levelManager)  {
 
     undoMove();  // נתקע באויב
     // טיפול בפגיעה
 }
 
-void Player::collide(Wall& other)  {
+void Player::collide(Wall& other, float deltaTime, LevelManager& levelManager)  {
     undoMove(); 
     std::cout << "collision" << std::endl;// נתקע בקיר
 }
 
-void Player::collide(Rock& other)  {
+void Player::collide(Rock& other, float deltaTime, LevelManager& levelManager)  {
     undoMove();  // נתקע באבן
 }
 
-void Player::collide(Door& other)  {
+void Player::collide(Door& other, float deltaTime, LevelManager& levelManager)  {
     undoMove();  // נתקע בדלת
 }
 
-void Player::collide(Explosion& other)  {
+void Player::collide(Explosion& other, float deltaTime, LevelManager& levelManager)  {
     // טיפול בפגיעה מפיצוץ
 }
 
-void Player::collide(Player& other) {
+void Player::collide(Player& other, float deltaTime, LevelManager& levelManager) {
    
 }
 
 void Player::draw(sf::RenderWindow& window) const {
     window.draw(m_sprite);
+}
+
+void Player::setScore(int score) {
+	playerScore = score;
+}
+
+int Player::getScore() const{
+    return playerScore;
+}
+
+void Player::setLives(int lives) {
+	playerLives = lives;
+}
+
+int Player::getLives() const{
+	return playerLives;
 }
