@@ -35,4 +35,6 @@ void Explosion::collide(Explosion& other) {
 
 void Explosion::collide(Rock& other) {
 	other.setActive(false);
+
+
 }

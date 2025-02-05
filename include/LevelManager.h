@@ -15,6 +15,7 @@
 #include "Bomb.h"
 #include "Explosion.h"
 #include <iostream>
+#include "Gift.h"
 
 
 class LevelManager {
@@ -31,6 +32,8 @@ private:
     std::unique_ptr<GameObject> m_player;
     std::vector<std::unique_ptr <Enemy>> m_enemies;
     std::vector<std::unique_ptr <GameObject>> m_tempExplosion;
+    std::unique_ptr<GameObject> m_tempBomb;
+    std::unique_ptr<GameObject> m_tempGift;
     Door* m_door;
 
 public:
@@ -67,5 +70,4 @@ private:
     void createObject(char symbol, float x, float y, sf::Font font);
     //void calcTileSize();
     void readLevelData(const std::string& filename, std::vector<std::string>& levelData);
-    std::unique_ptr<GameObject> m_tempBomb;
 };

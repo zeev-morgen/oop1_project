@@ -2,7 +2,7 @@
 #include "Config.h"
 
 GameObject::GameObject(const sf::Texture& texture, const sf::Vector2f& position)
-	: m_sprite(), m_position(position), m_isActive(true), m_prevPosition(position)
+	: m_sprite(), m_position(position), m_isActive(true), m_prevPosition(position), m_show(false)
 {
 	m_sprite.setTexture(texture);
 	m_sprite.setPosition(position);
@@ -67,4 +67,12 @@ sf::FloatRect GameObject::getBounds() const {
 
 void GameObject::setActive(bool active) {
 	m_isActive = active;
+}
+
+void GameObject::setShow(bool show) {
+	m_show = show;
+}
+
+bool GameObject::getShow() const {
+	return m_show;
 }

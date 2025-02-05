@@ -16,6 +16,12 @@ protected:
 	sf::Vector2f m_position;
     sf::Vector2f m_prevPosition;
 	bool m_isActive;
+	bool m_show;
+
+    sf::Vector2i m_currentFrame;     // מיקום הפריים הנוכחי
+    sf::IntRect m_frameRect;         // מלבן שמגדיר את החלק הנוכחי מהטקסטורה
+    float m_animationTimer;          // טיימר לאנימציה
+    static constexpr float ANIMATION_SPEED = 0.1f; // מהירות האנימציה
 
 public:
     GameObject(const sf::Texture& texture, const sf::Vector2f& position);
@@ -37,6 +43,8 @@ public:
     virtual ~GameObject() = default;
     sf::FloatRect getBounds() const;
 	void setActive(bool active);
+	void setShow(bool show);
+	bool getShow() const;
 
     virtual void collide(GameObject& other) = 0;
 
