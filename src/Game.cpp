@@ -64,9 +64,12 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 			object->update(deltaTime, levelManager);
 		}
 	}
+
+	//std::cout << "num of game objects: " << m_levelManager.getGameObjects().size() << std::endl;
 		uiManager.update(60, 3, 7);
 		//uiManager.update(60, m_player->getScore(), m_player->getLives());
 	
+
 
 	auto& gameObjects = m_levelManager.getGameObjects();
 	auto playerIt = std::find_if(gameObjects.begin(), gameObjects.end(),
@@ -96,6 +99,7 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 	}
 
 	m_levelManager.getTempExplosion().clear();
+
 	m_levelManager.removeInactiveObjects();
 	
 

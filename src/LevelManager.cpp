@@ -1,4 +1,7 @@
 #include "LevelManager.h"
+#include <HealthGift.h>
+#include <TimeGift.h>
+#include <FreezeGift.h>
 
 LevelManager::LevelManager()
     : m_level(0), m_rows(0), m_cols(0), m_player(nullptr), m_door(nullptr), m_tempBomb(nullptr)
@@ -122,29 +125,54 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
     switch (symbol) {
     case '@':  // rock
     {
-        m_gameObjects.push_back(std::make_unique<Rock>(*texture, position));
+        auto rockPtr = std::make_unique<Rock>(*texture, position);
+
+        if (rand() % 3 == 0) { // 33% ֳ±ֳ©ֳ«ֳ¥ֳ© ֳ¬ֳ®ֳ÷ֳ°ֳ₪
+            int giftType = rand() % 3;
+            texture = textureManager.getTexture('$');
+
+            switch (giftType) {
+
+            case 0:
+                m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
+				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
+				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
+                break;
+
+            case 1:
+                m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
+				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
+				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
+                break;
+
+            case 2:
+                m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
+				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
+				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
+                break;
+            }
+        }
+        m_gameObjects.push_back(std::move(rockPtr));
+        break;
     }
-    break;
 
     case '!':
     {
-        //m_enemies.push_back(std::make_unique<Enemy>(*texture, position));
         m_gameObjects.push_back(std::make_unique<Enemy>(*texture, position));
     }
     break;
 
     case '%':
     {
-        //m_tempBomb.push_back(std::make_unique<Bomb>(*texture, position, font));
         m_tempBomb = std::make_unique<Bomb>(*texture, position, font);
-
-        //m_gameObjects.push_back(std::make_unique<Bomb>(*texture, position, font));
     }
     break;
 
     case '/':
     {
-        m_player = std::make_unique<Player>(*texture, position);
+
+        //m_player = std::make_unique<Player>(*texture, position);
+
         m_gameObjects.push_back(std::make_unique<Player>(*texture, position));
     }
     break;
@@ -163,14 +191,14 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
 
     case '*':
     {
-        // יוצרים פיצוץ במרכז
+        // ֳ©ֳ¥ֳ¶ֳ¸ֳ©ֳ­ ֳ´ֳ©ֳ¶ֳ¥ֳµ ֳ¡ֳ®ֳ¸ֳ«ֳ¦
         m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position, font));
 
-        // יוצרים פיצוצים לכל כיוון
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(50, 0), font)); // ימינה
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(-50, 0), font)); // שמאלה
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, 50), font)); // למטה
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, -50), font)); // למעלה
+        // ֳ©ֳ¥ֳ¶ֳ¸ֳ©ֳ­ ֳ´ֳ©ֳ¶ֳ¥ֳ¶ֳ©ֳ­ ֳ¬ֳ«ֳ¬ ֳ«ֳ©ֳ¥ֳ¥ֳ¯
+        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(50, 0), font)); // ֳ©ֳ®ֳ©ֳ°ֳ₪
+        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(-50, 0), font)); // ֳ¹ֳ®ֳ ֳ¬ֳ₪
+        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, 50), font)); // ֳ¬ֳ®ֳ¨ֳ₪
+        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, -50), font)); // ֳ¬ֳ®ֳ²ֳ¬ֳ₪
 
     }
     break;
@@ -279,8 +307,20 @@ void LevelManager::addTheExplosion(sf::Vector2f position) {
 //===============================================
 void LevelManager::removeInactiveObjects() {
     auto& objects = m_gameObjects;
+	
+    // ֳ°ֳ²ֳ¡ֳ¥ֳ¸ ֳ²ֳ¬ ֳ«ֳ¬ ֳ₪ֳ ֳ¥ֳ¡ֳ©ֳ©ֳ·ֳ¨ֳ©ֳ­
+    for (size_t i = 0; i < objects.size(); i++) {
+        if (!objects[i]->isActive()) {
+            if (auto* rock = dynamic_cast<Rock*>(objects[i].get())) {
+                size_t giftIndex = rock->getGiftIndex();
+                
+                if (rock->getHasGift() && giftIndex < objects.size()) {                    
+                    objects[giftIndex-2]->setShow(true);
+                }
+            }
+        }
+    }
 
-    // מחיקת כל האובייקטים הלא פעילים
     objects.erase(
         std::remove_if(objects.begin(), objects.end(),
             [](const std::unique_ptr<GameObject>& obj) {
@@ -288,26 +328,5 @@ void LevelManager::removeInactiveObjects() {
             }),
         objects.end()
     );
-}
-//==============================================
-Player* LevelManager::GetPlayer() {
-    Player* playerPtr = nullptr;
-    for (const auto& object : m_gameObjects) {
-        // מנסים להמיר את האובייקט לסוג Player
-        playerPtr = dynamic_cast<Player*>(object.get());
-        if (playerPtr != nullptr) {
-            // מצאנו מופע מהסוג Player, ניתן לעצור את החיפוש
-            break;
-        }
-    }
 
-    if (playerPtr != nullptr) {
-        // עכשיו ניתן להשתמש ב-playerPtr, למשל:
-        std::cout << "Player score: " << playerPtr->getScore() << std::endl;
-    }
-    else {
-        std::cout << "Player not found!" << std::endl;
-    }
-
-    return playerPtr;
 }
