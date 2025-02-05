@@ -70,43 +70,44 @@ void Player::update(float deltaTime, LevelManager& levelManager){
 }
 
 
-void Player::collide(GameObject& other, float deltaTime, LevelManager& levelManager)  {
-    other.collide(*this, deltaTime, levelManager);  // Double dispatch
+void Player::collide(GameObject& other)  {
+    other.collide(*this);  // Double dispatch
 }
 
 bool Player::getFinish() {
 	return m_finishLevel;
 }
 
-void Player::collide(Enemy& other, float deltaTime, LevelManager& levelManager)  {
+void Player::collide(Enemy& other)  {
 
     undoMove();
 	m_isActive = false;
+	m_lives--;
 	std::cout << "player is :"<< isActive() << std::endl;
 }
 
-void Player::collide(Wall& other, float deltaTime, LevelManager& levelManager)  {
+void Player::collide(Wall& other)  {
     undoMove(); 
     std::cout << "collision" << std::endl;// ðú÷ò á÷éø
 }
 
-void Player::collide(Rock& other, float deltaTime, LevelManager& levelManager) {
+void Player::collide(Rock& other) {
     undoMove(); 
 }
 
-void Player::collide(Door& other, float deltaTime, LevelManager& levelManager)  {
+void Player::collide(Door& other)  {
     undoMove();
 	m_finishLevel = true;
 }
 
-void Player::collide(Explosion& other, float deltaTime, LevelManager& levelManager)  {
+void Player::collide(Explosion& other)  {
 	undoMove();
     setActive(false);
 	std::cout << "collision" << std::endl;
 	//m_position = m_startPosition;
 }
 
-void Player::collide(Player& other, float deltaTime, LevelManager& levelManager) {
+void Player::collide(Player& other) {
 	//not implemented can not exist
 
 }
@@ -125,6 +126,18 @@ void Player::setLives(int health) {
 
 void Player::setTime(float time) {
 	m_time = time;
+}
+
+void Player::setScore(int score) {
+    m_score = score;
+}
+
+int Player::getScore() const {
+    return m_score;
+}
+
+int Player::getLives() const {
+    return m_lives;
 }
 
 
@@ -155,19 +168,5 @@ void Player::setTime(float time) {
 
 
 
-void Player::setScore(int score) {
-	playerScore = score;
-}
 
-int Player::getScore() const{
-    return playerScore;
-}
-
-//void Player::setLives(int lives) {
-//	playerLives = lives;
-//}
-
-int Player::getLives() const{
-	return playerLives;
-}
 

@@ -37,10 +37,10 @@ float MoveableObject::getSpeed()const {
 //===============================================
 bool MoveableObject::isValidPosition(const sf::Vector2f& newPosition, LevelManager& levelManager)  {
     
-    return (newPosition.x <= levelManager.getCols() * Config::TILE_HEIGHT - Config::TILE_HEIGHT
+	return (newPosition.x <= levelManager.getCols() * Config::TILE_HEIGHT - Config::TILE_HEIGHT
         && newPosition.x >= 0 
-        && newPosition.y <= levelManager.getRows() * Config::TILE_HEIGHT - Config::TILE_HEIGHT// - Config::UI
-        && newPosition.y >= 0);
+        && newPosition.y <= levelManager.getRows() * Config::TILE_HEIGHT - Config::TILE_HEIGHT + Config::UI
+        && newPosition.y >= Config::UI);
 }
 
 //===============================================
@@ -55,12 +55,12 @@ void MoveableObject::tryMove(const sf::Vector2f& movement, LevelManager& levelMa
         newPosition.x = (levelManager.getCols() - 1) * Config::TILE_HEIGHT;
     }
 
-    if (newPosition.y < 0) {
-        newPosition.y = 0;
+    if (newPosition.y < Config::UI) {
+        newPosition.y = Config::UI;
     }
 
-    else if (newPosition.y > (levelManager.getRows() - 1) * Config::TILE_HEIGHT) {
-        newPosition.y = (levelManager.getRows() - 1) * Config::TILE_HEIGHT;
+    else if (newPosition.y > (levelManager.getRows() - 1) * Config::TILE_HEIGHT + Config::UI) {
+        newPosition.y = (levelManager.getRows() - 1) * Config::TILE_HEIGHT + Config::UI;
     }
 
     if (newPosition != getPosition()) {
@@ -79,8 +79,8 @@ void MoveableObject::tryMove(const sf::Vector2f& movement, LevelManager& levelMa
 }
 //===============================================
 
-void MoveableObject::collide(GameObject& other,float deltaTime, LevelManager& levelManager) {
-    other.collide(*this,deltaTime,levelManager);
+void MoveableObject::collide(GameObject& other) {
+    other.collide(*this);
 }
 //===============================================
 void MoveableObject::alignToTile() {

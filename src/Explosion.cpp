@@ -16,24 +16,24 @@ void Explosion::draw(sf::RenderWindow& window) const {
     }
 }
 
-void Explosion::collide(GameObject& other, float deltaTime, LevelManager& levelManager) {
-	other.collide(*this,  deltaTime,  levelManager);
+void Explosion::collide(GameObject& other) {
+	other.collide(*this);
 }
 
-void Explosion::collide(Enemy& other, float deltaTime, LevelManager& levelManager) {
+void Explosion::collide(Enemy& other) {
 	other.setActive(false);
 }
 
-void Explosion::collide(Player& other, float deltaTime, LevelManager& levelManager) {
+void Explosion::collide(Player& other) {
 	other.undoMove();
 	other.setActive(false);
 }
 
-void Explosion::collide(Explosion& other, float deltaTime, LevelManager& levelManager) {
+void Explosion::collide(Explosion& other) {
 
 }
 
-void Explosion::collide(Rock& other, float deltaTime, LevelManager& levelManager) {
+void Explosion::collide(Rock& other) {
 	other.setActive(false);
 
 

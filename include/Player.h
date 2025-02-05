@@ -9,7 +9,7 @@ public:
 
 
 
-    virtual void collide(GameObject& other, float deltaTime, LevelManager& levelManager) override;
+    virtual void collide(GameObject& other) override;
 
     bool getFinish(); // addition
 
@@ -18,12 +18,12 @@ public:
 	
     //void updateAnimation(float deltaTime);
 
-    virtual void collide(Player& other, float deltaTime, LevelManager& levelManager) override;
-    virtual void collide(Enemy& other, float deltaTime, LevelManager& levelManager) override;
-    virtual void collide(Wall& other, float deltaTime, LevelManager& levelManager) override;
-    virtual void collide(Rock& other, float deltaTime, LevelManager& levelManager) override;
-    virtual void collide(Door& other, float deltaTime, LevelManager& levelManager) override;
-    virtual void collide(Explosion& other, float deltaTime, LevelManager& levelManager) override;
+    virtual void collide(Player& other) override;
+    virtual void collide(Enemy& other) override;
+    virtual void collide(Wall& other) override;
+    virtual void collide(Rock& other) override;
+    virtual void collide(Door& other) override;
+    virtual void collide(Explosion& other) override;
 
     void draw(sf::RenderWindow& window) const override;//?
 	void setScore(int score);
@@ -35,10 +35,6 @@ public:
 
 private:
 	float m_moveSpeed;
-  
-    int playerLives = 3;  // addition
-    int playerScore = 0; // addition
-
     bool m_canPlaceBomb = true;
 	bool m_isMoving = false;
 	int m_lives = 3;

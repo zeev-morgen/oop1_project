@@ -5,23 +5,23 @@ Door::Door(const sf::Texture& texture, const sf::Vector2f& position)
 {
 }
 
-void Door::collide(GameObject& other, float deltaTime, LevelManager& levelManager) {
-    other.collide(*this, deltaTime,levelManager);  // Double dispatch
+void Door::collide(GameObject& other) {
+    other.collide(*this);  // Double dispatch
 }
 
 
 
-void Door::collide(Enemy& other, float deltaTime, LevelManager& levelManager) {
-    undoMove();  // ðú÷ò áàåéá
-    // èéôåì áôâéòä
+void Door::collide(Enemy& other) {
+    undoMove();  
+    
 }
 
-void Door::collide(Player& other, float deltaTime, LevelManager& levelManager) {
+void Door::collide(Player& other) {
     undoMove();  // ðú÷ò á÷éø
 
 }
 
-void Door::collide(Explosion& other, float deltaTime, LevelManager& levelManager) {
+void Door::collide(Explosion& other) {
     undoMove();  // ðú÷ò áàáï
 }
 
