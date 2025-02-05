@@ -4,7 +4,7 @@
 #include <FreezeGift.h>
 
 LevelManager::LevelManager()
-    : m_level(0), m_rows(0), m_cols(0), m_player(nullptr), m_door(nullptr), m_tempBomb(nullptr)//, m_tempExplosion(null)
+    : m_level(0), m_rows(0), m_cols(0), m_player(nullptr), m_door(nullptr), m_tempBomb(nullptr)
 {
     TextureManager& textureManager = TextureManager::instance();
     textureManager.loadGameTextures();
@@ -13,6 +13,7 @@ LevelManager::LevelManager()
     m_font.loadFromFile("ARIAL.TTF");
     loadLevel();
 }
+
 //===============================================
 
 void LevelManager::loadPlaylist(const std::string& filename) {
@@ -62,7 +63,7 @@ bool LevelManager::loadFromFile(const std::string& filename) {
             char symbol = levelData[row][col];
             if (symbol != ' ') {
                 float x = col * Config::TILE_WIDTH;
-                float y = row * Config::TILE_HEIGHT;
+                float y = row * Config::TILE_HEIGHT + Config::UI;
                 createObject(symbol, x, y, m_font);
             }
         }
@@ -105,7 +106,7 @@ void LevelManager::draw(sf::RenderWindow& window) {
 //===============================================
 void LevelManager::clear() {
     m_gameObjects.clear();
-    m_player = nullptr; 
+    m_player = nullptr;
     m_door = nullptr;
 }
 //===============================================
@@ -126,7 +127,7 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
     {
         auto rockPtr = std::make_unique<Rock>(*texture, position);
 
-        if (rand() % 3 == 0) { // 33% ñéëåé ìîúğä
+        if (rand() % 3 == 0) { // 33% Ã±Ã©Ã«Ã¥Ã© Ã¬Ã®ÃºÃ°Ã¤
             int giftType = rand() % 3;
             texture = textureManager.getTexture('$');
 
@@ -169,6 +170,9 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
 
     case '/':
     {
+
+        //m_player = std::make_unique<Player>(*texture, position);
+
         m_gameObjects.push_back(std::make_unique<Player>(*texture, position));
     }
     break;
@@ -187,14 +191,14 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
 
     case '*':
     {
-        // éåöøéí ôéöåõ áîøëæ
+        // Ã©Ã¥Ã¶Ã¸Ã©Ã­ Ã´Ã©Ã¶Ã¥Ãµ Ã¡Ã®Ã¸Ã«Ã¦
         m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position, font));
 
-        // éåöøéí ôéöåöéí ìëì ëéååï
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(50, 0), font)); // éîéğä
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(-50, 0), font)); // ùîàìä
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, 50), font)); // ìîèä
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, -50), font)); // ìîòìä
+        // Ã©Ã¥Ã¶Ã¸Ã©Ã­ Ã´Ã©Ã¶Ã¥Ã¶Ã©Ã­ Ã¬Ã«Ã¬ Ã«Ã©Ã¥Ã¥Ã¯
+        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(50, 0), font)); // Ã©Ã®Ã©Ã°Ã¤
+        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(-50, 0), font)); // Ã¹Ã®Ã Ã¬Ã¤
+        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, 50), font)); // Ã¬Ã®Ã¨Ã¤
+        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, -50), font)); // Ã¬Ã®Ã²Ã¬Ã¤
 
     }
     break;
@@ -304,7 +308,7 @@ void LevelManager::addTheExplosion(sf::Vector2f position) {
 void LevelManager::removeInactiveObjects() {
     auto& objects = m_gameObjects;
 	
-    // ğòáåø òì ëì äàåáéé÷èéí
+    // Ã°Ã²Ã¡Ã¥Ã¸ Ã²Ã¬ Ã«Ã¬ Ã¤Ã Ã¥Ã¡Ã©Ã©Ã·Ã¨Ã©Ã­
     for (size_t i = 0; i < objects.size(); i++) {
         if (!objects[i]->isActive()) {
             if (auto* rock = dynamic_cast<Rock*>(objects[i].get())) {
@@ -325,6 +329,4 @@ void LevelManager::removeInactiveObjects() {
         objects.end()
     );
 
-    // îçé÷ú ëì äàåáéé÷èéí äìà ôòéìéí
-    
 }

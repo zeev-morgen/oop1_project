@@ -9,19 +9,19 @@ Wall::Wall(const sf::Texture& texture, const sf::Vector2f& position)
     // הגדרות ספציפיות לקיר אם יש
 }
 
-void Wall::collide(GameObject& other)  {
-    other.collide(*this);
+void Wall::collide(GameObject& other, float deltaTime, LevelManager& levelManager)  {
+    other.collide(*this, deltaTime ,levelManager);
 }
 
-void Wall::collide(Player& player)  {
+void Wall::collide(Player& player, float deltaTime, LevelManager& levelManager)  {
     //player.undoMove();
 }
 
-void Wall::collide(Enemy& enemy)  {
+void Wall::collide(Enemy& enemy, float deltaTime, LevelManager& levelManager)  {
     enemy.undoMove();
 }
 
-void Wall::collide(Explosion& explosion)  {
+void Wall::collide(Explosion& explosion, float deltaTime, LevelManager& levelManager)  {
     // קירות לא מושפעים מפיצוצים
 }
 

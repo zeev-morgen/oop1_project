@@ -35,6 +35,7 @@ private:
     std::unique_ptr<GameObject> m_tempBomb;
     std::unique_ptr<GameObject> m_tempGift;
     Door* m_door;
+    Player* GetPlayer();
 
 public:
     LevelManager();
