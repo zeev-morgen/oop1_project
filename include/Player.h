@@ -36,7 +36,6 @@ public:
 private:
 	float m_moveSpeed;
   
-	sf::Vector2f m_direction; // addition
     int playerLives = 3;  // addition
     int playerScore = 0; // addition
 

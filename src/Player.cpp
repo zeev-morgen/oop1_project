@@ -90,7 +90,7 @@ void Player::collide(Wall& other, float deltaTime, LevelManager& levelManager)  
     std::cout << "collision" << std::endl;// ðú÷ò á÷éø
 }
 
-void Player::collide(Rock& other float deltaTime, LevelManager& levelManager) {
+void Player::collide(Rock& other, float deltaTime, LevelManager& levelManager) {
     undoMove(); 
 }
 
@@ -119,7 +119,7 @@ void Player::draw(sf::RenderWindow& window) const {
     window.draw(m_sprite);
 }
 
-void Player::setHealth(int health) {
+void Player::setLives(int health) {
 	m_lives = health;
 }
 
@@ -163,9 +163,9 @@ int Player::getScore() const{
     return playerScore;
 }
 
-void Player::setLives(int lives) {
-	playerLives = lives;
-}
+//void Player::setLives(int lives) {
+//	playerLives = lives;
+//}
 
 int Player::getLives() const{
 	return playerLives;

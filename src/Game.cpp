@@ -5,7 +5,7 @@ Game::Game()
 	: m_window(sf::VideoMode(m_levelManager.getCols()* Config::TILE_HEIGHT, m_levelManager.getRows()* Config::TILE_HEIGHT+ Config::UI), "SFML Game")
 	, m_isRunning(true)
 	, m_gameObjects(m_levelManager.getGameObjects())
-	, m_start(false) // Initialize m_start // addition - check if needed
+	//, m_start(false) // Initialize m_start // addition - check if needed
 	, uiManager()
 
 {

@@ -10,13 +10,12 @@ public:
     virtual void update(float deltaTime, LevelManager& levelManager) override;
     virtual void draw(sf::RenderWindow& window) const override;
 
-    virtual void collide(GameObject& other) override;
-    virtual void collide(Enemy& enemy) override;
-    virtual void collide(Wall& wall) override;
-    virtual void collide(Rock& rock) override;
-    virtual void collide(Door& door) override;
-    virtual void collide(Explosion& explosion) override;
-    virtual void collide(Player& player) override;
+    virtual void collide(GameObject& other, float deltaTime, LevelManager& levelManager) override;
+    virtual void collide(Enemy& enemy, float deltaTime, LevelManager& levelManager) override;
+    virtual void collide(Wall& wall, float deltaTime, LevelManager& levelManager) override;
+    virtual void collide(Door& door, float deltaTime, LevelManager& levelManager) override;
+    virtual void collide(Explosion& explosion, float deltaTime, LevelManager& levelManager) override;
+    virtual void collide(Player& player, float deltaTime, LevelManager& levelManager) override;
 
     //void setShow(bool show);
 

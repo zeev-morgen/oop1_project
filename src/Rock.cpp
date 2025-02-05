@@ -15,15 +15,15 @@ void Rock::draw(sf::RenderWindow& window) const {
 }
 
 //need to chack if can delete this function
-void Rock::collide(Player& player) {
+void Rock::collide(Player& player, float deltaTime, LevelManager& levelManager) {
     player.undoMove();
 }
 
-void Rock::collide(Enemy& enemy) {
+void Rock::collide(Enemy& enemy, float deltaTime, LevelManager& levelManager) {
 	enemy.undoMove();
 }
 
-void Rock::collide(Explosion& exp) {
+void Rock::collide(Explosion& exp, float deltaTime, LevelManager& levelManager) {
 	m_isActive = false;
     if (m_hasGift && m_gift) {
         // כשהאבן מתפוצצת, שחרר את המתנה

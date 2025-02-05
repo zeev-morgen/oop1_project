@@ -12,9 +12,9 @@ public:
     void update(float deltaTime, LevelManager& levelManager) override;
     void draw(sf::RenderWindow& window) const override;
 
-    void collide(Player& player) override;
-    void collide(Enemy& enemy) override;
-    void collide(Explosion& enemy) override;
+    void collide(Player& player, float deltaTime, LevelManager& levelManager) override;
+    void collide(Enemy& enemy, float deltaTime, LevelManager& levelManager) override;
+    void collide(Explosion& enemy, float deltaTime, LevelManager& levelManager) override;
     void setGift(std::unique_ptr<Gift> gift);
     void setGiftIndex(size_t index);
     size_t getGiftIndex() const;
