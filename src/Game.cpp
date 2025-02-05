@@ -55,6 +55,9 @@ void Game::draw() {
 }
 //===============================================
 void Game::update(float deltaTime, LevelManager& levelManager) {
+
+	m_levelManager.updateTime();
+
 	if (m_player) { // Ensure m_player is not null
 		m_player->update(deltaTime, levelManager);
 	}
@@ -66,8 +69,8 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 	}
 
 	//std::cout << "num of game objects: " << m_levelManager.getGameObjects().size() << std::endl;
-		uiManager.update(60, 3, 7);
-		//uiManager.update(60, m_player->getScore(), m_player->getLives());
+		uiManager.update(0, 0, m_levelManager.getTimeLeft());
+		//uiManager.update(m_levelManager.getTimeLeft(), m_player->getScore(), m_player->getLives());
 	
 
 
@@ -164,7 +167,6 @@ void Game::handleCollisions() {
 }
 //===============================================
 void Game::saveInitialPositions() {
-	// ùîéøú îé÷åîéí ùì ëì äàåáéé÷èéí
 	for (const auto& obj : m_gameObjects) {
 		if (obj) {
 			m_initialPositions[obj.get()] = obj->getPosition();
@@ -173,7 +175,6 @@ void Game::saveInitialPositions() {
 }
 //===============================================
 void Game::resetPositions() {
-	// äçæøú ëì äàåáéé÷èéí ìîé÷åîí ääúçìúé
 	for (const auto& obj : m_gameObjects) {
 		if (obj && obj->isActive()) {
 			auto it = m_initialPositions.find(obj.get());

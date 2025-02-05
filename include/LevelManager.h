@@ -16,6 +16,9 @@
 #include "Explosion.h"
 #include <iostream>
 #include "Gift.h"
+#include <chrono>
+#include <iomanip>
+#include <sstream>
 
 
 class LevelManager {
@@ -27,21 +30,30 @@ private:
     int m_level;
     float m_tileWidth;
     float m_tileHeight;
+    int remainingTime;
+    
     //TextureManager* m_bobmTexture;
-
+    std::chrono::time_point<std::chrono::steady_clock> startTime;
     std::unique_ptr<GameObject> m_player;
     std::vector<std::unique_ptr <Enemy>> m_enemies;
     std::vector<std::unique_ptr <GameObject>> m_tempExplosion;
     std::unique_ptr<GameObject> m_tempBomb;
     std::unique_ptr<GameObject> m_tempGift;
     Door* m_door;
-    Player* GetPlayer();
+    
+   
+
+    
 
 public:
     LevelManager();
 
     //void init();
     //void setToTile(GameObject* object);
+    void updateTime();
+    int getTimeLeft()const;
+    void startLevel();
+    void addTime(int seconds);
     void loadPlaylist(const std::string& filename);
     bool loadLevel();
     bool loadFromFile(const std::string& filename);

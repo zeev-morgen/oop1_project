@@ -4,7 +4,7 @@
 #include <FreezeGift.h>
 
 LevelManager::LevelManager()
-    : m_level(0), m_rows(0), m_cols(0), m_player(nullptr), m_door(nullptr), m_tempBomb(nullptr)
+    : m_level(0), m_rows(0), m_cols(0), m_player(nullptr), m_door(nullptr), m_tempBomb(nullptr),remainingTime(90)
 {
     TextureManager& textureManager = TextureManager::instance();
     textureManager.loadGameTextures();
@@ -68,7 +68,7 @@ bool LevelManager::loadFromFile(const std::string& filename) {
             }
         }
     }
-    
+    startLevel();
     return true;
 }
 //===============================================
@@ -329,4 +329,32 @@ void LevelManager::removeInactiveObjects() {
         objects.end()
     );
 
+}
+
+
+
+
+
+void LevelManager::startLevel() {
+    startTime = std::chrono::steady_clock::now();
+    remainingTime = 90;
+}
+
+void LevelManager::updateTime() {
+    auto now = std::chrono::steady_clock::now();
+    remainingTime = 90 - std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
+
+    if (remainingTime <= 0) {
+        std::cout << "Game Over! Time is up!" << std::endl;
+        // לוגיקת סיום שלב
+    }
+}
+
+void LevelManager::addTime(int seconds) {
+    remainingTime += seconds;
+    std::cout << "Bonus! +" << seconds << " seconds!" << std::endl;
+}
+
+int LevelManager::getTimeLeft() const {
+    return remainingTime;
 }
