@@ -29,26 +29,7 @@ void Enemy::update(float deltaTime, LevelManager& levelManager) {
 
 
 //===============================================
-//void Enemy::update(float deltaTime, LevelManager& levelManager) {
-//    sf::Vector2f movement = m_currentDirection * getSpeed() * deltaTime;
-//
-//    movement.x = std::round(movement.x);
-//    movement.y = std::round(movement.y);
 
-    //if (getPosition().x + movement.x < 0 || getPosition().x + movement.x > Config::WINDOW_WIDTH - Config::TILE_WIDTH) {
-    //    //m_currentDirection.x *= -1;  // äôéëú ëéååï àåô÷é
-    //    changeDirection(deltaTime);
-    //}
-    //if (getPosition().y + movement.y < 0 || getPosition().y + movement.y > Config::WINDOW_HEIGHT - Config::TILE_WIDTH) {
-    //    //m_currentDirection.y *= -1;  // äôéëú ëéååï àðëé
-    //    changeDirection(deltaTime);
-    //}
-
-  /*  tryMove(movement, levelManager);
-}*/
-
-
-//===============================================
 void Enemy::changeDirection(float deltaTime, LevelManager& levelManager) {
     const sf::Vector2f possibleDirections[] = {
                 {1.0f, 0.0f},   
@@ -92,7 +73,7 @@ void Enemy::collide(Player& other)  {
     //resetLocation();
 	/*other.undoMove();
 	other.setActive(false);*/
-	other.setActive(false);
+	other.setStatus(false);
 	//other.setLives(other.getLives() - 1);
 
 }
@@ -125,7 +106,7 @@ void Enemy::draw(sf::RenderWindow& window) const  {
     window.draw(m_sprite);
 }
 
-//ôåð÷öééä ìäçæøú ùåîøéí ìîé÷åí äúçìúé
+
 void Enemy::resetLocation() {
     for (Enemy* enemy : allEnemies) {
         if (enemy->isActive()) {
@@ -134,10 +115,3 @@ void Enemy::resetLocation() {
     }
 }
 
-//Enemy::~Enemy() {
-//    // äñøú äàåéá îäøùéîä ëùäåà ðäøñ
-//    auto it = std::find(allEnemies.begin(), allEnemies.end(), this);
-//    if (it != allEnemies.end()) {
-//        allEnemies.erase(it);
-//    }
-//}

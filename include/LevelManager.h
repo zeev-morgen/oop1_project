@@ -61,6 +61,8 @@ public:
     float getCols();
     size_t getRows();
     sf::Font& getFont();
+    void clearAllBombs();
+
 
     void draw(sf::RenderWindow& window);
     void removeInactiveObjects();

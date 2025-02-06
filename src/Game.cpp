@@ -5,9 +5,7 @@ Game::Game()
 	: m_window(sf::VideoMode(m_levelManager.getCols()* Config::TILE_HEIGHT, m_levelManager.getRows()* Config::TILE_HEIGHT + Config::UI), "SFML Game")
 	, m_isRunning(true)
 	, m_gameObjects(m_levelManager.getGameObjects())
-	//, m_start(false) // Initialize m_start // addition - check if needed
 	, uiManager()
-
 {
 	m_window.setFramerateLimit(60);
 	saveInitialPositions();
@@ -55,33 +53,13 @@ void Game::draw() {
 }
 //===============================================
 void Game::update(float deltaTime, LevelManager& levelManager) {
-	if (m_player) { // Ensure m_player is not null
-		m_player->update(deltaTime, levelManager);
-	}
-
+	
 	for (const auto& object : m_levelManager.getGameObjects()) {
 		if (object) {
 			object->update(deltaTime, levelManager);
 		}
 	}
-
-	auto& gameObjects = m_levelManager.getGameObjects();
-
-	auto playerIt = std::find_if(gameObjects.begin(), gameObjects.end(),
-		[](const std::unique_ptr<GameObject>& obj) {
-			return dynamic_cast<Player*>(obj.get()) != nullptr;
-		});
-
-	if (playerIt != gameObjects.end()) {
-		auto* player = dynamic_cast<Player*>((*playerIt).get());
-
-		uiManager.update(player->getLives(), player->getScore(), 54);
-
-		if (!player->isActive()) {
-			player->setActive(true);
-			resetPositions();
-		}
-	}
+	
 
 	if (auto& tempBomb = m_levelManager.getTempBomb()) {
 		m_levelManager.addTheBomb(tempBomb->getPosition());
@@ -96,33 +74,10 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 	}
 
 	m_levelManager.getTempExplosion().clear();
-
-	m_levelManager.removeInactiveObjects();
-	
-
 	handleCollisions();
-
-	auto& gameObjects2 = m_levelManager.getGameObjects();
-	auto playerIt2 = std::find_if(gameObjects.begin(), gameObjects.end(),
-		[](const std::unique_ptr<GameObject>& obj) {
-			return dynamic_cast<Player*>(obj.get()) != nullptr;
-		});
-
-	if (playerIt2 != gameObjects.end()) {
-		auto* player = dynamic_cast<Player*>((*playerIt2).get());
-	
-		if (player->getFinish()) {
-			if (levelManager.nextLevel()) {
-				recreateWindow();
-				m_initialPositions.clear();
-				saveInitialPositions();
-			}
-			else {
-				m_isRunning = false;
-				m_window.close();
-			}
-		}
-	}
+	updatePlayerData();
+	m_levelManager.removeInactiveObjects();
+	isLevelComplete();
 }
 
 
@@ -146,10 +101,9 @@ void Game::handleEvents() {
 		}
 	}
 }
+//===============================================
 void Game::handleCollisions() {
-    float deltaTime = 0.016f; // Assuming a fixed deltaTime for simplicity
-    LevelManager& levelManager = m_levelManager; // Reference to the level manager
-
+    
     for (size_t i = 0; i < m_gameObjects.size(); ++i) {
         for (size_t j = i + 1; j < m_gameObjects.size(); ++j) {
             if (m_gameObjects[i]->getBounds().intersects(m_gameObjects[j]->getBounds())) {
@@ -161,7 +115,7 @@ void Game::handleCollisions() {
 }
 //===============================================
 void Game::saveInitialPositions() {
-	// ùîéøú îé÷åîéí ùì ëì äàåáéé÷èéí
+
 	for (const auto& obj : m_gameObjects) {
 		if (obj) {
 			m_initialPositions[obj.get()] = obj->getPosition();
@@ -170,7 +124,7 @@ void Game::saveInitialPositions() {
 }
 //===============================================
 void Game::resetPositions() {
-	// äçæøú ëì äàåáéé÷èéí ìîé÷åîí ääúçìúé
+
 	for (const auto& obj : m_gameObjects) {
 		if (obj && obj->isActive()) {
 			auto it = m_initialPositions.find(obj.get());
@@ -189,6 +143,55 @@ void Game::recreateWindow() {
 	m_window.create(sf::VideoMode(newWidth, newHeight), "SFML Game");
 	m_window.setFramerateLimit(60);
 }
+//===============================================
+void Game::isLevelComplete(){
+	auto& gameObjects = m_levelManager.getGameObjects();
+	auto playerIt = std::find_if(gameObjects.begin(), gameObjects.end(),
+		[](const std::unique_ptr<GameObject>& obj) {
+			return dynamic_cast<Player*>(obj.get()) != nullptr;
+		});
 
+	if (playerIt != gameObjects.end()) {
+		auto* player = dynamic_cast<Player*>((*playerIt).get());
 
+		if (player->getFinish()) {
+			if (m_levelManager.nextLevel()) {
+				recreateWindow();
+				m_initialPositions.clear();
+				saveInitialPositions();
+			}
+			else {
+				m_isRunning = false;
+				m_window.close();
+			}
+		}
+	}
+}
+//===============================================
+void Game::updatePlayerData() {
+	auto& gameObjects = m_levelManager.getGameObjects();
 
+	auto playerIt = std::find_if(gameObjects.begin(), gameObjects.end(),
+		[](const std::unique_ptr<GameObject>& obj) {
+			return dynamic_cast<Player*>(obj.get()) != nullptr;
+		});
+
+	if (playerIt != gameObjects.end()) {
+		auto* player = dynamic_cast<Player*>((*playerIt).get());
+
+		uiManager.update(player->getLives(), player->getScore(), 54);
+
+		if (!player->getStatus()) {
+			resetGameState();
+			player->setStatus(true);
+		}
+	}
+}
+//===============================================
+void Game::resetGameState() {
+	resetPositions();
+
+	m_levelManager.clearAllBombs();
+	m_levelManager.getTempExplosion().clear();
+
+}

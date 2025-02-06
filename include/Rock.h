@@ -21,7 +21,8 @@ public:
 	bool getHasGift() const;
 
 private:
-    std::unique_ptr<Gift> m_gift;
+    //std::unique_ptr<Gift> m_gift;
     bool m_hasGift;
 	size_t m_giftIndex;
+    std::unique_ptr<Gift> m_gift;
 };

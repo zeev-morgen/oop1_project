@@ -14,6 +14,11 @@ protected:
 	void tryMove(const sf::Vector2f& movement, LevelManager& levelManager);
 	void alignToTile();
 
+	bool canMoveInDirection(const sf::Vector2f& direction, float speed, float deltaTime, LevelManager& levelManager) {
+		sf::Vector2f testMove = direction * speed * deltaTime;
+		return isValidPosition(getPosition() + testMove, levelManager);
+	}
+
 public:
 	MoveableObject(const sf::Texture& texture, const sf::Vector2f& position, float speed);
 
