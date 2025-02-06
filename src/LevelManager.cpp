@@ -129,23 +129,25 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
 
         if (rand() % 3 == 0) { // 33% ñéëåé ìîúðä
             int giftType = rand() % 3;
-            texture = textureManager.getTexture('$');
 
             switch (giftType) {
 
             case 0:
+                texture = textureManager.getTexture('$');
                 m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
 				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
 				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
                 break;
 
             case 1:
+                texture = textureManager.getTexture('T');
                 m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
 				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
 				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
                 break;
 
             case 2:
+                texture = textureManager.getTexture('H');
                 m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
 				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
 				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
@@ -308,7 +310,6 @@ void LevelManager::addTheExplosion(sf::Vector2f position) {
 void LevelManager::removeInactiveObjects() {
     auto& objects = m_gameObjects;
 	
-    // ðòáåø òì ëì äàåáéé÷èéí
     for (size_t i = 0; i < objects.size(); i++) {
         if (!objects[i]->isActive()) {
             if (auto* rock = dynamic_cast<Rock*>(objects[i].get())) {

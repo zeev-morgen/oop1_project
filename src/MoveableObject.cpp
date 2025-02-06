@@ -1,6 +1,7 @@
 #include "MoveableObject.h"
 #include "LevelManager.h"
 #include <iostream>
+#include <cmath>
 
 class LevelManager;
 
@@ -93,3 +94,5 @@ void MoveableObject::alignToTile() {
     // יישור למשבצת
     setPosition({ tileX, tileY });
 }
+
+

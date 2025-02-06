@@ -13,11 +13,6 @@ public:
 
     bool getFinish(); // addition
 
-
-
-	
-    //void updateAnimation(float deltaTime);
-
     virtual void collide(Player& other) override;
     virtual void collide(Enemy& other) override;
     virtual void collide(Wall& other) override;
@@ -30,7 +25,7 @@ public:
 	int getScore()const;
 	void setLives(int lives);
 	int getLives()const;
-  void setTime(float time);
+    void setTime(float time);
 
 
 private:
@@ -41,20 +36,7 @@ private:
 	int m_score = 0;
     int m_time;
 	bool m_finishLevel = false;
-    
 
 	sf::Vector2f m_startPosition;
     sf::Vector2f m_direction;
-
-    //// ����� ������ ��������
-    //static constexpr int FRAME_WIDTH = 50;  // ���� �� ����� ��������
-    //static constexpr int FRAME_HEIGHT = 50; // ���� �� ����� ��������
-    //static constexpr int FRAMES_PER_ROW = 3; // ��� ������� �� ��� ����
-
-    //// ����� ������ ������� ��� ���� �� �����
-    //static constexpr int DOWN_ROW = 0;
-    //static constexpr int UP_ROW = 1;
-    //static constexpr int LEFT_ROW = 2;
-    //static constexpr int RIGHT_ROW = 3;
-
 };
