@@ -19,5 +19,5 @@ public:
 
 private:
     sf::Clock m_lifetimeClock;
-    float m_lifetime = 1.0f; // זמן מחיקה של הפיצוץ
+    float m_lifetime = Config::EXP_LIFE_TIME; 
 };

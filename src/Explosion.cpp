@@ -26,7 +26,7 @@ void Explosion::collide(Enemy& other) {
 
 void Explosion::collide(Player& other) {
 	other.undoMove();
-	other.setActive(false);
+	other.setStatus(false);
 }
 
 void Explosion::collide(Explosion& other) {

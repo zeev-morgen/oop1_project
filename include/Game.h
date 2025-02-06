@@ -7,7 +7,6 @@
 #include "MenuManager.h"
 #include "UIManager.h"
 
-
 class Game {
 public:
 	Game();
@@ -19,7 +18,7 @@ private:
 	sf::Clock m_timerClock;
 	float m_timeLeft;
 	const float LEVEL_TIME = 60.0f;
-
+	bool m_isPlayerDead = false;
 
 	void handleEvents();
 	void update(float deltaTime, LevelManager& levelManager);
@@ -28,11 +27,10 @@ private:
 	void openMenu();
 	void draw();
 	void handleCollisions();
-
-	void resetLevel();
+	void resetGameState();
 	void recreateWindow();
-
-
+	void isLevelComplete();
+	void updatePlayerData();
 	std::vector<std::unique_ptr<GameObject>>& m_gameObjects;
 	std::map<std::string, sf::Texture> m_textures;
 	std::unique_ptr<Player> m_player;
@@ -42,7 +40,7 @@ private:
 
 	bool m_isRunning;
 
-	std::map<const GameObject*, sf::Vector2f> m_initialPositions; // îé÷åîéí äúçìúééí
-	void saveInitialPositions();    // ùîéøú îé÷åîéí äúçìúééí
+	std::map<const GameObject*, sf::Vector2f> m_initialPositions; 
+	void saveInitialPositions(); 
 	void resetPositions();
 };

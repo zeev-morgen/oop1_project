@@ -8,6 +8,7 @@ Player::Player(const sf::Texture& texture, const sf::Vector2f& position)
 	, m_moveSpeed(Config::PLAYER_SPEED)
     , m_direction(0.0f, 0.0f)
     , m_startPosition(position)
+    , m_time(Config::GAME_TIME)
 {
 }
 
@@ -66,7 +67,7 @@ bool Player::getFinish() {
 void Player::collide(Enemy& other)  {
 
     undoMove();
-	m_isActive = false;
+	m_status = false;
 	m_lives--;
 	std::cout << "player is :"<< isActive() << std::endl;
 }
@@ -87,7 +88,8 @@ void Player::collide(Door& other)  {
 
 void Player::collide(Explosion& other)  {
 	undoMove();
-    setActive(false);
+    setStatus(false);
+	this->m_lives--;
 	std::cout << "collision" << std::endl;
 }
 
@@ -117,4 +119,12 @@ int Player::getScore() const {
 
 int Player::getLives() const {
     return m_lives;
+}
+
+void Player::setStatus(bool status) {
+	m_status = status;
+}
+
+bool Player::getStatus() const {
+	return m_status;
 }

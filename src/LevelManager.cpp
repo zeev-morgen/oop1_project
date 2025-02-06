@@ -127,7 +127,7 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
     {
         auto rockPtr = std::make_unique<Rock>(*texture, position);
 
-        if (rand() % 3 == 0) { // 33% ñéëåé ìîúðä
+        if (rand() % 3 == 0) { 
             int giftType = rand() % 3;
 
             switch (giftType) {
@@ -172,9 +172,6 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
 
     case '/':
     {
-
-        //m_player = std::make_unique<Player>(*texture, position);
-
         m_gameObjects.push_back(std::make_unique<Player>(*texture, position));
     }
     break;
@@ -193,14 +190,12 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
 
     case '*':
     {
-        // éåöøéí ôéöåõ áîøëæ
         m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position, font));
 
-        // éåöøéí ôéöåöéí ìëì ëéååï
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(50, 0), font)); // éîéðä
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(-50, 0), font)); // ùîàìä
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, 50), font)); // ìîèä
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, -50), font)); // ìîòìä
+        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(50, 0), font)); 
+        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(-50, 0), font)); 
+        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, 50), font));
+        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, -50), font));
 
     }
     break;
@@ -330,4 +325,17 @@ void LevelManager::removeInactiveObjects() {
         objects.end()
     );
 
+}
+//===============================================
+void LevelManager::clearAllBombs() {
+    // מחיקת כל הפצצות מהמשחק
+    auto& gameObjects = getGameObjects();
+    gameObjects.erase(
+        std::remove_if(gameObjects.begin(), gameObjects.end(),
+            [](const auto& obj) {
+                return dynamic_cast<Bomb*>(obj.get()) != nullptr;
+            }
+        ),
+        gameObjects.end()
+    );
 }

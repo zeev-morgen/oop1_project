@@ -29,6 +29,7 @@ void Bomb::update(float deltaTime, LevelManager& levelManager) {
 			
             m_exploded = true;
 			m_isActive = false;
+
         }
     }
 }

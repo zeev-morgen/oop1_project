@@ -26,6 +26,8 @@ public:
 	void setLives(int lives);
 	int getLives()const;
     void setTime(float time);
+	void setStatus(bool status);
+	bool getStatus() const;
 
 
 private:
@@ -36,6 +38,7 @@ private:
 	int m_score = 0;
     int m_time;
 	bool m_finishLevel = false;
+	bool m_status = true;
 
 	sf::Vector2f m_startPosition;
     sf::Vector2f m_direction;

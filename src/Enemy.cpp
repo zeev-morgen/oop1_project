@@ -73,7 +73,7 @@ void Enemy::collide(Player& other)  {
     //resetLocation();
 	/*other.undoMove();
 	other.setActive(false);*/
-	other.setActive(false);
+	other.setStatus(false);
 	//other.setLives(other.getLives() - 1);
 
 }
