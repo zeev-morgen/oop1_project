@@ -5,7 +5,7 @@ FreezeGift::FreezeGift(const sf::Texture& texture, const sf::Vector2f& position)
 {
 }
 
-void FreezeGift::collide(Player& player, float deltaTime, LevelManager& levelManager) {
+void FreezeGift::collide(Player& player) {
 	//freeze all enemies
     //LevelManager::getInstance().freezeAllEnemies(FREEZE_DURATION);
     setActive(false);

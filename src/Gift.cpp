@@ -16,15 +16,15 @@ void Gift::draw(sf::RenderWindow& window) const  {
 	}
 }
 
-void Gift::collide(GameObject& other, float deltaTime, LevelManager& levelManager)  {
-    other.collide(*this, deltaTime, levelManager);
+void Gift::collide(GameObject& other)  {
+    other.collide(*this);
 }
 
-void Gift::collide(Enemy& enemy, float deltaTime, LevelManager& levelManager)  {
+void Gift::collide(Enemy& enemy)  {
 
 }
 
-void Gift::collide(Wall& wall, float deltaTime, LevelManager& levelManager)  {
+void Gift::collide(Wall& wall)  {
 
 }
 
@@ -32,14 +32,14 @@ void Gift::collide(Wall& wall, float deltaTime, LevelManager& levelManager)  {
 //
 //}
 
-void Gift::collide(Door& door, float deltaTime, LevelManager& levelManager)  {
+void Gift::collide(Door& door)  {
 
 }
 
-void Gift::collide(Explosion& explosion, float deltaTime, LevelManager& levelManager)  {
+void Gift::collide(Explosion& explosion)  {
 
 }
 
-void Gift::collide(Player& player, float deltaTime, LevelManager& levelManager) {
+void Gift::collide(Player& player) {
 	m_isActive = false;
 }

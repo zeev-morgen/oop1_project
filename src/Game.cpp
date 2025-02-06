@@ -2,7 +2,7 @@
 
 Game::Game()
 
-	: m_window(sf::VideoMode(m_levelManager.getCols()* Config::TILE_HEIGHT, m_levelManager.getRows()* Config::TILE_HEIGHT+ Config::UI), "SFML Game")
+	: m_window(sf::VideoMode(m_levelManager.getCols()* Config::TILE_HEIGHT, m_levelManager.getRows()* Config::TILE_HEIGHT + Config::UI), "SFML Game")
 	, m_isRunning(true)
 	, m_gameObjects(m_levelManager.getGameObjects())
 	//, m_start(false) // Initialize m_start // addition - check if needed
@@ -65,13 +65,8 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 		}
 	}
 
-	//std::cout << "num of game objects: " << m_levelManager.getGameObjects().size() << std::endl;
-		uiManager.update(60, 3, 7);
-		//uiManager.update(60, m_player->getScore(), m_player->getLives());
-	
-
-
 	auto& gameObjects = m_levelManager.getGameObjects();
+
 	auto playerIt = std::find_if(gameObjects.begin(), gameObjects.end(),
 		[](const std::unique_ptr<GameObject>& obj) {
 			return dynamic_cast<Player*>(obj.get()) != nullptr;
@@ -79,6 +74,8 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 
 	if (playerIt != gameObjects.end()) {
 		auto* player = dynamic_cast<Player*>((*playerIt).get());
+
+		uiManager.update(player->getLives(), player->getScore(), 54);
 
 		if (!player->isActive()) {
 			player->setActive(true);
@@ -156,8 +153,8 @@ void Game::handleCollisions() {
     for (size_t i = 0; i < m_gameObjects.size(); ++i) {
         for (size_t j = i + 1; j < m_gameObjects.size(); ++j) {
             if (m_gameObjects[i]->getBounds().intersects(m_gameObjects[j]->getBounds())) {
-                m_gameObjects[i]->collide(*m_gameObjects[j], deltaTime, levelManager);
-                m_gameObjects[j]->collide(*m_gameObjects[i], deltaTime, levelManager);
+                m_gameObjects[i]->collide(*m_gameObjects[j]);
+                m_gameObjects[j]->collide(*m_gameObjects[i]);
             }
         }
     }
@@ -186,7 +183,7 @@ void Game::resetPositions() {
 //===============================================
 void Game::recreateWindow() {
 	float newWidth = m_levelManager.getCols() * Config::TILE_WIDTH;
-	float newHeight = m_levelManager.getRows() * Config::TILE_HEIGHT;
+	float newHeight = m_levelManager.getRows() * Config::TILE_HEIGHT + Config::UI;
 
 	m_window.close();
 	m_window.create(sf::VideoMode(newWidth, newHeight), "SFML Game");

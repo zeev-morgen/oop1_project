@@ -9,7 +9,6 @@ Enemy::Enemy(const sf::Texture& texture, const sf::Vector2f& position)
 	: MoveableObject(texture, position, ENEMY_SPEED), m_startPosition(position)
 {
     allEnemies.push_back(this);
-    //setOrigin();
     randomLocation();
 }
 //===============================================
@@ -52,25 +51,26 @@ void Enemy::update(float deltaTime, LevelManager& levelManager) {
 //===============================================
 void Enemy::changeDirection(float deltaTime, LevelManager& levelManager) {
     const sf::Vector2f possibleDirections[] = {
-                {1.0f, 0.0f},   // éîéðä
-                {-1.0f, 0.0f},  // ùîàìä
-                {0.0f, 1.0f},   // ìîèä
-                {0.0f, -1.0f}   // ìîòìä
+                {1.0f, 0.0f},   
+                {-1.0f, 0.0f},  
+                {0.0f, 1.0f},   
+                {0.0f, -1.0f}  
     };
 
     // save the current direction
     sf::Vector2f oldDirection = m_currentDirection;
     int attempts = 0;
-    do {
-        int randomIndex = rand() % 4; // áçø ëéååï à÷øàé îúåê äàôùøåéåú
+
+   // do {
+        int randomIndex = rand() % 4; 
         m_currentDirection = possibleDirections[randomIndex];
         attempts++;
-        // áî÷øä åàéï ëéååï ú÷éï ìàçø îñôø ðéñéåðåú, ùîåø òì äëéååï ä÷åãí
+
         if (attempts > 2) {
             m_currentDirection = oldDirection;
-            break;
+           // break;
         }
-    } while (!MoveableObject::isValidPosition(getPosition() + (m_currentDirection * getSpeed() * deltaTime), levelManager));
+   // } while (!MoveableObject::isValidPosition(getPosition() + (m_currentDirection * getSpeed() * deltaTime), levelManager));
 }
 
 //===============================================
@@ -83,38 +83,40 @@ void Enemy::randomLocation() {
 }
 
 //===============================================
-void Enemy::collide(GameObject& other, float deltaTime, LevelManager& levelManager) {
-    other.collide(*this, deltaTime, levelManager);
+void Enemy::collide(GameObject& other) {
+    other.collide(*this);
 }
 
 
-void Enemy::collide(Player& other, float deltaTime, LevelManager& levelManager)  {
+void Enemy::collide(Player& other)  {
     //resetLocation();
 	/*other.undoMove();
 	other.setActive(false);*/
 	other.setActive(false);
+	//other.setLives(other.getLives() - 1);
 
 }
 
-void Enemy::collide(Enemy& other, float deltaTime, LevelManager& levelManager)  {
-    // àåéáéí òåáøéí àçã ãøê äùðé
+void Enemy::collide(Enemy& other)  {
+    
 }
 
 
-void Enemy::collide(Wall& other, float deltaTime, LevelManager& levelManager) {
-    changeDirection(deltaTime, levelManager);
+void Enemy::collide(Wall& other) {
+	randomLocation();
 }
 
 
-void Enemy::collide(Rock& other,float deltaTime,LevelManager& levelManager)  {
-    changeDirection(deltaTime, levelManager);  // ðú÷ò áàáï
+void Enemy::collide(Rock& other)  {
+	randomLocation();
 }
 
-void Enemy::collide(Door& other, float deltaTime, LevelManager& levelManager)  {
-    undoMove();  // ðú÷ò áãìú
+void Enemy::collide(Door& other)  {
+    undoMove();
+	randomLocation();
 }
 
-void Enemy::collide(Explosion& other, float deltaTime, LevelManager& levelManager)  {
+void Enemy::collide(Explosion& other)  {
     this->setActive(false);  // ðäøñ îôéöåõ
 
 }
