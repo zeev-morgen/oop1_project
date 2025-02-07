@@ -50,11 +50,7 @@ sf::FloatRect GameObject::getGlobalBounds() const {
 }
 
 void GameObject::setToTile(float tileHeight, float tileWidth) {
-	sf::FloatRect bounds = m_sprite.getGlobalBounds();
-	float scaleX = tileWidth / bounds.width;
-	float scaleY = tileHeight / bounds.height;
-	m_sprite.setScale(scaleX, scaleY);
-}
+Object::undoMove() {
 
 void GameObject::undoMove() {
 	m_position = m_prevPosition;
