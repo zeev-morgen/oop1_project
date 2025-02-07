@@ -4,7 +4,7 @@
 #include <FreezeGift.h>
 
 LevelManager::LevelManager()
-    : m_level(0), m_rows(0), m_cols(0), m_player(nullptr), m_door(nullptr), m_tempBomb(nullptr)
+    : m_level(0), m_rows(0), m_cols(0), m_tempBomb(nullptr)//, m_player(nullptr), m_door(nullptr)
 {
     TextureManager& textureManager = TextureManager::instance();
     textureManager.loadGameTextures();
@@ -62,8 +62,8 @@ bool LevelManager::loadFromFile(const std::string& filename) {
         for (size_t col = 0; col < m_cols; ++col) {
             char symbol = levelData[row][col];
             if (symbol != ' ') {
-                float x = col * Config::TILE_WIDTH;
-                float y = row * Config::TILE_HEIGHT + Config::UI;
+                float x = static_cast<float>(col) * Config::TILE_WIDTH;
+                float y = static_cast<float>(row) * Config::TILE_HEIGHT + Config::UI;
                 createObject(symbol, x, y, m_font);
             }
         }
@@ -106,8 +106,8 @@ void LevelManager::draw(sf::RenderWindow& window) {
 //===============================================
 void LevelManager::clear() {
     m_gameObjects.clear();
-    m_player = nullptr;
-    m_door = nullptr;
+    //m_player = nullptr;
+    //m_door = nullptr;
 }
 //===============================================
 
@@ -223,32 +223,16 @@ void LevelManager::readLevelData(const std::string& filename, std::vector<std::s
     m_cols = levelData[0].length();
 }
 //===============================================
-float LevelManager::getTileWidth() const {
-    return m_tileWidth;
-}
-//===============================================
-float LevelManager::getTileHeight() const {
-    return m_tileHeight;
-}
-//===============================================
- size_t LevelManager::getRows()  {
+ size_t LevelManager::getRows() const {
     return m_rows; 
 }
 //===============================================
-float LevelManager::getCols()  {
+size_t LevelManager::getCols()  {
     return m_cols;
 }
 //===============================================
 std::vector<std::unique_ptr<GameObject>>& LevelManager::getGameObjects()  {
     return m_gameObjects;
-}
-//===============================================
-const std::unique_ptr<GameObject>& LevelManager::getPlayer() const {
-    return m_player;
-}
-//===============================================
-const std::vector<std::unique_ptr<Enemy>>& LevelManager::getEnemies() const {
-    return m_enemies;
 }
 //===============================================
 

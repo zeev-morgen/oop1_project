@@ -78,6 +78,41 @@ void MoveableObject::tryMove(const sf::Vector2f& movement, LevelManager& levelMa
         }
     }
 }
+
+//void MoveableObject::tryMove(const sf::Vector2f& movement, LevelManager& levelManager) {
+//    sf::Vector2f newPosition = getPosition() + movement;
+//    bool wasBlocked = false;
+//
+//    // בדיקת גבולות המסך
+//    if (newPosition.x < 0) {
+//        newPosition.x = 0;
+//        wasBlocked = true;
+//    }
+//    else if (newPosition.x > (levelManager.getCols() - 1) * Config::TILE_HEIGHT) {
+//        newPosition.x = (levelManager.getCols() - 1) * Config::TILE_HEIGHT;
+//        wasBlocked = true;
+//    }
+//
+//    if (newPosition.y < Config::UI) {
+//        newPosition.y = Config::UI;
+//        wasBlocked = true;
+//    }
+//    else if (newPosition.y > (levelManager.getRows() - 1) * Config::TILE_HEIGHT + Config::UI) {
+//        newPosition.y = (levelManager.getRows() - 1) * Config::TILE_HEIGHT + Config::UI;
+//        wasBlocked = true;
+//    }
+//
+//    // שמירת המיקום הקודם לפני העדכון
+//    m_prevPosition = getPosition();
+//
+//    // עדכון המיקום החדש
+//    setPosition(newPosition);
+//
+//    // עדכון סטטוס התנועה
+//    m_isMoving = (newPosition != m_prevPosition);
+//    m_isBlocked = wasBlocked;
+//}
+
 //===============================================
 
 void MoveableObject::collide(GameObject& other) {
@@ -87,12 +122,22 @@ void MoveableObject::collide(GameObject& other) {
 void MoveableObject::alignToTile() {
     sf::Vector2f currentPos = getPosition();
 
+    /*tileX = currentPos.x;
+	tileY = currentPos.y;*/
+
+    //חישוב משבצת קרובה ב 10 פיקסלים
+    //תיקון רק ב 10 פיקסלים
+
+
+
     // חישוב המשבצת הקרובה ביותר
     float tileX = std::round(currentPos.x / Config::TILE_HEIGHT) * Config::TILE_HEIGHT;
     float tileY = std::round(currentPos.y / Config::TILE_HEIGHT) * Config::TILE_HEIGHT;
-
+    
     // יישור למשבצת
     setPosition({ tileX, tileY });
 }
-
-
+//===============================================
+bool MoveableObject::isBlocked() const {
+    return m_isBlocked; 
+}

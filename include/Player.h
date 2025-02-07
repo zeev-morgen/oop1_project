@@ -11,7 +11,7 @@ public:
 
     virtual void collide(GameObject& other) override;
 
-    bool getFinish(); // addition
+    bool getFinish()const; // addition
 
     virtual void collide(Player& other) override;
     virtual void collide(Enemy& other) override;
@@ -36,9 +36,18 @@ private:
 	bool m_isMoving = false;
 	int m_lives = 3;
 	int m_score = 0;
-    int m_time;
+    float m_time;
 	bool m_finishLevel = false;
 	bool m_status = true;
+
+    /*enum class Direction {
+        None,
+        Left,
+        Right,
+        Up,
+        Down
+    };
+    Direction m_lastDirection = Direction::None;*/
 
 	sf::Vector2f m_startPosition;
     sf::Vector2f m_direction;

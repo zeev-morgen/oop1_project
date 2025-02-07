@@ -136,8 +136,8 @@ void Game::resetPositions() {
 }
 //===============================================
 void Game::recreateWindow() {
-	float newWidth = m_levelManager.getCols() * Config::TILE_WIDTH;
-	float newHeight = m_levelManager.getRows() * Config::TILE_HEIGHT + Config::UI;
+	unsigned int newWidth = m_levelManager.getCols() * Config::TILE_WIDTH;
+	unsigned int newHeight = m_levelManager.getRows() * Config::TILE_HEIGHT + Config::UI;
 
 	m_window.close();
 	m_window.create(sf::VideoMode(newWidth, newHeight), "SFML Game");

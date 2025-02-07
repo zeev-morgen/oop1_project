@@ -13,7 +13,7 @@ protected:
 	bool isValidPosition(const sf::Vector2f& newPosition, LevelManager& levelManager);
 	void tryMove(const sf::Vector2f& movement, LevelManager& levelManager);
 	void alignToTile();
-
+	bool m_isBlocked = false;
 	bool canMoveInDirection(const sf::Vector2f& direction, float speed, float deltaTime, LevelManager& levelManager) {
 		sf::Vector2f testMove = direction * speed * deltaTime;
 		return isValidPosition(getPosition() + testMove, levelManager);
@@ -32,7 +32,7 @@ public:
 	float getSpeed() const;
 
 
-
+	bool isBlocked() const;
 	void collide(GameObject& other) override;
 
 	virtual void update(float deltaTime, LevelManager& levelManager) = 0;
