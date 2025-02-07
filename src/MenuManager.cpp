@@ -25,7 +25,7 @@ void MenuManager::draw() {
 
 	else{
 		//m_window.draw(m_title);
-
+		m_window.draw(m_highlightBox);
 		for (const auto& button : m_buttons) {
 			m_window.draw(button);
 		}
@@ -54,12 +54,14 @@ int MenuManager::handleInput() {
 					m_buttons[m_selectedButton].setFillColor(sf::Color::White);
 					m_selectedButton = (m_selectedButton - 1 + Config::NUM_BUTTONS_MENU) % Config::NUM_BUTTONS_MENU;
 					m_buttons[m_selectedButton].setFillColor(sf::Color::Yellow);
+					m_highlightBox.setPosition(m_buttons[m_selectedButton].getPosition());
 					break;
 
 				case sf::Keyboard::Down:
 					m_buttons[m_selectedButton].setFillColor(sf::Color::White);
 					m_selectedButton = (m_selectedButton + 1) % Config::NUM_BUTTONS_MENU;
 					m_buttons[m_selectedButton].setFillColor(sf::Color::Yellow);
+					m_highlightBox.setPosition(m_buttons[m_selectedButton].getPosition());
 					break;
 
 				case sf::Keyboard::Enter:
@@ -79,6 +81,44 @@ int MenuManager::handleInput() {
 				}
 			}
 		}
+		if (event.type == sf::Event::MouseMoved) {
+			sf::Vector2f mousePos = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window));
+
+			for (int i = 0; i < Config::NUM_BUTTONS_MENU; ++i) {
+				if (m_buttons[i].getGlobalBounds().contains(mousePos)) {
+					m_buttons[m_selectedButton].setFillColor(sf::Color::White);
+					m_selectedButton = i;
+					m_highlightBox.setPosition(m_buttons[m_selectedButton].getPosition());
+					m_buttons[m_selectedButton].setFillColor(sf::Color::Yellow);
+				}
+			}
+		}
+
+
+		if (event.type == sf::Event::MouseButtonReleased) {
+			if (event.mouseButton.button == sf::Mouse::Left) {
+				sf::Vector2f mousePos = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window));
+
+				for (int i = 0; i < Config::NUM_BUTTONS_MENU; ++i) {
+					if (m_buttons[i].getGlobalBounds().contains(mousePos)) {
+						switch (i) {
+						case 0:  // Start Game
+							return 0;
+
+						case 1:  // Help
+							m_showHelp = true;
+							break;
+
+						case 2:  // Exit
+							m_window.close();  // 2 - יציאה מהמשחק
+							break;
+						}
+						break;
+					}
+				}
+			}
+		}
+
 	}
 }
 //===============================================
@@ -98,16 +138,17 @@ void MenuManager::setButtons() {
 		m_buttons[i].setString(buttonTexts[i]);
 		m_buttons[i].setCharacterSize(30);
 		m_buttons[i].setFillColor(sf::Color::White);
-
-
-		//center of the buttons
-		sf::FloatRect textRect = m_buttons[i].getLocalBounds();
-		m_buttons[i].setOrigin(textRect.width / 2.f, textRect.height / 2.f);
-
+		m_buttons[i].setOrigin(m_buttons[i].getLocalBounds().width / 2.f, m_buttons[i].getLocalBounds().height / 2.f);
+		
 		//set the buttons in the center
 		float startY = m_window.getSize().y / 2.f - 60;
 		m_buttons[i].setPosition(m_window.getSize().x / 2.f, startY + i * 60);
 	}
+
+	m_highlightBox.setSize({ 200, 50 }); 
+	m_highlightBox.setFillColor(sf::Color(255, 255, 255, 50)); 
+	m_highlightBox.setOrigin(m_highlightBox.getSize().x / 2.f, m_highlightBox.getSize().y / 2.f - 8);
+	m_highlightBox.setPosition(m_buttons[m_selectedButton].getPosition()); 
 
 	m_buttons[0].setFillColor(sf::Color::Yellow);
 }
