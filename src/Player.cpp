@@ -166,20 +166,5 @@ void Player::handleBombs() {
 	}
 	else if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
 		m_canPlaceBomb = true;
-	}
-
-    /*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-        if (m_canPlaceBomb) {
-            sf::Vector2f bombPosition = sf::Vector2f(
-                std::round(m_position.x / 50) * 50,
-                std::round(m_position.y / 50) * 50
-            );
-            createBomb(bombPosition);
-            m_canPlaceBomb = false;
-
-        }
-    }
-    else {
-        m_canPlaceBomb = true;
-    }*/
+	}   
 }

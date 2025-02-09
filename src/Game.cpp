@@ -15,6 +15,7 @@ Game::Game()
 void Game::run() {
 	openMenu();
 	m_levelManager.startLevel();
+
 	// Load sounds before playing them
 	if (!SoundManager::instance().loadSounds()) {
 		std::cerr << "Failed to load sounds!" << std::endl;
@@ -259,6 +260,8 @@ void Game::updatePlayerData() {
 		if (player->getLives() < 0) {
 			m_isRunning = false;
 			m_window.close();
+			//run();
+			//openMenu();
 			// ADD GAME_OVER
 		}
 	}

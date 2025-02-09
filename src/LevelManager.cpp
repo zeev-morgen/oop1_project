@@ -4,7 +4,7 @@
 #include <FreezeGift.h>
 
 LevelManager::LevelManager()
-: m_level(0), m_rows(0), m_cols(0), remainingTime(Config::LEVEL_TIME)
+: m_level(0), m_rows(0), m_cols(0), remainingTime(Config::LEVEL_TIME), m_savedPlayerScore(0), m_savedPlayerLives(Config::PLAYER_LIVES)
 
 {
     TextureManager& textureManager = TextureManager::instance();
@@ -55,7 +55,6 @@ bool LevelManager::loadFromFile(const std::string& filename) {
     std::vector<std::string> levelData;
     readLevelData(filename, levelData);
 
-    //calcTileSize();
     clear();
 
     for (size_t row = 0; row < m_rows; ++row) {
@@ -68,6 +67,17 @@ bool LevelManager::loadFromFile(const std::string& filename) {
             }
         }
     }
+
+    auto playerIt = std::find_if(m_gameObjects.begin(), m_gameObjects.end(),
+        [](const std::unique_ptr<GameObject>& obj) {
+            return dynamic_cast<Player*>(obj.get()) != nullptr;
+        });
+
+    if (playerIt != m_gameObjects.end()) {
+        auto* player = dynamic_cast<Player*>((*playerIt).get());
+        loadPlayerData(*player);
+    }
+
     startLevel();
     return true;
 }
@@ -276,12 +286,12 @@ void LevelManager::removeInactiveObjects() {
 
 }
 
-
+//===============================================
 void LevelManager::startLevel() {
     startTime = std::chrono::steady_clock::now();
     remainingTime = Config::LEVEL_TIME;
 }
-
+//===============================================
 void LevelManager::updateTime() {
     auto now = std::chrono::steady_clock::now();
     remainingTime = Config::LEVEL_TIME - std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
@@ -291,12 +301,12 @@ void LevelManager::updateTime() {
         // ADD GAME_OVER
     }
 }
-
+//===============================================
 void LevelManager::addTime(int seconds) {
     remainingTime += seconds;
     std::cout << "Bonus! +" << seconds << " seconds!" << std::endl;
 }
-
+//===============================================
 int LevelManager::getTimeLeft() const {
     return remainingTime;
 }
@@ -324,4 +334,15 @@ std::unique_ptr<GameObject>& LevelManager::getPlayer() {
 		throw std::runtime_error("Player not found in game objects.");
 	}
 	return *it;
+}
+//===============================================
+void LevelManager::savePlayerData(Player& player) {
+    m_savedPlayerScore = player.getScore();
+    m_savedPlayerLives = player.getLives();
+}
+
+//===============================================
+void LevelManager::loadPlayerData(Player& player) {
+	player.setScore(m_savedPlayerScore);
+	player.setLives(m_savedPlayerLives);
 }

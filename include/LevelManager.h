@@ -31,6 +31,8 @@ private:
     size_t m_rows;
     size_t m_cols;
     int m_level;
+    int m_savedPlayerScore;
+    int m_savedPlayerLives;
 
     
 
@@ -63,4 +65,6 @@ public:
     int getTimeLeft()const;
     void startLevel();
     void addTime(int seconds);
+	void savePlayerData(Player& player);
+	void loadPlayerData(Player& player);
 };
