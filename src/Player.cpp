@@ -111,8 +111,6 @@ void Player::collide(Explosion& other)  {
 	undoMove();
     setStatus(false);
 	this->m_lives--;
-	//this->getBombs().clear();
-	//להוסיף מחיקת פצצות ופיצוצים אם השחקן נפגע
 }
 
 void Player::collide(Player& other) {

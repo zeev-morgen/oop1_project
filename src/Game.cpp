@@ -157,15 +157,20 @@ void Game::handleCollisions() {
 
 	if (player) {
 		for (const auto& bomb : player->getBombs()) {
-			for (const auto& explosion : bomb->getExplosions()) {
-				for (const auto& obj : m_gameObjects) {
-					if (obj->isActive() && obj->checkCollision(*explosion) && explosion) {
+			if (bomb) {
+				for (const auto& explosion : bomb->getExplosions()) {
+					for (const auto& obj : m_gameObjects) {
+						if (obj->isActive() && obj->checkCollision(*explosion) && explosion) {
 
-						obj->collide(*explosion);
-						explosion->collide(*obj);
+							obj->collide(*explosion);
+							explosion->collide(*obj);
+						}
 					}
 				}
 			}
+		}
+		if (!player->getStatus()) {
+			player->getBombs().clear();
 		}
 	}
 }
