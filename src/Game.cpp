@@ -98,7 +98,7 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 		}
 	}
 	
-	//handleCollisions();
+	handleCollisions();
 	updatePlayerData();
 	m_levelManager.removeInactiveObjects();
 	isLevelComplete();

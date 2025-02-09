@@ -68,6 +68,10 @@ void Enemy::collide(Enemy& other)  {
     
 }
 
+void Enemy::collide(SmartEnemy& other) {
+
+}
+
 
 void Enemy::collide(Wall& other) {
 	randomLocation();
@@ -84,7 +88,7 @@ void Enemy::collide(Door& other)  {
 }
 
 void Enemy::collide(Explosion& other)  {
-    this->setActive(false);  // ðäøñ îôéöåõ
+    this->setActive(false); 
 
 }
 

@@ -16,6 +16,8 @@ public:
     virtual void collide(Door& door) override;
     virtual void collide(Explosion& explosion) override;
     virtual void collide(Player& player) override;
+	virtual void collide(SmartEnemy& smartEnemy) override;
+	virtual void collide(Rock& rock) override;
 
     //void setShow(bool show);
 

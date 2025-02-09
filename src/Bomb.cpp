@@ -69,3 +69,4 @@ void Bomb::explode(sf::Vector2f position) {
 std::vector<std::unique_ptr<Explosion>>& Bomb::getExplosions() {
 	return m_explosions;
 }
+//================================================

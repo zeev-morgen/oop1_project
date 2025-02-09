@@ -22,7 +22,23 @@ void Door::collide(Player& other) {
 }
 
 void Door::collide(Explosion& other) {
-    undoMove();  // ðú÷ò áàáï
+    undoMove();   
+}
+
+void Door::collide(SmartEnemy& other) {
+	undoMove();  
+}
+
+void Door::collide(Wall& other) {
+	undoMove();  
+}
+
+void Door::collide(Rock& other) {
+	undoMove();  
+}
+
+void Door::collide(Door& other) {
+	undoMove();  
 }
 
 void Door::update(float deltaTime, LevelManager& levelManager) {

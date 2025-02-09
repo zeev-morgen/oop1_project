@@ -117,9 +117,9 @@ void MoveableObject::tryMove(const sf::Vector2f& movement, LevelManager& levelMa
 
 //===============================================
 
-void MoveableObject::collide(GameObject& other) {
-    other.collide(*this);
-}
+//void MoveableObject::collide(GameObject& other) {
+//    other.collide(*this);
+//}
 //===============================================
 void MoveableObject::alignToTile() {
     sf::Vector2f currentPos = getPosition();

@@ -14,6 +14,15 @@ public:
 	void explode(sf::Vector2f position);
 	std::vector<std::unique_ptr<Explosion>>& getExplosions();
 
+	virtual void collide(GameObject& other) override {}
+
+    virtual void collide(Player& player) override {}
+    virtual void collide(Enemy& enemy) override {}
+    virtual void collide(Wall& wall) override {}
+    virtual void collide(Rock& rock) override {}
+    virtual void collide(Door& door) override {}
+    virtual void collide(Explosion& explosion) override {}
+    virtual void collide(SmartEnemy& smartEnemy)override {}
 
 private:
     float m_explodeTime = Config::EXPLOSION_TIME;

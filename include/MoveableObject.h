@@ -38,7 +38,7 @@ public:
 
 
 	bool isBlocked() const;
-	void collide(GameObject& other) override;
+	//void collide(GameObject& other) override;
 
 	virtual void update(float deltaTime, LevelManager& levelManager) = 0;
 	virtual void draw(sf::RenderWindow& window) const = 0;
