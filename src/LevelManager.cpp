@@ -165,7 +165,18 @@ void LevelManager::createObject(char symbol, float x, float y) {
 
 	case '!':  // enemy
     {
-        m_gameObjects.push_back(std::make_unique<Enemy>(*texture, position));
+        int enemyType = rand() % 2;
+
+        switch (enemyType) {
+
+        case 0:
+            m_gameObjects.push_back(std::make_unique<SmartEnemy>(*texture, position));
+            break;
+
+        case 1:
+            m_gameObjects.push_back(std::make_unique<Enemy>(*texture, position));
+            break;
+        }
     }
     break;
 
@@ -279,4 +290,15 @@ void LevelManager::freezeAllEnemies(float duration) {
             enemy->freeze(duration);
         }
     }
+}
+//===============================================
+std::unique_ptr<GameObject>& LevelManager::getPlayer() {
+	auto it = std::find_if(m_gameObjects.begin(), m_gameObjects.end(),
+		[](const std::unique_ptr<GameObject>& obj) {
+			return dynamic_cast<Player*>(obj.get()) != nullptr;
+		});
+	if (it == m_gameObjects.end()) {
+		throw std::runtime_error("Player not found in game objects.");
+	}
+	return *it;
 }

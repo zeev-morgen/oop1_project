@@ -16,6 +16,7 @@
 #include "Explosion.h"
 #include <iostream>
 #include "Gift.h"
+#include "SmartEnemy.h"
 
 
 class LevelManager {
@@ -49,4 +50,5 @@ public:
     void removeInactiveObjects();
     void resetLevel();
     void freezeAllEnemies(float duration);
+	std::unique_ptr<GameObject>& getPlayer();
 };

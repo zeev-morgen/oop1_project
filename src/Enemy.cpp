@@ -39,29 +39,6 @@ void Enemy::update(float deltaTime, LevelManager& levelManager) {
 
 //===============================================
 
-void Enemy::changeDirection(float deltaTime, LevelManager& levelManager) {
-    const sf::Vector2f possibleDirections[] = {
-                {1.0f, 0.0f},   
-                {-1.0f, 0.0f},  
-                {0.0f, 1.0f},   
-                {0.0f, -1.0f}  
-    };
-
-    // save the current direction
-    sf::Vector2f oldDirection = m_currentDirection;
-    int attempts = 0;
-
-   // do {
-        int randomIndex = rand() % 4; 
-        m_currentDirection = possibleDirections[randomIndex];
-        attempts++;
-
-        if (attempts > 2) {
-            m_currentDirection = oldDirection;
-           // break;
-        }
-   // } while (!MoveableObject::isValidPosition(getPosition() + (m_currentDirection * getSpeed() * deltaTime), levelManager));
-}
 
 //===============================================
 void Enemy::randomLocation() {

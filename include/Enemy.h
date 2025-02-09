@@ -31,14 +31,12 @@ public:
 private:
 	static std::vector<Enemy*> allEnemies;
 	sf::Vector2f m_currentDirection;
-	void changeDirection(float deltaTime, LevelManager& levelManager);
+	
 	
 	static constexpr float ENEMY_SPEED = 60.0f;
 
 	sf::Vector2f m_startPosition;
 	bool isExplode();
 	static void resetLocation();
-	bool m_isFrozen = false;
-	float m_freezeTimeLeft;
 };
 

@@ -6,6 +6,6 @@ public:
     FreezeGift(const sf::Texture& texture, const sf::Vector2f& position);
     virtual void collide(Player& player) override;
 
-private:
-    static const float Config::FREEZE_DURATION; 
+//private:
+//    static const float Config::FREEZE_DURATION; 
 };

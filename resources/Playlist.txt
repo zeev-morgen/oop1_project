@@ -1,4 +1,3 @@
-Level001.txt
 Level002.txt
 Level003.txt
 Level004.txt

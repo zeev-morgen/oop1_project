@@ -9,7 +9,11 @@ class MoveableObject : public GameObject {
 protected:
 	float m_speed;
 	sf::Vector2f m_direction;
+	sf::Vector2f m_currentDirection;
+	float m_freezeTime;
 	bool m_isMoving;
+	bool m_isFrozen;
+	float m_freezeTimeLeft;
 	bool isValidPosition(const sf::Vector2f& newPosition, LevelManager& levelManager);
 	void tryMove(const sf::Vector2f& movement, LevelManager& levelManager);
 	void alignToTile();
@@ -18,6 +22,7 @@ protected:
 		sf::Vector2f testMove = direction * speed * deltaTime;
 		return isValidPosition(getPosition() + testMove, levelManager);
 	}
+	void changeDirection(float deltaTime, LevelManager& levelManager);
 
 public:
 	MoveableObject(const sf::Texture& texture, const sf::Vector2f& position, float speed);
