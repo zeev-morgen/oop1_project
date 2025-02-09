@@ -1,6 +1,6 @@
 #include "Bomb.h"
 
-Bomb::Bomb(const sf::Texture& texture, const sf::Vector2f& position, sf::Font font)
+Bomb::Bomb(const sf::Texture& texture, const sf::Vector2f& position)
     : StaticObject(texture, position)
 {
     m_timer.restart();
@@ -19,16 +19,21 @@ bool Bomb::hasExploded() const {
 void Bomb::update(float deltaTime, LevelManager& levelManager) {
 
     float timeLeft = Config::EXPLOSION_TIME - m_timer.getElapsedTime().asSeconds();
-    m_timerText.setString(std::to_string(static_cast<int>(timeLeft))); // הצגת הזמן בשניות
+    m_timerText.setString(std::to_string(static_cast<int>(timeLeft))); 
 	m_timerText.setOrigin(m_timerText.getLocalBounds().width / 2, m_timerText.getLocalBounds().height / 2);
-    // בודקים אם עבר זמן הפיצוץ
-    if (m_timer.getElapsedTime().asSeconds() >= Config::EXPLOSION_TIME) {
 
-        if (!m_exploded) {
-            levelManager.addExplosion(this->getPosition());
+    if (m_timer.getElapsedTime().asSeconds() >= Config::EXPLOSION_TIME) {
+		m_exploded = true;
+
+        if (m_exploded) {
+            explode(m_position);
 			
-            m_exploded = true;
 			m_isActive = false;
+
+			if (m_timer.getElapsedTime().asSeconds() >= Config::EXPLOSION_TIME + Config::EXP_LIFE_TIME) {
+				m_explosions.clear();
+			}
+
         }
     }
 }
@@ -42,4 +47,25 @@ void Bomb::draw(sf::RenderWindow& window) const {
 		window.draw(m_sprite);
 		window.draw(m_timerText);
 	}
+}
+//================================================
+void Bomb::explode(sf::Vector2f position) {
+
+    TextureManager& textureManager = TextureManager::instance();
+
+    sf::Texture* texture = textureManager.getTexture('*');
+    if (!texture) {
+        std::cerr << "Failed to get texture for symbol: " << '*' << std::endl;
+        return;
+    }
+
+	m_explosions.push_back(std::make_unique<Explosion>(*texture, position));
+    m_explosions.push_back(std::make_unique<Explosion>(*texture, sf::Vector2f(position.x + Config::TILE_WIDTH, position.y)));
+	m_explosions.push_back(std::make_unique<Explosion>(*texture, sf::Vector2f(position.x - Config::TILE_WIDTH, position.y)));
+	m_explosions.push_back(std::make_unique<Explosion>(*texture, sf::Vector2f(position.x, position.y + Config::TILE_WIDTH)));
+	m_explosions.push_back(std::make_unique<Explosion>(*texture, sf::Vector2f(position.x, position.y - Config::TILE_WIDTH)));
+}
+//================================================
+std::vector<std::unique_ptr<Explosion>>& Bomb::getExplosions() {
+	return m_explosions;
 }

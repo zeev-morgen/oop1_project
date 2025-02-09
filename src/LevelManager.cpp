@@ -4,7 +4,8 @@
 #include <FreezeGift.h>
 
 LevelManager::LevelManager()
-    : m_level(0), m_rows(0), m_cols(0), m_player(nullptr), m_door(nullptr), m_tempBomb(nullptr),remainingTime(90)
+: m_level(0), m_rows(0), m_cols(0),remainingTime(90)
+
 {
     TextureManager& textureManager = TextureManager::instance();
     textureManager.loadGameTextures();
@@ -65,9 +66,9 @@ bool LevelManager::loadFromFile(const std::string& filename) {
         for (size_t col = 0; col < m_cols; ++col) {
             char symbol = levelData[row][col];
             if (symbol != ' ') {
-                float x = col * Config::TILE_WIDTH;
-                float y = row * Config::TILE_HEIGHT + Config::UI;
-                createObject(symbol, x, y, m_font);
+                float x = static_cast<float>(col) * Config::TILE_WIDTH;
+                float y = static_cast<float>(row) * Config::TILE_HEIGHT + Config::UI;
+                createObject(symbol, x, y);
             }
         }
     }
@@ -109,12 +110,10 @@ void LevelManager::draw(sf::RenderWindow& window) {
 //===============================================
 void LevelManager::clear() {
     m_gameObjects.clear();
-    m_player = nullptr;
-    m_door = nullptr;
 }
 //===============================================
 
-void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
+void LevelManager::createObject(char symbol, float x, float y) {
     TextureManager& textureManager = TextureManager::instance();
     
     sf::Texture* texture = textureManager.getTexture(symbol);
@@ -130,52 +129,64 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
     {
         auto rockPtr = std::make_unique<Rock>(*texture, position);
 
-        if (rand() % 3 == 0) { // 33% ñéëåé ìîúðä
-            int giftType = rand() % 3;
-            texture = textureManager.getTexture('$');
+        if (rand() % 4 == 0) { 
+            int giftType = rand() % 4;
 
             switch (giftType) {
 
             case 0:
+                texture = textureManager.getTexture('$');
                 m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
 				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
 				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
                 break;
 
             case 1:
+                texture = textureManager.getTexture('T');
                 m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
 				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
 				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
                 break;
 
             case 2:
+                texture = textureManager.getTexture('H');
                 m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
 				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
 				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
                 break;
-            }
+            
+            case 3:
+				texture = textureManager.getTexture('F');
+                m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
+                rockPtr->setGiftIndex(m_gameObjects.size() - 1);
+                std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
+                break;
+            }  
         }
         m_gameObjects.push_back(std::move(rockPtr));
         break;
     }
 
-    case '!':
+	case '!':  // enemy
     {
-        m_gameObjects.push_back(std::make_unique<Enemy>(*texture, position));
+        int enemyType = rand() % 2;
+
+        switch (enemyType) {
+
+        case 0:
+            m_gameObjects.push_back(std::make_unique<SmartEnemy>(*texture, position));
+            break;
+
+        case 1:
+            m_gameObjects.push_back(std::make_unique<Enemy>(*texture, position));
+            break;
+        }
     }
     break;
 
-    case '%':
+
+	case '/':  // player
     {
-        m_tempBomb = std::make_unique<Bomb>(*texture, position, font);
-    }
-    break;
-
-    case '/':
-    {
-
-        //m_player = std::make_unique<Player>(*texture, position);
-
         m_gameObjects.push_back(std::make_unique<Player>(*texture, position));
     }
     break;
@@ -192,19 +203,7 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
     }
     break;
 
-    case '*':
-    {
-        // éåöøéí ôéöåõ áîøëæ
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position, font));
 
-        // éåöøéí ôéöåöéí ìëì ëéååï
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(50, 0), font)); // éîéðä
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(-50, 0), font)); // ùîàìä
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, 50), font)); // ìîèä
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, -50), font)); // ìîòìä
-       
-    }
-    break;
     }
 }
 //===============================================
@@ -229,19 +228,11 @@ void LevelManager::readLevelData(const std::string& filename, std::vector<std::s
     m_cols = levelData[0].length();
 }
 //===============================================
-float LevelManager::getTileWidth() const {
-    return m_tileWidth;
-}
-//===============================================
-float LevelManager::getTileHeight() const {
-    return m_tileHeight;
-}
-//===============================================
- size_t LevelManager::getRows()  {
+ size_t LevelManager::getRows() const {
     return m_rows; 
 }
 //===============================================
-float LevelManager::getCols()  {
+size_t LevelManager::getCols()  {
     return m_cols;
 }
 //===============================================
@@ -249,71 +240,13 @@ std::vector<std::unique_ptr<GameObject>>& LevelManager::getGameObjects()  {
     return m_gameObjects;
 }
 //===============================================
-const std::unique_ptr<GameObject>& LevelManager::getPlayer() const {
-    return m_player;
-}
-//===============================================
-const std::vector<std::unique_ptr<Enemy>>& LevelManager::getEnemies() const {
-    return m_enemies;
-}
-//===============================================
-
-void LevelManager::addBomb(sf::Vector2f position) {
-    createObject('%', position.x, position.y, m_font);
-}
-//===============================================
-
-void LevelManager::addExplosion(sf::Vector2f position) {
-
-    createObject('*', position.x, position.y, m_font);
-}
-//===============================================
 sf::Font& LevelManager::getFont() {
     return m_font;
-}
-//===============================================
-std::unique_ptr<GameObject>& LevelManager::getTempBomb() {
-    return m_tempBomb;
-}
-//===============================================
-std::vector<std::unique_ptr<GameObject>>& LevelManager::getTempExplosion() {
-    return m_tempExplosion;
-}
-//===============================================
-void LevelManager::addTheBomb(sf::Vector2f position) {
-
-    TextureManager& textureManager = TextureManager::instance();
-    textureManager.loadGameTextures();
-    sf::Texture* texture = textureManager.getTexture('%');
-    if (!texture) {
-        std::cerr << "Failed to get texture for symbol: " << '%' << std::endl;
-        return;
-    }
-
-    m_gameObjects.push_back(std::make_unique<Bomb>(*texture, position, m_font));
-    m_tempBomb.release();
-}
-//===============================================
-void LevelManager::addTheExplosion(sf::Vector2f position) {
-
-    TextureManager& textureManager = TextureManager::instance();
-    SoundManager& soundManager = SoundManager::instance();
-    textureManager.loadGameTextures();
-    sf::Texture* texture = textureManager.getTexture('*');
-    if (!texture) {
-        std::cerr << "Failed to get texture for symbol: " << '*' << std::endl;
-        return;
-    }
-
-    m_gameObjects.push_back(std::make_unique<Explosion>(*texture, position, m_font));
-    SoundManager::instance().playExplosion();
-
 }
 //===============================================
 void LevelManager::removeInactiveObjects() {
     auto& objects = m_gameObjects;
 	
-    // ðòáåø òì ëì äàåáéé÷èéí
     for (size_t i = 0; i < objects.size(); i++) {
         if (!objects[i]->isActive()) {
             if (auto* rock = dynamic_cast<Rock*>(objects[i].get())) {
@@ -339,9 +272,6 @@ void LevelManager::removeInactiveObjects() {
 }
 
 
-
-
-
 void LevelManager::startLevel() {
     startTime = std::chrono::steady_clock::now();
     remainingTime = 90;
@@ -353,7 +283,7 @@ void LevelManager::updateTime() {
 
     if (remainingTime <= 0) {
         std::cout << "Game Over! Time is up!" << std::endl;
-        // לוגיקת סיום שלב
+        // ADD GAME_OVER
     }
 }
 
@@ -364,4 +294,43 @@ void LevelManager::addTime(int seconds) {
 
 int LevelManager::getTimeLeft() const {
     return remainingTime;
+
+//===============================================
+void LevelManager::clearAllBombs() {
+    // מחיקת כל הפצצות מהמשחק
+    auto& gameObjects = getGameObjects();
+    gameObjects.erase(
+        std::remove_if(gameObjects.begin(), gameObjects.end(),
+            [](const auto& obj) {
+                return dynamic_cast<Bomb*>(obj.get()) != nullptr;
+            }
+        ),
+        gameObjects.end()
+    );
+}
+
+//===============================================
+void LevelManager::resetLevel() {
+	clearAllBombs();
+	loadLevel();
+    
+}
+//===============================================
+void LevelManager::freezeAllEnemies(float duration) {
+    for (auto& obj : m_gameObjects) {
+        if (auto* enemy = dynamic_cast<Enemy*>(obj.get())) {
+            enemy->freeze(duration);
+        }
+    }
+}
+//===============================================
+std::unique_ptr<GameObject>& LevelManager::getPlayer() {
+	auto it = std::find_if(m_gameObjects.begin(), m_gameObjects.end(),
+		[](const std::unique_ptr<GameObject>& obj) {
+			return dynamic_cast<Player*>(obj.get()) != nullptr;
+		});
+	if (it == m_gameObjects.end()) {
+		throw std::runtime_error("Player not found in game objects.");
+	}
+	return *it;
 }

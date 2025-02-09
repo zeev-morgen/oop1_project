@@ -1,6 +1,9 @@
 #pragma once
 #include "MoveableObject.h"
+#include "Bomb.h"
+#include <memory>
 class LevelManager;
+class Bomb;
 
 class Player : public MoveableObject {
 public:
@@ -9,56 +12,40 @@ public:
 
 
 
-    virtual void collide(GameObject& other, float deltaTime, LevelManager& levelManager) override;
+    virtual void collide(GameObject& other) override;
 
-    bool getFinish(); // addition
+    bool getFinish()const; // addition
 
-
-
-	
-    //void updateAnimation(float deltaTime);
-
-    virtual void collide(Player& other, float deltaTime, LevelManager& levelManager) override;
-    virtual void collide(Enemy& other, float deltaTime, LevelManager& levelManager) override;
-    virtual void collide(Wall& other, float deltaTime, LevelManager& levelManager) override;
-    virtual void collide(Rock& other, float deltaTime, LevelManager& levelManager) override;
-    virtual void collide(Door& other, float deltaTime, LevelManager& levelManager) override;
-    virtual void collide(Explosion& other, float deltaTime, LevelManager& levelManager) override;
+    virtual void collide(Player& other) override;
+    virtual void collide(Enemy& other) override;
+    virtual void collide(Wall& other) override;
+    virtual void collide(Rock& other) override;
+    virtual void collide(Door& other) override;
+    virtual void collide(Explosion& other) override;
 
     void draw(sf::RenderWindow& window) const override;//?
 	void setScore(int score);
 	int getScore()const;
 	void setLives(int lives);
 	int getLives()const;
-  void setTime(float time);
-
+    void setTime(float time);
+	void setStatus(bool status);
+	bool getStatus() const;
+	std::vector<std::unique_ptr<Bomb>>& getBombs();
 
 private:
 	float m_moveSpeed;
-  
-    int playerLives = 3;  // addition
-    int playerScore = 0; // addition
-
     bool m_canPlaceBomb = true;
 	bool m_isMoving = false;
 	int m_lives = 3;
 	int m_score = 0;
-    int m_time;
+    float m_time;
 	bool m_finishLevel = false;
-    
+	bool m_status = true;
+	void createBomb(sf::Vector2f pos);
+	std::vector<std::unique_ptr<Bomb>> m_bombs;
 
+    
 	sf::Vector2f m_startPosition;
     sf::Vector2f m_direction;
-
-    //// ����� ������ ��������
-    //static constexpr int FRAME_WIDTH = 50;  // ���� �� ����� ��������
-    //static constexpr int FRAME_HEIGHT = 50; // ���� �� ����� ��������
-    //static constexpr int FRAMES_PER_ROW = 3; // ��� ������� �� ��� ����
-
-    //// ����� ������ ������� ��� ���� �� �����
-    //static constexpr int DOWN_ROW = 0;
-    //static constexpr int UP_ROW = 1;
-    //static constexpr int LEFT_ROW = 2;
-    //static constexpr int RIGHT_ROW = 3;
-
 };

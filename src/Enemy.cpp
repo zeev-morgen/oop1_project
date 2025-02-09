@@ -10,12 +10,20 @@ Enemy::Enemy(const sf::Texture& texture, const sf::Vector2f& position)
     : MoveableObject(texture, position, ENEMY_SPEED), m_startPosition(position)
 {
     allEnemies.push_back(this);
-    //setOrigin();
     randomLocation();
     soundManager = &SoundManager::instance(); // Use the singleton instance
 }
 //===============================================
 void Enemy::update(float deltaTime, LevelManager& levelManager) {
+
+    if (m_isFrozen) {
+        m_freezeTimeLeft -= deltaTime;
+        if (m_freezeTimeLeft <= 0) {
+            m_isFrozen = false;
+        }
+        return;  
+    }
+
     sf::Vector2f movement = m_currentDirection * getSpeed() * deltaTime;
     movement.x = std::round(movement.x);
     movement.y = std::round(movement.y);
@@ -31,30 +39,6 @@ void Enemy::update(float deltaTime, LevelManager& levelManager) {
 }
 
 //===============================================
-void Enemy::changeDirection(float deltaTime, LevelManager& levelManager) {
-    const sf::Vector2f possibleDirections[] = {
-                {1.0f, 0.0f},   // éîéðä
-                {-1.0f, 0.0f},  // ùîàìä
-                {0.0f, 1.0f},   // ìîèä
-                {0.0f, -1.0f}   // ìîòìä
-    };
-
-    // save the current direction
-    sf::Vector2f oldDirection = m_currentDirection;
-    int attempts = 0;
-    do {
-        int randomIndex = rand() % 4; // áçø ëéååï à÷øàé îúåê äàôùøåéåú
-        m_currentDirection = possibleDirections[randomIndex];
-        attempts++;
-        // áî÷øä åàéï ëéååï ú÷éï ìàçø îñôø ðéñéåðåú, ùîåø òì äëéååï ä÷åãí
-        if (attempts > 2) {
-            m_currentDirection = oldDirection;
-            break;
-        }
-    } while (!MoveableObject::isValidPosition(getPosition() + (m_currentDirection * getSpeed() * deltaTime), levelManager));
-}
-
-//===============================================
 void Enemy::randomLocation() {
     const sf::Vector2f possibleDirections[] = {
                 {1.0f, 0.0f}, {-1.0f, 0.0f},
@@ -64,39 +48,51 @@ void Enemy::randomLocation() {
 }
 
 //===============================================
-void Enemy::collide(GameObject& other, float deltaTime, LevelManager& levelManager) {
-    other.collide(*this, deltaTime, levelManager);
+void Enemy::collide(GameObject& other) {
+    other.collide(*this);
 }
 
-void Enemy::collide(Player& other, float deltaTime, LevelManager& levelManager) {
-    other.setActive(false);
+
+
+void Enemy::collide(Player& other)  {
+    //resetLocation();
+	/*other.undoMove();
+	other.setActive(false);*/
+	other.setStatus(false);
+	//other.setLives(other.getLives() - 1);
+
 }
 
-void Enemy::collide(Enemy& other, float deltaTime, LevelManager& levelManager) {
-    // àåéáéí òåáøéí àçã ãøê äùðé
+void Enemy::collide(Enemy& other)  {
+    
 }
 
-void Enemy::collide(Wall& other, float deltaTime, LevelManager& levelManager) {
-    changeDirection(deltaTime, levelManager);
+
+void Enemy::collide(Wall& other) {
+	randomLocation();
 }
 
-void Enemy::collide(Rock& other, float deltaTime, LevelManager& levelManager) {
-    changeDirection(deltaTime, levelManager);  // ðú÷ò áàáï
+
+void Enemy::collide(Rock& other)  {
+	randomLocation();
 }
 
-void Enemy::collide(Door& other, float deltaTime, LevelManager& levelManager) {
-    undoMove();  // ðú÷ò áãìú
+void Enemy::collide(Door& other)  {
+    undoMove();
+	randomLocation();
 }
 
-void Enemy::collide(Explosion& other, float deltaTime, LevelManager& levelManager) {
-    this->setActive(false);
+void Enemy::collide(Explosion& other)  {
+    this->setActive(false);  // ðäøñ îôéöåõ
+
+
 }
 
 void Enemy::draw(sf::RenderWindow& window) const {
     window.draw(m_sprite);
 }
 
-//ôåð÷öééä ìäçæøú ùåîøéí ìîé÷åí äúçìúé
+
 void Enemy::resetLocation() {
     for (Enemy* enemy : allEnemies) {
         if (enemy->isActive()) {
@@ -104,3 +100,10 @@ void Enemy::resetLocation() {
         }
     }
 }
+
+
+void Enemy::freeze(float duration) {
+    m_isFrozen = true;
+    m_freezeTimeLeft = duration;
+}
+

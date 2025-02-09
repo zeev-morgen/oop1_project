@@ -9,6 +9,7 @@ private:
 	sf::Sprite m_background;
 	sf::Text m_helpText;
 	sf::Text m_title;
+	sf::RectangleShape m_highlightBox;
 
 	int m_selectedButton;
 	bool m_showHelp;

@@ -5,7 +5,7 @@ HealthGift::HealthGift(const sf::Texture& texture, const sf::Vector2f& position)
 {
 }
 
-void HealthGift::collide(Player& player, float deltaTime, LevelManager& levelManager) {
+void HealthGift::collide(Player& player) {
     player.setLives(HEALTH_BONUS);
-    setActive(false); // המתנה נעלמת אחרי השימוש
+    setActive(false); 
 }

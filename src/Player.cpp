@@ -8,12 +8,8 @@ Player::Player(const sf::Texture& texture, const sf::Vector2f& position)
 	, m_moveSpeed(Config::PLAYER_SPEED)
     , m_direction(0.0f, 0.0f)
     , m_startPosition(position)
+    , m_time(Config::GAME_TIME)
 {
-    //// אתחול המלבן של האנימציה
-    //m_frameRect = sf::IntRect(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
-    //m_sprite.setTextureRect(m_frameRect);
-    //m_currentFrame = sf::Vector2i(0, DOWN_ROW);
-    //m_animationTimer = 0.0f;
 }
 
 void Player::update(float deltaTime, LevelManager& levelManager){
@@ -21,27 +17,39 @@ void Player::update(float deltaTime, LevelManager& levelManager){
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
     {
         m_direction.x = -1.0f;
-		//m_isMoving = true;
-        //m_currentFrame.y = LEFT_ROW;
     }
 
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
     {
         m_direction.x = 1.0f;
-		//m_isMoving = true;
-        //m_currentFrame.y = RIGHT_ROW;
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {
         m_direction.y = -1.0f;
-		//m_isMoving = true;
-        //m_currentFrame.y = UP_ROW;
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
     {
         m_direction.y = 1.0f;
-		//m_isMoving = true;
-        //m_currentFrame.y = DOWN_ROW;
+    }
+
+    sf::Vector2f movement = m_direction * m_moveSpeed * deltaTime;
+
+    // במקום עיגול למספרים שלמים, נשתמש בהחלקה עדינה יותר
+    sf::Vector2f targetPos = m_position + movement;
+
+    if (m_direction.x != 0) {  // תנועה אופקית
+        float targetY = std::round(m_position.y / 50) * 50;
+        float diff = targetY - m_position.y;
+        if (std::abs(diff) < m_moveSpeed * deltaTime) {
+            movement.y = diff;
+        }
+    }
+    else if (m_direction.y != 0) {  // תנועה אנכית
+        float targetX = std::round(m_position.x / 50) * 50;
+        float diff = targetX - m_position.x;
+        if (std::abs(diff) < m_moveSpeed * deltaTime) {
+            movement.x = diff;
+        }
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
@@ -50,70 +58,64 @@ void Player::update(float deltaTime, LevelManager& levelManager){
                 std::round(m_position.x / 50) * 50,
                 std::round(m_position.y / 50) * 50
             );
-            levelManager.addBomb(bombPosition);  // ֳ₪ֳ¥ֳ±ֳ´ֳ÷ ֳ´ֳ¶ֳ¶ֳ₪
-            m_canPlaceBomb = false; // ֳ°ֳ¥ֳ²ֳ¬ ֳ¬ֳ§ֳ©ֳ¶ֳ₪ ֳ§ֳ¥ֳ¦ֳ¸ֳ÷
+            //levelManager.addBomb(bombPosition); 
+            createBomb(bombPosition);
+            m_canPlaceBomb = false; 
 
         }
     }
     else {
-        m_canPlaceBomb = true; // ֳ®ֳ¹ֳ§ֳ¸ֳ¸ ֳ ֳ÷ ֳ₪ֳ°ֳ²ֳ©ֳ¬ֳ₪ ֳ«ֳ¹ֳ₪ֳ«ֳ´ֳ÷ֳ¥ֳ¸ ֳ¬ֳ  ֳ¬ֳ§ֳ¥ֳµ
+        m_canPlaceBomb = true; 
     }
-    sf::Vector2f movement = m_direction * m_moveSpeed * deltaTime;
+    //sf::Vector2f movement = m_direction * m_moveSpeed * deltaTime;
 
     //set the move to int
     movement.x = std::round(movement.x);
     movement.y = std::round(movement.y);
 
     tryMove(movement, levelManager);
-
-    //updateAnimation(deltaTime);
 }
 
 
-void Player::collide(GameObject& other, float deltaTime, LevelManager& levelManager)  {
-    other.collide(*this, deltaTime, levelManager);  // Double dispatch
+void Player::collide(GameObject& other)  {
+    other.collide(*this);
 }
 
-bool Player::getFinish() {
+bool Player::getFinish() const{
 	return m_finishLevel;
 }
 
-void Player::collide(Enemy& other, float deltaTime, LevelManager& levelManager)  {
+void Player::collide(Enemy& other)  {
 
     undoMove();
-	m_isActive = false;
+	m_status = false;
+	m_lives--;
 	std::cout << "player is :"<< isActive() << std::endl;
 }
 
-void Player::collide(Wall& other, float deltaTime, LevelManager& levelManager)  {
+void Player::collide(Wall& other)  {
     undoMove(); 
-    std::cout << "collision" << std::endl;// ֳ°ֳ÷ֳ·ֳ² ֳ¡ֳ·ֳ©ֳ¸
+    std::cout << "collision" << std::endl;
 }
 
-void Player::collide(Rock& other, float deltaTime, LevelManager& levelManager) {
+void Player::collide(Rock& other) {
     undoMove(); 
 }
 
-void Player::collide(Door& other, float deltaTime, LevelManager& levelManager)  {
+void Player::collide(Door& other)  {
     undoMove();
 	m_finishLevel = true;
 }
 
-void Player::collide(Explosion& other, float deltaTime, LevelManager& levelManager)  {
+void Player::collide(Explosion& other)  {
 	undoMove();
-    setActive(false);
-	std::cout << "collision" << std::endl;
-	//m_position = m_startPosition;
+    setStatus(false);
+	this->m_lives--;
 }
 
-void Player::collide(Player& other, float deltaTime, LevelManager& levelManager) {
-	//not implemented can not exist
+void Player::collide(Player& other) {
 
 }
-
-//void Player::collide(Gift& other) {
-//	other.setActive(false);
-//}
 
 void Player::draw(sf::RenderWindow& window) const {
     window.draw(m_sprite);
@@ -127,47 +129,40 @@ void Player::setTime(float time) {
 	m_time = time;
 }
 
-
-//void Player::updateAnimation(float deltaTime) {
-//    m_animationTimer += deltaTime;
-//
-//    // עדכון האנימציה רק אם השחקן זז
-//    if (m_direction.x != 0 || m_direction.y != 0) {
-//        if (m_animationTimer >= ANIMATION_SPEED) {
-//            m_animationTimer = 0;
-//
-//            // התקדמות לפריים הבא
-//            m_currentFrame.x = (m_currentFrame.x + 1) % FRAMES_PER_ROW;
-//
-//            // עדכון המלבן שמציג את הפריים הנוכחי
-//            m_frameRect.left = m_currentFrame.x * FRAME_WIDTH;
-//            m_frameRect.top = m_currentFrame.y * FRAME_HEIGHT;
-//            m_sprite.setTextureRect(m_frameRect);
-//        }
-//    }
-//    else {
-//        // כשהשחקן לא זז, מציגים את הפריים הראשון
-//        m_currentFrame.x = 0;
-//        m_frameRect.left = 0;
-//        m_sprite.setTextureRect(m_frameRect);
-//    }
-//}
-
-
-
 void Player::setScore(int score) {
-	playerScore = score;
+    m_score = score;
 }
 
-int Player::getScore() const{
-    return playerScore;
+int Player::getScore() const {
+    return m_score;
 }
 
-//void Player::setLives(int lives) {
-//	playerLives = lives;
-//}
-
-int Player::getLives() const{
-	return playerLives;
+int Player::getLives() const {
+    return m_lives;
 }
 
+void Player::setStatus(bool status) {
+	m_status = status;
+}
+
+bool Player::getStatus() const {
+	return m_status;
+}
+
+//===============================================
+void Player::createBomb(sf::Vector2f position) {
+	//load the texture of the bomb and create a new bomb
+    TextureManager& textureManager = TextureManager::instance();
+
+    sf::Texture* texture = textureManager.getTexture('%');
+    if (!texture) {
+        std::cerr << "Failed to get texture for symbol: " << '%' << std::endl;
+        return;
+    }
+
+    m_bombs.push_back(std::make_unique<Bomb>(*texture, position));
+}
+//===============================================
+std::vector<std::unique_ptr<Bomb>>& Player::getBombs() {
+	return m_bombs;
+}
