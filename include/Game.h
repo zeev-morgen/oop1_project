@@ -6,6 +6,7 @@
 #include <iostream>
 #include "MenuManager.h"
 #include "UIManager.h"
+#include "SoundManager.h"
 
 class Game {
 public:
@@ -15,6 +16,7 @@ public:
 private:
 	LevelManager m_levelManager;
 	UIManager uiManager;
+	SoundManager& soundManager = SoundManager::instance();
 	sf::Clock m_timerClock;
 	float m_timeLeft;
 	const float LEVEL_TIME = 60.0f;

@@ -14,8 +14,12 @@
 #include "Door.h"
 #include "Bomb.h"
 #include "Explosion.h"
+#include "SoundManager.h"
 #include <iostream>
 #include "Gift.h"
+#include <chrono>
+#include <iomanip>
+#include <sstream>
 #include "SmartEnemy.h"
 
 
@@ -28,6 +32,12 @@ private:
     size_t m_cols;
     int m_level;
 
+    std::chrono::time_point<std::chrono::steady_clock> startTime;
+    void updateTime();
+    int getTimeLeft()const;
+    void startLevel();
+    void addTime(int seconds);
+
     sf::Font m_font;
     void clear();
     void createObject(char symbol, float x, float y);
@@ -35,6 +45,7 @@ private:
 
 public:
     LevelManager();
+
 
     void loadPlaylist(const std::string& filename);
     bool loadLevel();

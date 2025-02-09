@@ -14,6 +14,14 @@ Game::Game()
 //===============================================
 void Game::run() {
 	openMenu();
+	m_levelManager.startLevel();
+	// Load sounds before playing them
+	if (!SoundManager::instance().loadSounds()) {
+		std::cerr << "Failed to load sounds!" << std::endl;
+	}
+
+	SoundManager::instance().playBackground();
+
 	sf::Clock clock;
 	loadTextures();
 	while (m_window.isOpen()) {
@@ -73,10 +81,15 @@ void Game::draw() {
 }
 //===============================================
 void Game::update(float deltaTime, LevelManager& levelManager) {
+
+	m_levelManager.updateTime();
+
+	uiManager.update(0, 0, m_levelManager.getTimeLeft());
 	
 	for (const auto& object : m_levelManager.getGameObjects()) {
 		if (auto* player = dynamic_cast<Player*>(object.get())) {
 			const auto& bombs = player->getBombs();
+
 
 			for (const auto& bomb : bombs) {
 				if (bomb) {
@@ -176,7 +189,6 @@ void Game::handleCollisions() {
 }
 //===============================================
 void Game::saveInitialPositions() {
-
 	for (const auto& obj : m_gameObjects) {
 		if (obj) {
 			m_initialPositions[obj.get()] = obj->getPosition();
@@ -185,7 +197,6 @@ void Game::saveInitialPositions() {
 }
 //===============================================
 void Game::resetPositions() {
-
 	for (const auto& obj : m_gameObjects) {
 		if (obj && obj->isActive()) {
 			auto it = m_initialPositions.find(obj.get());
