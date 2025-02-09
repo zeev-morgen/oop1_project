@@ -28,9 +28,13 @@ void Gift::collide(Wall& wall)  {
 
 }
 
-//void Gift::collide(Rock& rock, float deltaTime, LevelManager& levelManager)  {
-//
-//}
+void Gift::collide(Rock& rock)  {
+
+}
+
+void Gift::collide(SmartEnemy& other) {
+
+}
 
 void Gift::collide(Door& door)  {
 

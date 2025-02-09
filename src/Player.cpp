@@ -58,7 +58,6 @@ void Player::update(float deltaTime, LevelManager& levelManager){
                 std::round(m_position.x / 50) * 50,
                 std::round(m_position.y / 50) * 50
             );
-            //levelManager.addBomb(bombPosition); 
             createBomb(bombPosition);
             m_canPlaceBomb = false; 
 
@@ -70,8 +69,8 @@ void Player::update(float deltaTime, LevelManager& levelManager){
     //sf::Vector2f movement = m_direction * m_moveSpeed * deltaTime;
 
     //set the move to int
-    movement.x = std::round(movement.x);
-    movement.y = std::round(movement.y);
+    /*movement.x = std::round(movement.x);
+    movement.y = std::round(movement.y);*/
 
     tryMove(movement, levelManager);
 }
@@ -105,6 +104,12 @@ void Player::collide(Rock& other) {
 void Player::collide(Door& other)  {
     undoMove();
 	m_finishLevel = true;
+}
+
+void Player::collide(SmartEnemy& other) {
+	undoMove();
+	m_status = false;
+	m_lives--;
 }
 
 void Player::collide(Explosion& other)  {

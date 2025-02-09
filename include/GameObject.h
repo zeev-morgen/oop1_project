@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 //#include "LevelManager.h"
 
+class SmartEnemy;
 class Player;
 class Enemy;
 class Wall;
@@ -54,6 +55,8 @@ public:
     virtual void collide(Rock& other) = 0;
     virtual void collide(Door& other) = 0;
     virtual void collide(Explosion& other) = 0;
+    virtual void collide(SmartEnemy& smartEnemy) = 0;
+
 
     virtual void draw(sf::RenderWindow& window) const = 0;
 

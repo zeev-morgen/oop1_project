@@ -36,6 +36,14 @@ void Explosion::collide(Explosion& other) {
 
 void Explosion::collide(Rock& other) {
 	other.setActive(false);
+}
 
+void Explosion::collide(Wall& wall) {
+}
 
+void Explosion::collide(Door& door) {
+}
+
+void Explosion::collide(SmartEnemy& smartEnemy) {
+	smartEnemy.setActive(false);
 }

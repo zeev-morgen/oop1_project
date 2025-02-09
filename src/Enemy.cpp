@@ -30,9 +30,10 @@ void Enemy::update(float deltaTime, LevelManager& levelManager) {
 
     sf::Vector2f newPosition = getPosition() + movement;
 
-    if (!MoveableObject::isValidPosition(newPosition, levelManager)) {
-        changeDirection(deltaTime, levelManager);
-        return;
+    
+    if (!MoveableObject::isValidPosition(newPosition,levelManager)) {
+        changeDirection();
+        return; 
     }
 
     tryMove(movement, levelManager);
@@ -67,6 +68,10 @@ void Enemy::collide(Enemy& other)  {
     
 }
 
+void Enemy::collide(SmartEnemy& other) {
+
+}
+
 
 void Enemy::collide(Wall& other) {
 	randomLocation();
@@ -83,7 +88,7 @@ void Enemy::collide(Door& other)  {
 }
 
 void Enemy::collide(Explosion& other)  {
-    this->setActive(false);  // ðäøñ îôéöåõ
+    this->setActive(false); 
 
 
 }

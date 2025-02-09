@@ -6,7 +6,7 @@
 SmartEnemy::SmartEnemy(const sf::Texture& texture, const sf::Vector2f& position)
     : MoveableObject(texture, position, Config::ENEMY_SPEED) {
 }
-
+//===============================================
 void SmartEnemy::update(float deltaTime, LevelManager& levelManager) {
     const Player* player = nullptr;
     for (const auto& obj : levelManager.getGameObjects()) {
@@ -24,7 +24,7 @@ void SmartEnemy::update(float deltaTime, LevelManager& levelManager) {
 
     move(deltaTime, levelManager);
 }
-
+//===============================================
 void SmartEnemy::chasePlayer(const Player& player) {
     sf::Vector2f direction = player.getPosition() - getPosition();
     if (std::abs(direction.x) >= std::abs(direction.y)) {
@@ -32,18 +32,17 @@ void SmartEnemy::chasePlayer(const Player& player) {
     } else {
         direction.x = 0;  // נורמליזציה לכיוון אנכי
     }
-    if (direction.x == direction.y ) {
-        direction.x = 0;
-        return;
-    }
-    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-    if (length != 0) {
-        direction /= length;  // נורמליזציה של הכיוון
+    
+    if (direction.x != 0 || direction.y != 0) {
+        float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+        // נורמליזציה של הווקטור
+        direction /= length;
     }
     
     m_currentDirection = direction;
 }
-
+//===============================================
 void SmartEnemy::avoidBombs(const std::vector<std::unique_ptr<GameObject>>& gameObjects) {
     if (isNearBomb(getPosition(), gameObjects)) {
         // שינוי כיוון להימנעות מפצצות
@@ -63,14 +62,14 @@ bool SmartEnemy::isNearBomb(const sf::Vector2f& position, const std::vector<std:
     }
     return false;
 }
-
+//===============================================
 void SmartEnemy::draw(sf::RenderWindow& window) const {
 	window.draw(m_sprite);
 }
 
-//void SmartEnemy::collide(GameObject& other) {
-//    other.collide(*this);
-//}
+void SmartEnemy::collide(GameObject& other) {
+    other.collide(*this);
+}
 
 void SmartEnemy::collide(Player& other) {
     // התנהגות כאשר השומר החכם מתנגש בשחקן
@@ -81,24 +80,31 @@ void SmartEnemy::collide(Enemy& other) {
     // התנהגות כאשר השומר החכם מתנגש בשומר אחר
 }
 
+void SmartEnemy::collide(SmartEnemy& other) {
+    // התנהגות כאשר השומר החכם מתנגש בשומר אחר
+}
+
 void SmartEnemy::collide(Wall& other) {
-    // התנהגות כאשר השומר החכם מתנגש בקיר
+	undoMove();
+	changeDirection();
 }
 
 void SmartEnemy::collide(Rock& other) {
-    // התנהגות כאשר השומר החכם מתנגש בסלע
+	undoMove();
+	changeDirection();
 }
 
 void SmartEnemy::collide(Door& other) {
     // התנהגות כאשר השומר החכם מתנגש בדלת
     undoMove();
+	changeDirection();
 }
 
 void SmartEnemy::collide(Explosion& other) {
     // התנהגות כאשר השומר החכם מתנגש בפיצוץ
     this->setActive(false);
 }
-
+//===============================================
 void SmartEnemy::move(float deltaTime, LevelManager& levelManager) {
 
     if (m_isFrozen) {
@@ -116,7 +122,7 @@ void SmartEnemy::move(float deltaTime, LevelManager& levelManager) {
     sf::Vector2f newPosition = getPosition() + movement;
 
     if (!MoveableObject::isValidPosition(newPosition, levelManager)) {
-        changeDirection(deltaTime, levelManager);
+        changeDirection();
         return;
     }
 

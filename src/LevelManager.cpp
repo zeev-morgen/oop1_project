@@ -251,11 +251,20 @@ void LevelManager::removeInactiveObjects() {
         if (!objects[i]->isActive()) {
             if (auto* rock = dynamic_cast<Rock*>(objects[i].get())) {
                 size_t giftIndex = rock->getGiftIndex();
-               /* if (auto* enemy = dynamic_cast<Enemy*>(objects[i].get())) {
-                    soundManager.playGuard();
-                }*/
-                if (rock->getHasGift() && giftIndex < objects.size()) {                    
+
+                
+                if (rock->getHasGift() && giftIndex < objects.size()) {
+					/*if (auto* gift = dynamic_cast<Gift*>(objects[giftIndex].get())) {
+						gift->setShow(true);
+					}*/
+
                     objects[giftIndex-2]->setShow(true);
+                    objects[giftIndex-1]->setShow(true);
+                    objects[giftIndex]->setShow(true);
+                    objects[giftIndex+1]->setShow(true);
+                    objects[giftIndex+2]->setShow(true);
+					
+					
                 }
             }
         }

@@ -57,3 +57,23 @@ size_t Rock::getGiftIndex() const {
 bool Rock::getHasGift() const {
 	return m_hasGift;
 }
+
+void Rock::collide(Door& door) {
+	undoMove();
+}
+
+void Rock::collide(SmartEnemy& enemy) {
+	undoMove();
+}
+
+void Rock::collide(Rock& other) {
+	other.collide(*this);
+}
+
+void Rock::collide(Wall& other) {
+	other.collide(*this);
+}
+
+void Rock::collide(GameObject& other) {
+	other.collide(*this);
+}
