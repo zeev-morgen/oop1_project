@@ -8,6 +8,7 @@ private:
     sf::Text m_healthText;
     sf::Text m_scoreText;
     sf::Text m_timerText;
+    int timer = 1;
 
 public:
     UIManager() {
@@ -32,11 +33,19 @@ public:
         m_timerText.setPosition(550.f, 5.f);
     }
 
-    
-    void update(int health, int score, float time) {
+    std::string getFormattedTime(int timer) const {
+        int minutes = timer / 60;
+        int seconds = timer % 60;
+
+        std::ostringstream oss;
+        oss << minutes << ":" << std::setw(2) << std::setfill('0') << seconds; // מבטיח תצוגה כמו 1:09
+        return oss.str();
+    }
+
+    void update(int health, int score, float timer) {
         m_healthText.setString("LIVE: " + std::to_string(health));
         m_scoreText.setString("SCORE: " + std::to_string(score));
-        m_timerText.setString("TIMER: " + std::to_string(static_cast<int>(time)));
+        m_timerText.setString("TIMER: " + getFormattedTime(timer));
     }
 
     

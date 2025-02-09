@@ -4,7 +4,8 @@
 #include <FreezeGift.h>
 
 LevelManager::LevelManager()
-    : m_level(0), m_rows(0), m_cols(0)
+: m_level(0), m_rows(0), m_cols(0),remainingTime(90)
+
 {
     TextureManager& textureManager = TextureManager::instance();
     textureManager.loadGameTextures();
@@ -13,7 +14,10 @@ LevelManager::LevelManager()
     m_font.loadFromFile("ARIAL.TTF");
     loadLevel();
 }
-
+//===============================================
+LevelManager::~LevelManager() {
+   
+}
 //===============================================
 
 void LevelManager::loadPlaylist(const std::string& filename) {
@@ -68,7 +72,7 @@ bool LevelManager::loadFromFile(const std::string& filename) {
             }
         }
     }
-    
+    startLevel();
     return true;
 }
 //===============================================
@@ -199,6 +203,7 @@ void LevelManager::createObject(char symbol, float x, float y) {
     }
     break;
 
+
     }
 }
 //===============================================
@@ -246,7 +251,9 @@ void LevelManager::removeInactiveObjects() {
         if (!objects[i]->isActive()) {
             if (auto* rock = dynamic_cast<Rock*>(objects[i].get())) {
                 size_t giftIndex = rock->getGiftIndex();
-                
+               /* if (auto* enemy = dynamic_cast<Enemy*>(objects[i].get())) {
+                    soundManager.playGuard();
+                }*/
                 if (rock->getHasGift() && giftIndex < objects.size()) {                    
                     objects[giftIndex-2]->setShow(true);
                 }
@@ -263,6 +270,31 @@ void LevelManager::removeInactiveObjects() {
     );
 
 }
+
+
+void LevelManager::startLevel() {
+    startTime = std::chrono::steady_clock::now();
+    remainingTime = 90;
+}
+
+void LevelManager::updateTime() {
+    auto now = std::chrono::steady_clock::now();
+    remainingTime = 90 - std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
+
+    if (remainingTime <= 0) {
+        std::cout << "Game Over! Time is up!" << std::endl;
+        // ADD GAME_OVER
+    }
+}
+
+void LevelManager::addTime(int seconds) {
+    remainingTime += seconds;
+    std::cout << "Bonus! +" << seconds << " seconds!" << std::endl;
+}
+
+int LevelManager::getTimeLeft() const {
+    return remainingTime;
+
 //===============================================
 void LevelManager::clearAllBombs() {
     // מחיקת כל הפצצות מהמשחק

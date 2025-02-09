@@ -1,16 +1,14 @@
 #pragma once
 #include "MoveableObject.h"
 #include "Player.h"
+#include "SoundManager.h"
 class LevelManager;
-
-
-
-
 
 class Enemy : public MoveableObject {
 public:
-	Enemy(const sf::Texture& texture, const sf::Vector2f& position);
-	//void update(float deltaTime);
+    Enemy(const sf::Texture& texture, const sf::Vector2f& position);
+    //void update(float deltaTime);
+
 
 	virtual void collide(GameObject& other) override;
 
@@ -21,7 +19,11 @@ public:
 	virtual void collide(Door& other) override;
 	virtual void collide(Explosion& other) override;
 
-	void update(float deltaTime, LevelManager& levelManager) override;
+
+    void update(float deltaTime, LevelManager& levelManager) override;
+
+
+    SoundManager* soundManager; // Use a pointer to the singleton instance
 
 	void draw(sf::RenderWindow& window) const override;
 	void randomLocation();
@@ -38,5 +40,5 @@ private:
 	sf::Vector2f m_startPosition;
 	bool isExplode();
 	static void resetLocation();
-};
 
+};

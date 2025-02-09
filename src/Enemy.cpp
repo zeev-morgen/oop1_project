@@ -1,15 +1,17 @@
 #include "Enemy.h"
 #include "Wall.h"
 #include "LevelManager.h"
+#include "SoundManager.h"
 #include <iostream>
 
 std::vector<Enemy*> Enemy::allEnemies;
 
 Enemy::Enemy(const sf::Texture& texture, const sf::Vector2f& position)
-	: MoveableObject(texture, position, ENEMY_SPEED), m_startPosition(position)
+    : MoveableObject(texture, position, ENEMY_SPEED), m_startPosition(position)
 {
     allEnemies.push_back(this);
     randomLocation();
+    soundManager = &SoundManager::instance(); // Use the singleton instance
 }
 //===============================================
 void Enemy::update(float deltaTime, LevelManager& levelManager) {
@@ -27,18 +29,14 @@ void Enemy::update(float deltaTime, LevelManager& levelManager) {
     movement.y = std::round(movement.y);
 
     sf::Vector2f newPosition = getPosition() + movement;
-    
-    if (!MoveableObject::isValidPosition(newPosition,levelManager)) {
-        changeDirection(deltaTime,levelManager);
-        return; 
+
+    if (!MoveableObject::isValidPosition(newPosition, levelManager)) {
+        changeDirection(deltaTime, levelManager);
+        return;
     }
-    
+
     tryMove(movement, levelManager);
 }
-
-
-//===============================================
-
 
 //===============================================
 void Enemy::randomLocation() {
@@ -53,6 +51,7 @@ void Enemy::randomLocation() {
 void Enemy::collide(GameObject& other) {
     other.collide(*this);
 }
+
 
 
 void Enemy::collide(Player& other)  {
@@ -86,9 +85,10 @@ void Enemy::collide(Door& other)  {
 void Enemy::collide(Explosion& other)  {
     this->setActive(false);  // ðäøñ îôéöåõ
 
+
 }
 
-void Enemy::draw(sf::RenderWindow& window) const  {
+void Enemy::draw(sf::RenderWindow& window) const {
     window.draw(m_sprite);
 }
 
@@ -100,6 +100,7 @@ void Enemy::resetLocation() {
         }
     }
 }
+
 
 void Enemy::freeze(float duration) {
     m_isFrozen = true;

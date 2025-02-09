@@ -12,7 +12,12 @@ configure_file ("gift.jpg" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("explode.jpg" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("bomb.jpg" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("backgraund.jpg" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("background.wav" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("explosion.wav" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("guard.ogg" ${CMAKE_BINARY_DIR} COPYONLY)
+
 configure_file ("timeGift.jpg" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("healthGift.jpg" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("ARIAL.TTF" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("frozenGift.jpg" ${CMAKE_BINARY_DIR} COPYONLY)	
+
