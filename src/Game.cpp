@@ -2,7 +2,7 @@
 
 Game::Game()
 
-	: m_window(sf::VideoMode(m_levelManager.getCols()* Config::TILE_HEIGHT, m_levelManager.getRows()* Config::TILE_HEIGHT+ Config::UI), "SFML Game")
+	: m_window(sf::VideoMode(m_levelManager.getCols()* Config::TILE_HEIGHT, m_levelManager.getRows()* Config::TILE_HEIGHT + Config::UI), "SFML Game")
 	, m_isRunning(true)
 	, m_gameObjects(m_levelManager.getGameObjects())
 	//, m_start(false) // Initialize m_start // addition - check if needed
@@ -15,6 +15,14 @@ Game::Game()
 //===============================================
 void Game::run() {
 	openMenu();
+	m_levelManager.startLevel();
+	// Load sounds before playing them
+	if (!SoundManager::instance().loadSounds()) {
+		std::cerr << "Failed to load sounds!" << std::endl;
+	}
+
+	SoundManager::instance().playBackground();
+
 	sf::Clock clock;
 	loadTextures();
 	while (m_window.isOpen()) {
@@ -59,7 +67,7 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 	m_levelManager.updateTime();
 
 	if (m_player) { // Ensure m_player is not null
-		m_player->update(deltaTime, levelManager);
+		m_player->update(deltaTime*2, levelManager);
 	}
 
 	for (const auto& object : m_levelManager.getGameObjects()) {
@@ -71,7 +79,7 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 	//std::cout << "num of game objects: " << m_levelManager.getGameObjects().size() << std::endl;
 		uiManager.update(0, 0, m_levelManager.getTimeLeft());
 		//uiManager.update(m_levelManager.getTimeLeft(), m_player->getScore(), m_player->getLives());
-	
+	///////
 
 
 	auto& gameObjects = m_levelManager.getGameObjects();

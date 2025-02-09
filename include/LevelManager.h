@@ -14,6 +14,7 @@
 #include "Door.h"
 #include "Bomb.h"
 #include "Explosion.h"
+#include "SoundManager.h"
 #include <iostream>
 #include "Gift.h"
 #include <chrono>
@@ -31,6 +32,7 @@ private:
     float m_tileWidth;
     float m_tileHeight;
     int remainingTime;
+   // SoundManager soundManager;
     
     //TextureManager* m_bobmTexture;
     std::chrono::time_point<std::chrono::steady_clock> startTime;
@@ -47,7 +49,7 @@ private:
 
 public:
     LevelManager();
-
+    ~LevelManager(); // Explicitly declar
     //void init();
     //void setToTile(GameObject* object);
     void updateTime();

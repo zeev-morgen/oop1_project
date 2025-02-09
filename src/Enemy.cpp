@@ -1,16 +1,18 @@
 #include "Enemy.h"
 #include "Wall.h"
 #include "LevelManager.h"
+#include "SoundManager.h"
 #include <iostream>
 
 std::vector<Enemy*> Enemy::allEnemies;
 
 Enemy::Enemy(const sf::Texture& texture, const sf::Vector2f& position)
-	: MoveableObject(texture, position, ENEMY_SPEED), m_startPosition(position)
+    : MoveableObject(texture, position, ENEMY_SPEED), m_startPosition(position)
 {
     allEnemies.push_back(this);
     //setOrigin();
     randomLocation();
+    soundManager = &SoundManager::instance(); // Use the singleton instance
 }
 //===============================================
 void Enemy::update(float deltaTime, LevelManager& levelManager) {
@@ -19,35 +21,14 @@ void Enemy::update(float deltaTime, LevelManager& levelManager) {
     movement.y = std::round(movement.y);
 
     sf::Vector2f newPosition = getPosition() + movement;
-    
-    if (!MoveableObject::isValidPosition(newPosition,levelManager)) {
-        changeDirection(deltaTime,levelManager);
-        return; 
+
+    if (!MoveableObject::isValidPosition(newPosition, levelManager)) {
+        changeDirection(deltaTime, levelManager);
+        return;
     }
-    
+
     tryMove(movement, levelManager);
 }
-
-
-//===============================================
-//void Enemy::update(float deltaTime, LevelManager& levelManager) {
-//    sf::Vector2f movement = m_currentDirection * getSpeed() * deltaTime;
-//
-//    movement.x = std::round(movement.x);
-//    movement.y = std::round(movement.y);
-
-    //if (getPosition().x + movement.x < 0 || getPosition().x + movement.x > Config::WINDOW_WIDTH - Config::TILE_WIDTH) {
-    //    //m_currentDirection.x *= -1;  // äôéëú ëéååï àåô÷é
-    //    changeDirection(deltaTime);
-    //}
-    //if (getPosition().y + movement.y < 0 || getPosition().y + movement.y > Config::WINDOW_HEIGHT - Config::TILE_WIDTH) {
-    //    //m_currentDirection.y *= -1;  // äôéëú ëéååï àðëé
-    //    changeDirection(deltaTime);
-    //}
-
-  /*  tryMove(movement, levelManager);
-}*/
-
 
 //===============================================
 void Enemy::changeDirection(float deltaTime, LevelManager& levelManager) {
@@ -87,39 +68,31 @@ void Enemy::collide(GameObject& other, float deltaTime, LevelManager& levelManag
     other.collide(*this, deltaTime, levelManager);
 }
 
-
-void Enemy::collide(Player& other, float deltaTime, LevelManager& levelManager)  {
-    //resetLocation();
-	/*other.undoMove();
-	other.setActive(false);*/
-	other.setActive(false);
-
+void Enemy::collide(Player& other, float deltaTime, LevelManager& levelManager) {
+    other.setActive(false);
 }
 
-void Enemy::collide(Enemy& other, float deltaTime, LevelManager& levelManager)  {
+void Enemy::collide(Enemy& other, float deltaTime, LevelManager& levelManager) {
     // àåéáéí òåáøéí àçã ãøê äùðé
 }
-
 
 void Enemy::collide(Wall& other, float deltaTime, LevelManager& levelManager) {
     changeDirection(deltaTime, levelManager);
 }
 
-
-void Enemy::collide(Rock& other,float deltaTime,LevelManager& levelManager)  {
+void Enemy::collide(Rock& other, float deltaTime, LevelManager& levelManager) {
     changeDirection(deltaTime, levelManager);  // ðú÷ò áàáï
 }
 
-void Enemy::collide(Door& other, float deltaTime, LevelManager& levelManager)  {
+void Enemy::collide(Door& other, float deltaTime, LevelManager& levelManager) {
     undoMove();  // ðú÷ò áãìú
 }
 
-void Enemy::collide(Explosion& other, float deltaTime, LevelManager& levelManager)  {
-    this->setActive(false);  // ðäøñ îôéöåõ
-
+void Enemy::collide(Explosion& other, float deltaTime, LevelManager& levelManager) {
+    this->setActive(false);
 }
 
-void Enemy::draw(sf::RenderWindow& window) const  {
+void Enemy::draw(sf::RenderWindow& window) const {
     window.draw(m_sprite);
 }
 
@@ -131,11 +104,3 @@ void Enemy::resetLocation() {
         }
     }
 }
-
-//Enemy::~Enemy() {
-//    // äñøú äàåéá îäøùéîä ëùäåà ðäøñ
-//    auto it = std::find(allEnemies.begin(), allEnemies.end(), this);
-//    if (it != allEnemies.end()) {
-//        allEnemies.erase(it);
-//    }
-//}

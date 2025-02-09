@@ -13,7 +13,10 @@ LevelManager::LevelManager()
     m_font.loadFromFile("ARIAL.TTF");
     loadLevel();
 }
-
+//===============================================
+LevelManager::~LevelManager() {
+   
+}
 //===============================================
 
 void LevelManager::loadPlaylist(const std::string& filename) {
@@ -199,7 +202,7 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
         m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(-50, 0), font)); // ùîàìä
         m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, 50), font)); // ìîèä
         m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, -50), font)); // ìîòìä
-
+       
     }
     break;
     }
@@ -294,6 +297,7 @@ void LevelManager::addTheBomb(sf::Vector2f position) {
 void LevelManager::addTheExplosion(sf::Vector2f position) {
 
     TextureManager& textureManager = TextureManager::instance();
+    SoundManager& soundManager = SoundManager::instance();
     textureManager.loadGameTextures();
     sf::Texture* texture = textureManager.getTexture('*');
     if (!texture) {
@@ -302,6 +306,7 @@ void LevelManager::addTheExplosion(sf::Vector2f position) {
     }
 
     m_gameObjects.push_back(std::make_unique<Explosion>(*texture, position, m_font));
+    SoundManager::instance().playExplosion();
 
 }
 //===============================================
@@ -313,7 +318,9 @@ void LevelManager::removeInactiveObjects() {
         if (!objects[i]->isActive()) {
             if (auto* rock = dynamic_cast<Rock*>(objects[i].get())) {
                 size_t giftIndex = rock->getGiftIndex();
-                
+               /* if (auto* enemy = dynamic_cast<Enemy*>(objects[i].get())) {
+                    soundManager.playGuard();
+                }*/
                 if (rock->getHasGift() && giftIndex < objects.size()) {                    
                     objects[giftIndex-2]->setShow(true);
                 }

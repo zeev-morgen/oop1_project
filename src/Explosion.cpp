@@ -10,7 +10,7 @@ void Explosion::update(float deltaTime, LevelManager& levelManager) {
     }
 }
 
-void Explosion::draw(sf::RenderWindow& window) const {
+void Explosion::draw(sf::RenderWindow& window) const{
     if(m_isActive){
 		window.draw(m_sprite);
     }

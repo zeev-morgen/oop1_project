@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "StaticObject.h"
 #include "LevelManager.h"
+#include "SoundManager.h"
 
 class Explosion : public StaticObject {
 public:
@@ -20,4 +21,5 @@ public:
 private:
     sf::Clock m_lifetimeClock;
     float m_lifetime = 1.0f; // זמן מחיקה של הפיצוץ
+    
 };
