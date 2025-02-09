@@ -1,6 +1,6 @@
 #include "Explosion.h"
 
-Explosion::Explosion(const sf::Texture& texture, const sf::Vector2f& position, sf::Font font)
+Explosion::Explosion(const sf::Texture& texture, const sf::Vector2f& position)
     : StaticObject(texture, position) {
 }
 

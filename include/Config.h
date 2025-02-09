@@ -9,7 +9,8 @@ namespace Config {
 	const int TILE_WIDTH = 50;
 	const int EXPLOSION_TIME = 4;
 	const int GAME_TIME = 90;
-	const float EXP_LIFE_TIME = 0.5;
+	const float EXP_LIFE_TIME = 1;
+	const int LEVEL_TIME = 10;
 
 	const int TIME_BONUS = 30;
 	const int GIFT_DUREATION = 10;

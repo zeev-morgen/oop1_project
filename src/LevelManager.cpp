@@ -4,7 +4,7 @@
 #include <FreezeGift.h>
 
 LevelManager::LevelManager()
-    : m_level(0), m_rows(0), m_cols(0), m_tempBomb(nullptr)//, m_player(nullptr), m_door(nullptr)
+    : m_level(0), m_rows(0), m_cols(0), m_tempBomb(nullptr)
 {
     TextureManager& textureManager = TextureManager::instance();
     textureManager.loadGameTextures();
@@ -64,7 +64,7 @@ bool LevelManager::loadFromFile(const std::string& filename) {
             if (symbol != ' ') {
                 float x = static_cast<float>(col) * Config::TILE_WIDTH;
                 float y = static_cast<float>(row) * Config::TILE_HEIGHT + Config::UI;
-                createObject(symbol, x, y, m_font);
+                createObject(symbol, x, y);
             }
         }
     }
@@ -106,12 +106,10 @@ void LevelManager::draw(sf::RenderWindow& window) {
 //===============================================
 void LevelManager::clear() {
     m_gameObjects.clear();
-    //m_player = nullptr;
-    //m_door = nullptr;
 }
 //===============================================
 
-void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
+void LevelManager::createObject(char symbol, float x, float y) {
     TextureManager& textureManager = TextureManager::instance();
     
     sf::Texture* texture = textureManager.getTexture(symbol);
@@ -158,19 +156,14 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
         break;
     }
 
-    case '!':
+	case '!':  // enemy
     {
         m_gameObjects.push_back(std::make_unique<Enemy>(*texture, position));
     }
     break;
 
-    case '%':
-    {
-        m_tempBomb = std::make_unique<Bomb>(*texture, position, font);
-    }
-    break;
 
-    case '/':
+	case '/':  // player
     {
         m_gameObjects.push_back(std::make_unique<Player>(*texture, position));
     }
@@ -188,17 +181,6 @@ void LevelManager::createObject(char symbol, float x, float y, sf::Font font) {
     }
     break;
 
-    case '*':
-    {
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position, font));
-
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(50, 0), font)); 
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(-50, 0), font)); 
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, 50), font));
-        m_tempExplosion.push_back(std::make_unique<Explosion>(*texture, position + sf::Vector2f(0, -50), font));
-
-    }
-    break;
     }
 }
 //===============================================
@@ -237,53 +219,17 @@ std::vector<std::unique_ptr<GameObject>>& LevelManager::getGameObjects()  {
 //===============================================
 
 void LevelManager::addBomb(sf::Vector2f position) {
-    createObject('%', position.x, position.y, m_font);
+    createObject('%', position.x, position.y);
 }
 //===============================================
 
 void LevelManager::addExplosion(sf::Vector2f position) {
 
-    createObject('*', position.x, position.y, m_font);
+    createObject('*', position.x, position.y);
 }
 //===============================================
 sf::Font& LevelManager::getFont() {
     return m_font;
-}
-//===============================================
-std::unique_ptr<GameObject>& LevelManager::getTempBomb() {
-    return m_tempBomb;
-}
-//===============================================
-std::vector<std::unique_ptr<GameObject>>& LevelManager::getTempExplosion() {
-    return m_tempExplosion;
-}
-//===============================================
-void LevelManager::addTheBomb(sf::Vector2f position) {
-
-    TextureManager& textureManager = TextureManager::instance();
-    textureManager.loadGameTextures();
-    sf::Texture* texture = textureManager.getTexture('%');
-    if (!texture) {
-        std::cerr << "Failed to get texture for symbol: " << '%' << std::endl;
-        return;
-    }
-
-    m_gameObjects.push_back(std::make_unique<Bomb>(*texture, position, m_font));
-    m_tempBomb.release();
-}
-//===============================================
-void LevelManager::addTheExplosion(sf::Vector2f position) {
-
-    TextureManager& textureManager = TextureManager::instance();
-    textureManager.loadGameTextures();
-    sf::Texture* texture = textureManager.getTexture('*');
-    if (!texture) {
-        std::cerr << "Failed to get texture for symbol: " << '*' << std::endl;
-        return;
-    }
-
-    m_gameObjects.push_back(std::make_unique<Explosion>(*texture, position, m_font));
-
 }
 //===============================================
 void LevelManager::removeInactiveObjects() {
@@ -322,4 +268,13 @@ void LevelManager::clearAllBombs() {
         ),
         gameObjects.end()
     );
+}
+
+//===============================================
+void LevelManager::resetLevel() {
+	clearAllBombs();
+	m_tempBomb.release();
+	m_tempExplosion.clear();
+	loadLevel();
+    
 }

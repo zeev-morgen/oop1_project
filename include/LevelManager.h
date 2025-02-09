@@ -41,10 +41,6 @@ public:
     void addBomb(sf::Vector2f position);
     void addExplosion(sf::Vector2f position);
     int getLevel() const;
-    std::unique_ptr<GameObject>& getTempBomb();
-    void addTheBomb(sf::Vector2f position);
-    void addTheExplosion(sf::Vector2f position);
-    std::vector<std::unique_ptr<GameObject>>& getTempExplosion();
     size_t getCols();
     size_t getRows()const;
     sf::Font& getFont();
@@ -54,9 +50,11 @@ public:
     void draw(sf::RenderWindow& window);
     void removeInactiveObjects();
 
+    void resetLevel();
+
 private:
     sf::Font m_font;
     void clear();
-    void createObject(char symbol, float x, float y, sf::Font font);
+    void createObject(char symbol, float x, float y);
     void readLevelData(const std::string& filename, std::vector<std::string>& levelData);
 };

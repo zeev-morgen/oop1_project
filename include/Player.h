@@ -1,6 +1,9 @@
 #pragma once
 #include "MoveableObject.h"
+#include "Bomb.h"
+#include <memory>
 class LevelManager;
+class Bomb;
 
 class Player : public MoveableObject {
 public:
@@ -28,7 +31,7 @@ public:
     void setTime(float time);
 	void setStatus(bool status);
 	bool getStatus() const;
-
+	std::vector<std::unique_ptr<Bomb>>& getBombs();
 
 private:
 	float m_moveSpeed;
@@ -39,16 +42,10 @@ private:
     float m_time;
 	bool m_finishLevel = false;
 	bool m_status = true;
+	void createBomb(sf::Vector2f pos);
+	std::vector<std::unique_ptr<Bomb>> m_bombs;
 
-    /*enum class Direction {
-        None,
-        Left,
-        Right,
-        Up,
-        Down
-    };
-    Direction m_lastDirection = Direction::None;*/
-
+    
 	sf::Vector2f m_startPosition;
     sf::Vector2f m_direction;
 };

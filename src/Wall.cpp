@@ -14,7 +14,7 @@ void Wall::collide(GameObject& other)  {
 }
 
 void Wall::collide(Player& player)  {
-    //player.undoMove();
+    player.undoMove();
 }
 
 void Wall::collide(Enemy& enemy)  {
