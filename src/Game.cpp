@@ -6,6 +6,7 @@ Game::Game()
 	, m_isRunning(true)
 	, m_gameObjects(m_levelManager.getGameObjects())
 	, uiManager()
+	, m_timeLeft(Config::LEVEL_TIME)
 {
 	m_window.setFramerateLimit(60);
 	saveInitialPositions();
@@ -46,7 +47,26 @@ void Game::openMenu() {
 void Game::draw() {
 
 	for (const auto& object : m_levelManager.getGameObjects()) {
-		if (object) {
+		if (auto* player = dynamic_cast<Player*>(object.get())) {
+			const auto& bombs = player->getBombs();
+
+			for (const auto& bomb : bombs) {
+				if (bomb) {
+					bomb->draw(m_window);
+
+					const auto& exp = bomb->getExplosions();
+					
+					for (const auto& explosion : exp) {
+						if (explosion) {
+							explosion->draw(m_window);
+						}
+					}
+				}
+			}
+			player->draw(m_window);
+		}
+
+		else if (object) {
 			object->draw(m_window);
 		}
 	}
@@ -55,29 +75,39 @@ void Game::draw() {
 void Game::update(float deltaTime, LevelManager& levelManager) {
 	
 	for (const auto& object : m_levelManager.getGameObjects()) {
-		if (object) {
+		if (auto* player = dynamic_cast<Player*>(object.get())) {
+			const auto& bombs = player->getBombs();
+
+			for (const auto& bomb : bombs) {
+				if (bomb) {
+					bomb->update(deltaTime, levelManager);
+
+					const auto& exp = bomb->getExplosions();
+					for (const auto& explosion : exp) {
+						if (explosion) {
+							explosion->update(deltaTime, levelManager);
+						}
+					}
+				}
+			}
+			player->update(deltaTime, levelManager);
+		}
+
+		else if (object) {
 			object->update(deltaTime, levelManager);
 		}
 	}
 	
-
-	if (auto& tempBomb = m_levelManager.getTempBomb()) {
-		m_levelManager.addTheBomb(tempBomb->getPosition());
-	}
-
-	const auto& tempExplosion = m_levelManager.getTempExplosion();
-
-	for (const auto& exp : tempExplosion) {
-		if (exp) {
-			m_levelManager.addTheExplosion(exp->getPosition());
-		}
-	}
-
-	m_levelManager.getTempExplosion().clear();
-	handleCollisions();
+	//handleCollisions();
 	updatePlayerData();
 	m_levelManager.removeInactiveObjects();
 	isLevelComplete();
+
+	/*m_timeLeft -= deltaTime;
+	if (m_timeLeft <= 0) {
+		m_levelManager.resetLevel();
+		m_timeLeft = Config::LEVEL_TIME;
+	}*/
 }
 
 
@@ -105,6 +135,10 @@ void Game::handleEvents() {
 void Game::handleCollisions() {
     
     for (size_t i = 0; i < m_gameObjects.size(); ++i) {
+		/*if (dynamic_cast<Wall*>(m_gameObjects[i].get())) {
+			continue;
+		}*/
+
         for (size_t j = i + 1; j < m_gameObjects.size(); ++j) {
             if (m_gameObjects[i]->getBounds().intersects(m_gameObjects[j]->getBounds())) {
                 m_gameObjects[i]->collide(*m_gameObjects[j]);
@@ -112,6 +146,33 @@ void Game::handleCollisions() {
             }
         }
     }
+
+	Player* player = nullptr;
+	for (const auto& obj : m_gameObjects) {
+		if (auto* p = dynamic_cast<Player*>(obj.get())) {
+			player = p;
+			break;
+		}
+	}
+
+	if (player) {
+		for (const auto& bomb : player->getBombs()) {
+			if (bomb) {
+				for (const auto& explosion : bomb->getExplosions()) {
+					for (const auto& obj : m_gameObjects) {
+						if (obj->isActive() && obj->checkCollision(*explosion) && explosion) {
+
+							obj->collide(*explosion);
+							explosion->collide(*obj);
+						}
+					}
+				}
+			}
+		}
+		if (!player->getStatus()) {
+			player->getBombs().clear();
+		}
+	}
 }
 //===============================================
 void Game::saveInitialPositions() {
@@ -191,7 +252,5 @@ void Game::updatePlayerData() {
 void Game::resetGameState() {
 	resetPositions();
 
-	m_levelManager.clearAllBombs();
-	m_levelManager.getTempExplosion().clear();
-
+	//m_levelManager.clearAllBombs();
 }

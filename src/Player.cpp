@@ -58,7 +58,8 @@ void Player::update(float deltaTime, LevelManager& levelManager){
                 std::round(m_position.x / 50) * 50,
                 std::round(m_position.y / 50) * 50
             );
-            levelManager.addBomb(bombPosition);  
+            //levelManager.addBomb(bombPosition); 
+            createBomb(bombPosition);
             m_canPlaceBomb = false; 
 
         }
@@ -110,7 +111,6 @@ void Player::collide(Explosion& other)  {
 	undoMove();
     setStatus(false);
 	this->m_lives--;
-	std::cout << "collision" << std::endl;
 }
 
 void Player::collide(Player& other) {
@@ -149,111 +149,20 @@ bool Player::getStatus() const {
 	return m_status;
 }
 
-//void Player::update(float deltaTime, LevelManager& levelManager) {
-//    m_direction = sf::Vector2f(0.0f, 0.0f);
-//
-//    // בדיקה איזה מקשים לחוצים כרגע
-//    bool leftPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Left);
-//    bool rightPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Right);
-//    bool upPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
-//    bool downPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Down);
-//
-//    // שמירת הכיוון הקודם לפני העדכון
-//    sf::Vector2f previousDirection = m_direction;
-//    Direction previousLastDirection = m_lastDirection;
-//
-//    // קביעת הכיוון בהתבסס על המקש האחרון שנלחץ
-//    if (leftPressed && !rightPressed) {
-//        m_direction.x = -1.0f;
-//        m_lastDirection = Direction::Left;
-//    }
-//    else if (rightPressed && !leftPressed) {
-//        m_direction.x = 1.0f;
-//        m_lastDirection = Direction::Right;
-//    }
-//    else if (upPressed && !downPressed) {
-//        m_direction.y = -1.0f;
-//        m_lastDirection = Direction::Up;
-//    }
-//    else if (downPressed && !upPressed) {
-//        m_direction.y = 1.0f;
-//        m_lastDirection = Direction::Down;
-//    }
-//
-//    // חישוב התנועה הראשונית
-//    sf::Vector2f movement = m_direction * m_moveSpeed * deltaTime;
-//
-//    const float GRID_SIZE = 50.0f;
-//    const float SNAP_THRESHOLD = 15.0f;
-//    const float CORNER_THRESHOLD = GRID_SIZE * 0.7f; // סף לבדיקת מעבר פינה
-//
-//    // שמירת המיקום הנוכחי לפני הניסיון לזוז
-//    sf::Vector2f originalPos = m_position;
-//
-//    // ניסיון ראשון לזוז
-//    tryMove(movement, levelManager);
-//
-//    // אם התנועה נחסמה (המיקום לא השתנה) ויש כיוון תנועה
-//    if (m_position == originalPos && m_direction != sf::Vector2f(0.0f, 0.0f)) {
-//        // בדיקה אם אנחנו קרובים לפינה של משבצת
-//        sf::Vector2f currentCell(
-//            std::round(m_position.x / GRID_SIZE) * GRID_SIZE,
-//            std::round(m_position.y / GRID_SIZE) * GRID_SIZE
-//        );
-//
-//        float xOffset = std::abs(m_position.x - currentCell.x);
-//        float yOffset = std::abs(m_position.y - currentCell.y);
-//
-//        // ניסיון להחליק לצד המתאים
-//        sf::Vector2f slideMovement(0.0f, 0.0f);
-//
-//        if (m_direction.x != 0) { // אם מנסים לנוע שמאלה או ימינה
-//            // בודק אם קרוב יותר לתא העליון או התחתון
-//            if (yOffset > 0) {
-//                if (m_position.y > currentCell.y) {
-//                    slideMovement.y = 1.0f; // החלקה למטה
-//                }
-//                else {
-//                    slideMovement.y = -1.0f; // החלקה למעלה
-//                }
-//            }
-//        }
-//        else if (m_direction.y != 0) { // אם מנסים לנוע למעלה או למטה
-//            // בודק אם קרוב יותר לתא השמאלי או הימני
-//            if (xOffset > 0) {
-//                if (m_position.x > currentCell.x) {
-//                    slideMovement.x = 1.0f; // החלקה ימינה
-//                }
-//                else {
-//                    slideMovement.x = -1.0f; // החלקה שמאלה
-//                }
-//            }
-//        }
-//
-//        // אם מצאנו כיוון החלקה, מנסים להחליק
-//        if (slideMovement != sf::Vector2f(0.0f, 0.0f)) {
-//            sf::Vector2f slideAttempt = slideMovement * m_moveSpeed * deltaTime;
-//            tryMove(slideAttempt, levelManager);
-//
-//            // אם ההחלקה הצליחה, מנסים שוב את התנועה המקורית
-//            if (m_position != originalPos) {
-//                tryMove(movement, levelManager);
-//            }
-//        }
-//    }
-//
-//    // טיפול בהנחת פצצות
-//    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-//        if (m_canPlaceBomb) {
-//            sf::Vector2f bombPosition = sf::Vector2f(
-//                std::round(m_position.x / GRID_SIZE) * GRID_SIZE,
-//                std::round(m_position.y / GRID_SIZE) * GRID_SIZE
-//            );
-//            levelManager.addBomb(bombPosition);
-//            m_canPlaceBomb = false;
-//        }
-//    }
-//    else {
-//        m_canPlaceBomb = true;
-//    }
-//}
+//===============================================
+void Player::createBomb(sf::Vector2f position) {
+	//load the texture of the bomb and create a new bomb
+    TextureManager& textureManager = TextureManager::instance();
+
+    sf::Texture* texture = textureManager.getTexture('%');
+    if (!texture) {
+        std::cerr << "Failed to get texture for symbol: " << '%' << std::endl;
+        return;
+    }
+
+    m_bombs.push_back(std::make_unique<Bomb>(*texture, position));
+}
+//===============================================
+std::vector<std::unique_ptr<Bomb>>& Player::getBombs() {
+	return m_bombs;
+}

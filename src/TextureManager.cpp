@@ -34,4 +34,5 @@ void TextureManager::loadGameTextures() {
     loadTexture('D', "door.jpg");
     loadTexture('T', "healthGift.jpg");
     loadTexture('H', "timeGift.jpg");
+	loadTexture('F', "frozenGift.jpg");
 }

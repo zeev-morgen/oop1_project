@@ -6,7 +6,7 @@
 
 class Explosion : public StaticObject {
 public:
-    Explosion(const sf::Texture& texture, const sf::Vector2f& position, sf::Font font);
+    Explosion(const sf::Texture& texture, const sf::Vector2f& position);
     void update(float deltaTime, LevelManager& levelManager) override;
     void draw(sf::RenderWindow& window) const override;
 

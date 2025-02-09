@@ -25,11 +25,13 @@ public:
 
 	void draw(sf::RenderWindow& window) const override;
 	void randomLocation();
+	void freeze(float duration);
+	
 	//~Enemy();
 private:
 	static std::vector<Enemy*> allEnemies;
 	sf::Vector2f m_currentDirection;
-	void changeDirection(float deltaTime, LevelManager& levelManager);
+	
 	
 	static constexpr float ENEMY_SPEED = 60.0f;
 

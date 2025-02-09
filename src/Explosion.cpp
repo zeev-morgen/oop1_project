@@ -1,6 +1,6 @@
 #include "Explosion.h"
 
-Explosion::Explosion(const sf::Texture& texture, const sf::Vector2f& position, sf::Font font)
+Explosion::Explosion(const sf::Texture& texture, const sf::Vector2f& position)
     : StaticObject(texture, position) {
 }
 
@@ -22,6 +22,7 @@ void Explosion::collide(GameObject& other) {
 
 void Explosion::collide(Enemy& other) {
 	other.setActive(false);
+
 }
 
 void Explosion::collide(Player& other) {

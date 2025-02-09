@@ -8,8 +8,10 @@ class LevelManager;
 MoveableObject::MoveableObject(const sf::Texture& texture, const sf::Vector2f& position, float speed)
 	: GameObject(texture, position),
 	m_speed(speed),
-	m_isMoving(false)
+	m_isMoving(false),
+	m_isFrozen(false)
 {
+	m_freezeTime = Config::FREEZE_DURATION;
 	m_direction = {0.f, 0.f};
 }
 //===============================================
@@ -140,4 +142,28 @@ void MoveableObject::alignToTile() {
 //===============================================
 bool MoveableObject::isBlocked() const {
     return m_isBlocked; 
+}
+//===============================================
+void MoveableObject::changeDirection(float deltaTime, LevelManager& levelManager) {
+    const sf::Vector2f possibleDirections[] = {
+                {1.0f, 0.0f},
+                {-1.0f, 0.0f},
+                {0.0f, 1.0f},
+                {0.0f, -1.0f}
+    };
+
+    // save the current direction
+    sf::Vector2f oldDirection = m_currentDirection;
+    int attempts = 0;
+
+    // do {
+    int randomIndex = rand() % 4;
+    m_currentDirection = possibleDirections[randomIndex];
+    attempts++;
+
+    if (attempts > 2) {
+        m_currentDirection = oldDirection;
+        // break;
+    }
+    // } while (!MoveableObject::isValidPosition(getPosition() + (m_currentDirection * getSpeed() * deltaTime), levelManager));
 }

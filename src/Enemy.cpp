@@ -13,6 +13,15 @@ Enemy::Enemy(const sf::Texture& texture, const sf::Vector2f& position)
 }
 //===============================================
 void Enemy::update(float deltaTime, LevelManager& levelManager) {
+
+    if (m_isFrozen) {
+        m_freezeTimeLeft -= deltaTime;
+        if (m_freezeTimeLeft <= 0) {
+            m_isFrozen = false;
+        }
+        return;  
+    }
+
     sf::Vector2f movement = m_currentDirection * getSpeed() * deltaTime;
     movement.x = std::round(movement.x);
     movement.y = std::round(movement.y);
@@ -30,29 +39,6 @@ void Enemy::update(float deltaTime, LevelManager& levelManager) {
 
 //===============================================
 
-void Enemy::changeDirection(float deltaTime, LevelManager& levelManager) {
-    const sf::Vector2f possibleDirections[] = {
-                {1.0f, 0.0f},   
-                {-1.0f, 0.0f},  
-                {0.0f, 1.0f},   
-                {0.0f, -1.0f}  
-    };
-
-    // save the current direction
-    sf::Vector2f oldDirection = m_currentDirection;
-    int attempts = 0;
-
-   // do {
-        int randomIndex = rand() % 4; 
-        m_currentDirection = possibleDirections[randomIndex];
-        attempts++;
-
-        if (attempts > 2) {
-            m_currentDirection = oldDirection;
-           // break;
-        }
-   // } while (!MoveableObject::isValidPosition(getPosition() + (m_currentDirection * getSpeed() * deltaTime), levelManager));
-}
 
 //===============================================
 void Enemy::randomLocation() {
@@ -113,5 +99,10 @@ void Enemy::resetLocation() {
             enemy->setPosition(enemy->m_startPosition);
         }
     }
+}
+
+void Enemy::freeze(float duration) {
+    m_isFrozen = true;
+    m_freezeTimeLeft = duration;
 }
 
