@@ -21,7 +21,7 @@
 #include <iomanip>
 #include <sstream>
 #include "SmartEnemy.h"
-
+#include <unordered_map>
 
 class LevelManager {
 private:
@@ -44,7 +44,7 @@ private:
 
 public:
     LevelManager();
-
+    std::unordered_map<Rock*, Gift*> rockToGift;
     int remainingTime;
     void loadPlaylist(const std::string& filename);
     bool loadLevel();

@@ -143,45 +143,33 @@ void LevelManager::createObject(char symbol, float x, float y) {
     sf::Vector2f position(x, y);
 
     switch (symbol) {
-    case '@':  // rock
+    case '@':  // Rock
     {
         auto rockPtr = std::make_unique<Rock>(*texture, position);
+        Gift* giftPtr = nullptr;
 
-        if (rand() % 4 == 0) { 
-            int giftType = rand() % 4;
+        if (rand() % 4 == 0) {
+            // בחירת סוג מתנה
+			std::cout << "Gift!" << std::endl;
+            char giftSymbols[] = { '$', 'T', 'H', 'F' };
+            char selectedGift = giftSymbols[rand() % 4];
 
-            switch (giftType) {
+            texture = textureManager.getTexture(selectedGift);
+            auto gift = std::make_unique<Gift>(*texture, position);
 
-            case 0:
-                texture = textureManager.getTexture('$');
-                m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
-				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
-				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
-                break;
-
-            case 1:
-                texture = textureManager.getTexture('T');
-                m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
-				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
-				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
-                break;
-
-            case 2:
-                texture = textureManager.getTexture('H');
-                m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
-				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
-				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
-                break;
-            
-            case 3:
-				texture = textureManager.getTexture('F');
-                m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
-                rockPtr->setGiftIndex(m_gameObjects.size() - 1);
-                std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
-                break;
-            }  
+            giftPtr = gift.get();  // שמירת מצביע
+            m_gameObjects.push_back(std::move(gift)); // הכנסת המתנה לווקטור
         }
+
+        // הכנסת הסלע לווקטור
+        Rock* rockRawPtr = rockPtr.get();
         m_gameObjects.push_back(std::move(rockPtr));
+
+        // אם יש מתנה, שמור אותה במפה לסלע הזה
+        if (giftPtr) {
+            rockToGift[rockRawPtr] = giftPtr;
+        }
+
         break;
     }
 
@@ -266,48 +254,28 @@ sf::Font& LevelManager::getFont() {
 }
 //===============================================
 void LevelManager::removeInactiveObjects() {
-    //    auto& objects = m_gameObjects;
-    //	
-    //    for (size_t i = 0; i < objects.size(); i++) {
-    //        if (!objects[i]->isActive()) {
-    //            if (auto* rock = dynamic_cast<Rock*>(objects[i].get())) {
-    //                size_t giftIndex = rock->getGiftIndex();
-    //
-    //                
-    //                if (rock->getHasGift() && giftIndex < objects.size()) {
-    //					/*if (auto* gift = dynamic_cast<Gift*>(objects[giftIndex].get())) {
-    //						gift->setShow(true);
-    //					}*/
-    //
-    //                    objects[giftIndex-2]->setShow(true);
-    //                    objects[giftIndex-1]->setShow(true);
-    //                    objects[giftIndex]->setShow(true);
-    //                    objects[giftIndex+1]->setShow(true);
-    //                    objects[giftIndex+2]->setShow(true);
-    //					
-    //					
-    //                }
-    //            }
-    //        }
-    //    }
-    //
-    //    objects.erase(
-    //        std::remove_if(objects.begin(), objects.end(),
-    //            [](const std::unique_ptr<GameObject>& obj) {
-    //                return obj && !obj->isActive();
-    //            }),
-    //        objects.end()
-    //    );
-    //
-    //}
     for (const auto& object : m_gameObjects) {
         if (!object->isActive()) {
-            if (dynamic_cast<Enemy*>(object.get()) != nullptr || dynamic_cast<SmartEnemy*>(object.get()) != nullptr) {
-                increaseScore(Config::SCORE_GUARD); // Add 5 points for each defeated enemy
+            // אם האובייקט הוא אויב, נוסיף נקודות
+            if (dynamic_cast<Enemy*>(object.get()) || dynamic_cast<SmartEnemy*>(object.get())) {
+                increaseScore(Config::SCORE_GUARD);
+            }
+
+            // אם האובייקט הוא סלע, נבדוק אם יש לו מתנה במפה
+            if (auto* rock = dynamic_cast<Rock*>(object.get())) {
+                auto it = rockToGift.find(rock);
+                if (it != rockToGift.end()) {
+                    Gift* gift = it->second;
+                    if (gift) {
+                        gift->setShow(true);  // מציגים את המתנה
+                    }
+                    rockToGift.erase(it); // מוחקים מהמפה כי הסלע נמחק
+                }
             }
         }
     }
 
+    // מחיקת אובייקטים לא פעילים מהווקטור
     m_gameObjects.erase(
         std::remove_if(m_gameObjects.begin(), m_gameObjects.end(),
             [](const std::unique_ptr<GameObject>& obj) {
