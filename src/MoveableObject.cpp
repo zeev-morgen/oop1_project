@@ -81,45 +81,6 @@ void MoveableObject::tryMove(const sf::Vector2f& movement, LevelManager& levelMa
     }
 }
 
-//void MoveableObject::tryMove(const sf::Vector2f& movement, LevelManager& levelManager) {
-//    sf::Vector2f newPosition = getPosition() + movement;
-//    bool wasBlocked = false;
-//
-//    // בדיקת גבולות המסך
-//    if (newPosition.x < 0) {
-//        newPosition.x = 0;
-//        wasBlocked = true;
-//    }
-//    else if (newPosition.x > (levelManager.getCols() - 1) * Config::TILE_HEIGHT) {
-//        newPosition.x = (levelManager.getCols() - 1) * Config::TILE_HEIGHT;
-//        wasBlocked = true;
-//    }
-//
-//    if (newPosition.y < Config::UI) {
-//        newPosition.y = Config::UI;
-//        wasBlocked = true;
-//    }
-//    else if (newPosition.y > (levelManager.getRows() - 1) * Config::TILE_HEIGHT + Config::UI) {
-//        newPosition.y = (levelManager.getRows() - 1) * Config::TILE_HEIGHT + Config::UI;
-//        wasBlocked = true;
-//    }
-//
-//    // שמירת המיקום הקודם לפני העדכון
-//    m_prevPosition = getPosition();
-//
-//    // עדכון המיקום החדש
-//    setPosition(newPosition);
-//
-//    // עדכון סטטוס התנועה
-//    m_isMoving = (newPosition != m_prevPosition);
-//    m_isBlocked = wasBlocked;
-//}
-
-//===============================================
-
-//void MoveableObject::collide(GameObject& other) {
-//    other.collide(*this);
-//}
 //===============================================
 void MoveableObject::alignToTile() {
     sf::Vector2f currentPos = getPosition();
@@ -144,7 +105,7 @@ bool MoveableObject::isBlocked() const {
     return m_isBlocked; 
 }
 //===============================================
-void MoveableObject::changeDirection(float deltaTime, LevelManager& levelManager) {
+void MoveableObject::changeDirection() {
     const sf::Vector2f possibleDirections[] = {
                 {1.0f, 0.0f},
                 {-1.0f, 0.0f},
@@ -152,18 +113,7 @@ void MoveableObject::changeDirection(float deltaTime, LevelManager& levelManager
                 {0.0f, -1.0f}
     };
 
-    // save the current direction
-    sf::Vector2f oldDirection = m_currentDirection;
-    int attempts = 0;
-
-    // do {
     int randomIndex = rand() % 4;
     m_currentDirection = possibleDirections[randomIndex];
-    attempts++;
-
-    if (attempts > 2) {
-        m_currentDirection = oldDirection;
-        // break;
-    }
-    // } while (!MoveableObject::isValidPosition(getPosition() + (m_currentDirection * getSpeed() * deltaTime), levelManager));
 }
+//===============================================

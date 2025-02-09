@@ -29,7 +29,7 @@ void Enemy::update(float deltaTime, LevelManager& levelManager) {
     sf::Vector2f newPosition = getPosition() + movement;
     
     if (!MoveableObject::isValidPosition(newPosition,levelManager)) {
-        changeDirection(deltaTime,levelManager);
+        changeDirection();
         return; 
     }
     

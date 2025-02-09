@@ -32,16 +32,7 @@ void SmartEnemy::chasePlayer(const Player& player) {
     } else {
         direction.x = 0;  // נורמליזציה לכיוון אנכי
     }
-    /*if (direction.x == direction.y ) {
-        direction.x = 0;
-        m_currentDirection = direction;
-        return;
-    }*/
-    //float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-    //if (length != 0) {
-    //    direction /= length;  // נורמליזציה של הכיוון
-    //}
-
+    
     if (direction.x != 0 || direction.y != 0) {
         float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
@@ -95,15 +86,18 @@ void SmartEnemy::collide(SmartEnemy& other) {
 
 void SmartEnemy::collide(Wall& other) {
 	undoMove();
+	changeDirection();
 }
 
 void SmartEnemy::collide(Rock& other) {
 	undoMove();
+	changeDirection();
 }
 
 void SmartEnemy::collide(Door& other) {
     // התנהגות כאשר השומר החכם מתנגש בדלת
     undoMove();
+	changeDirection();
 }
 
 void SmartEnemy::collide(Explosion& other) {
@@ -128,7 +122,7 @@ void SmartEnemy::move(float deltaTime, LevelManager& levelManager) {
     sf::Vector2f newPosition = getPosition() + movement;
 
     if (!MoveableObject::isValidPosition(newPosition, levelManager)) {
-        changeDirection(deltaTime, levelManager);
+        changeDirection();
         return;
     }
 

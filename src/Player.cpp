@@ -58,7 +58,6 @@ void Player::update(float deltaTime, LevelManager& levelManager){
                 std::round(m_position.x / 50) * 50,
                 std::round(m_position.y / 50) * 50
             );
-            //levelManager.addBomb(bombPosition); 
             createBomb(bombPosition);
             m_canPlaceBomb = false; 
 

@@ -22,12 +22,10 @@ protected:
 		sf::Vector2f testMove = direction * speed * deltaTime;
 		return isValidPosition(getPosition() + testMove, levelManager);
 	}
-	void changeDirection(float deltaTime, LevelManager& levelManager);
+	void changeDirection();
 
 public:
 	MoveableObject(const sf::Texture& texture, const sf::Vector2f& position, float speed);
-
-	//void alignToTile(sf::Vector2f& position);
 
 	virtual void move(const sf::Vector2f& movement);
 	virtual void setDirection(sf::Vector2f direction);
@@ -38,7 +36,6 @@ public:
 
 
 	bool isBlocked() const;
-	//void collide(GameObject& other) override;
 
 	virtual void update(float deltaTime, LevelManager& levelManager) = 0;
 	virtual void draw(sf::RenderWindow& window) const = 0;
