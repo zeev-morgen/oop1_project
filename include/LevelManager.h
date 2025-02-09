@@ -22,13 +22,15 @@ class LevelManager {
 private:
     std::vector<std::unique_ptr<GameObject>> m_gameObjects;
     std::vector<std::string> m_levelFiles;
-    std::vector<std::unique_ptr <GameObject>> m_tempExplosion;
-    std::unique_ptr<GameObject> m_tempBomb;
-    std::unique_ptr<GameObject> m_tempGift;
 
     size_t m_rows;
     size_t m_cols;
     int m_level;
+
+    sf::Font m_font;
+    void clear();
+    void createObject(char symbol, float x, float y);
+    void readLevelData(const std::string& filename, std::vector<std::string>& levelData);
 
 public:
     LevelManager();
@@ -38,23 +40,13 @@ public:
     bool loadFromFile(const std::string& filename);
     bool nextLevel();
     std::vector<std::unique_ptr<GameObject>>& getGameObjects() ;
-    void addBomb(sf::Vector2f position);
-    void addExplosion(sf::Vector2f position);
     int getLevel() const;
     size_t getCols();
     size_t getRows()const;
     sf::Font& getFont();
     void clearAllBombs();
-
-
     void draw(sf::RenderWindow& window);
     void removeInactiveObjects();
-
     void resetLevel();
-
-private:
-    sf::Font m_font;
-    void clear();
-    void createObject(char symbol, float x, float y);
-    void readLevelData(const std::string& filename, std::vector<std::string>& levelData);
+    void freezeAllEnemies(float duration);
 };

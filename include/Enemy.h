@@ -25,6 +25,8 @@ public:
 
 	void draw(sf::RenderWindow& window) const override;
 	void randomLocation();
+	void freeze(float duration);
+	
 	//~Enemy();
 private:
 	static std::vector<Enemy*> allEnemies;
@@ -36,5 +38,7 @@ private:
 	sf::Vector2f m_startPosition;
 	bool isExplode();
 	static void resetLocation();
+	bool m_isFrozen = false;
+	float m_freezeTimeLeft;
 };
 

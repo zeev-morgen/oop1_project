@@ -7,5 +7,5 @@ public:
     virtual void collide(Player& player) override;
 
 private:
-    static const float FREEZE_DURATION; // 10 seconds
+    static const float Config::FREEZE_DURATION; 
 };

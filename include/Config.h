@@ -11,6 +11,7 @@ namespace Config {
 	const int GAME_TIME = 90;
 	const float EXP_LIFE_TIME = 1;
 	const int LEVEL_TIME = 10;
+	const int FREEZE_DURATION = 10;
 
 	const int TIME_BONUS = 30;
 	const int GIFT_DUREATION = 10;

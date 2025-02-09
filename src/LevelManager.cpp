@@ -4,7 +4,7 @@
 #include <FreezeGift.h>
 
 LevelManager::LevelManager()
-    : m_level(0), m_rows(0), m_cols(0), m_tempBomb(nullptr)
+    : m_level(0), m_rows(0), m_cols(0)
 {
     TextureManager& textureManager = TextureManager::instance();
     textureManager.loadGameTextures();
@@ -125,8 +125,8 @@ void LevelManager::createObject(char symbol, float x, float y) {
     {
         auto rockPtr = std::make_unique<Rock>(*texture, position);
 
-        if (rand() % 3 == 0) { 
-            int giftType = rand() % 3;
+        if (rand() % 4 == 0) { 
+            int giftType = rand() % 4;
 
             switch (giftType) {
 
@@ -150,7 +150,14 @@ void LevelManager::createObject(char symbol, float x, float y) {
 				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
 				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
                 break;
-            }
+            
+            case 3:
+				texture = textureManager.getTexture('F');
+                m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
+                rockPtr->setGiftIndex(m_gameObjects.size() - 1);
+                std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
+                break;
+            }  
         }
         m_gameObjects.push_back(std::move(rockPtr));
         break;
@@ -217,17 +224,6 @@ std::vector<std::unique_ptr<GameObject>>& LevelManager::getGameObjects()  {
     return m_gameObjects;
 }
 //===============================================
-
-void LevelManager::addBomb(sf::Vector2f position) {
-    createObject('%', position.x, position.y);
-}
-//===============================================
-
-void LevelManager::addExplosion(sf::Vector2f position) {
-
-    createObject('*', position.x, position.y);
-}
-//===============================================
 sf::Font& LevelManager::getFont() {
     return m_font;
 }
@@ -273,8 +269,14 @@ void LevelManager::clearAllBombs() {
 //===============================================
 void LevelManager::resetLevel() {
 	clearAllBombs();
-	m_tempBomb.release();
-	m_tempExplosion.clear();
 	loadLevel();
     
+}
+//===============================================
+void LevelManager::freezeAllEnemies(float duration) {
+    for (auto& obj : m_gameObjects) {
+        if (auto* enemy = dynamic_cast<Enemy*>(obj.get())) {
+            enemy->freeze(duration);
+        }
+    }
 }

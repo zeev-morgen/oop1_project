@@ -13,6 +13,15 @@ Enemy::Enemy(const sf::Texture& texture, const sf::Vector2f& position)
 }
 //===============================================
 void Enemy::update(float deltaTime, LevelManager& levelManager) {
+
+    if (m_isFrozen) {
+        m_freezeTimeLeft -= deltaTime;
+        if (m_freezeTimeLeft <= 0) {
+            m_isFrozen = false;
+        }
+        return;  
+    }
+
     sf::Vector2f movement = m_currentDirection * getSpeed() * deltaTime;
     movement.x = std::round(movement.x);
     movement.y = std::round(movement.y);
@@ -113,5 +122,10 @@ void Enemy::resetLocation() {
             enemy->setPosition(enemy->m_startPosition);
         }
     }
+}
+
+void Enemy::freeze(float duration) {
+    m_isFrozen = true;
+    m_freezeTimeLeft = duration;
 }
 
