@@ -33,6 +33,7 @@ private:
     int m_level;
     int m_savedPlayerScore;
     int m_savedPlayerLives;
+	int m_numEnemies;
 
     
 
@@ -67,4 +68,5 @@ public:
     void addTime(int seconds);
 	void savePlayerData(Player& player);
 	void loadPlayerData(Player& player);
+    void increaseScore(int points);
 };

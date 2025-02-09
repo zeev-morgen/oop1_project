@@ -14,4 +14,5 @@ namespace Config {
 	const int TIME_BONUS = 30;
 	const int GIFT_DUREATION = 10;
 	const int UI = 50;
+	const int SCORE_GUARD = 5;
 }
