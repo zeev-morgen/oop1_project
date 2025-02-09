@@ -1,5 +1,4 @@
-#ifndef SOUNDMANAGER_H
-#define SOUNDMANAGER_H
+#pragma once
 
 #include <SFML/Audio.hpp>
 #include <string>
@@ -43,5 +42,3 @@ private:
     sf::Sound menuSound;
     sf::Sound guardSound;
 };
-
-#endif // SOUNDMANAGER_H

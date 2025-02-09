@@ -32,7 +32,7 @@ bool SoundManager::loadSounds() {
 
     backgroundSound.setBuffer(backgroundBuffer);
     backgroundSound.setLoop(true);
-    backgroundSound.setVolume(30);
+    backgroundSound.setVolume(40);
 
     explosionSound.setBuffer(explosionBuffer);
     explosionSound.setVolume(60);

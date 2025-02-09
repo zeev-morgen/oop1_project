@@ -4,7 +4,7 @@
 #include <FreezeGift.h>
 
 LevelManager::LevelManager()
-: m_level(0), m_rows(0), m_cols(0),remainingTime(90)
+: m_level(0), m_rows(0), m_cols(0), remainingTime(Config::LEVEL_TIME)
 
 {
     TextureManager& textureManager = TextureManager::instance();
@@ -13,10 +13,6 @@ LevelManager::LevelManager()
     loadPlaylist("Playlist.txt");
     m_font.loadFromFile("ARIAL.TTF");
     loadLevel();
-}
-//===============================================
-LevelManager::~LevelManager() {
-   
 }
 //===============================================
 
@@ -283,12 +279,12 @@ void LevelManager::removeInactiveObjects() {
 
 void LevelManager::startLevel() {
     startTime = std::chrono::steady_clock::now();
-    remainingTime = 90;
+    remainingTime = Config::LEVEL_TIME;
 }
 
 void LevelManager::updateTime() {
     auto now = std::chrono::steady_clock::now();
-    remainingTime = 90 - std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
+    remainingTime = Config::LEVEL_TIME - std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
 
     if (remainingTime <= 0) {
         std::cout << "Game Over! Time is up!" << std::endl;
@@ -303,26 +299,12 @@ void LevelManager::addTime(int seconds) {
 
 int LevelManager::getTimeLeft() const {
     return remainingTime;
-
-//===============================================
-void LevelManager::clearAllBombs() {
-    // מחיקת כל הפצצות מהמשחק
-    auto& gameObjects = getGameObjects();
-    gameObjects.erase(
-        std::remove_if(gameObjects.begin(), gameObjects.end(),
-            [](const auto& obj) {
-                return dynamic_cast<Bomb*>(obj.get()) != nullptr;
-            }
-        ),
-        gameObjects.end()
-    );
 }
 
 //===============================================
+
 void LevelManager::resetLevel() {
-	clearAllBombs();
 	loadLevel();
-    
 }
 //===============================================
 void LevelManager::freezeAllEnemies(float duration) {

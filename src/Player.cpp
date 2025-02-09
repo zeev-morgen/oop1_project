@@ -8,7 +8,8 @@ Player::Player(const sf::Texture& texture, const sf::Vector2f& position)
 	, m_moveSpeed(Config::PLAYER_SPEED)
     , m_direction(0.0f, 0.0f)
     , m_startPosition(position)
-    , m_time(Config::GAME_TIME)
+	, m_lives(Config::PLAYER_LIVES)
+	, m_score(0)
 {
 }
 
@@ -52,20 +53,8 @@ void Player::update(float deltaTime, LevelManager& levelManager){
         }
     }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-        if (m_canPlaceBomb) {
-            sf::Vector2f bombPosition = sf::Vector2f(
-                std::round(m_position.x / 50) * 50,
-                std::round(m_position.y / 50) * 50
-            );
-            createBomb(bombPosition);
-            m_canPlaceBomb = false; 
+	handleBombs();
 
-        }
-    }
-    else {
-        m_canPlaceBomb = true; 
-    }
     //sf::Vector2f movement = m_direction * m_moveSpeed * deltaTime;
 
     //set the move to int
@@ -76,50 +65,10 @@ void Player::update(float deltaTime, LevelManager& levelManager){
 }
 
 
-void Player::collide(GameObject& other)  {
-    other.collide(*this);
-}
+
 
 bool Player::getFinish() const{
 	return m_finishLevel;
-}
-
-void Player::collide(Enemy& other)  {
-
-    undoMove();
-	m_status = false;
-	m_lives--;
-	std::cout << "player is :"<< isActive() << std::endl;
-}
-
-void Player::collide(Wall& other)  {
-    undoMove(); 
-    std::cout << "collision" << std::endl;
-}
-
-void Player::collide(Rock& other) {
-    undoMove(); 
-}
-
-void Player::collide(Door& other)  {
-    undoMove();
-	m_finishLevel = true;
-}
-
-void Player::collide(SmartEnemy& other) {
-	undoMove();
-	m_status = false;
-	m_lives--;
-}
-
-void Player::collide(Explosion& other)  {
-	undoMove();
-    setStatus(false);
-	this->m_lives--;
-}
-
-void Player::collide(Player& other) {
-
 }
 
 void Player::draw(sf::RenderWindow& window) const {
@@ -128,10 +77,6 @@ void Player::draw(sf::RenderWindow& window) const {
 
 void Player::setLives(int health) {
 	m_lives = health;
-}
-
-void Player::setTime(float time) {
-	m_time = time;
 }
 
 void Player::setScore(int score) {
@@ -170,4 +115,71 @@ void Player::createBomb(sf::Vector2f position) {
 //===============================================
 std::vector<std::unique_ptr<Bomb>>& Player::getBombs() {
 	return m_bombs;
+}
+//===============================================
+void Player::collide(GameObject& other) {
+    other.collide(*this);
+}
+
+void Player::collide(Enemy& other) {
+
+    undoMove();
+    m_status = false;
+    m_lives--;
+    std::cout << "player is :" << isActive() << std::endl;
+}
+
+void Player::collide(Wall& other) {
+    undoMove();
+    std::cout << "collision" << std::endl;
+}
+
+void Player::collide(Rock& other) {
+    undoMove();
+}
+
+void Player::collide(Door& other) {
+    undoMove();
+    m_finishLevel = true;
+}
+
+void Player::collide(SmartEnemy& other) {
+    undoMove();
+    m_status = false;
+    m_lives--;
+}
+
+void Player::collide(Explosion& other) {
+    undoMove();
+    setStatus(false);
+    this->m_lives--;
+}
+
+void Player::collide(Player& other) {
+
+}
+//===============================================
+void Player::handleBombs() {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_canPlaceBomb) {
+		createBomb(sf::Vector2f(std::round(m_position.x / 50) * 50, std::round(m_position.y / 50) * 50));
+		m_canPlaceBomb = false;
+	}
+	else if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+		m_canPlaceBomb = true;
+	}
+
+    /*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+        if (m_canPlaceBomb) {
+            sf::Vector2f bombPosition = sf::Vector2f(
+                std::round(m_position.x / 50) * 50,
+                std::round(m_position.y / 50) * 50
+            );
+            createBomb(bombPosition);
+            m_canPlaceBomb = false;
+
+        }
+    }
+    else {
+        m_canPlaceBomb = true;
+    }*/
 }

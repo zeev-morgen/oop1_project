@@ -84,7 +84,7 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 
 	m_levelManager.updateTime();
 
-	uiManager.update(0, 0, m_levelManager.getTimeLeft());
+	//uiManager.update(0, 0, m_levelManager.getTimeLeft());
 	
 	for (const auto& object : m_levelManager.getGameObjects()) {
 		if (auto* player = dynamic_cast<Player*>(object.get())) {
@@ -116,11 +116,9 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 	m_levelManager.removeInactiveObjects();
 	isLevelComplete();
 
-	/*m_timeLeft -= deltaTime;
-	if (m_timeLeft <= 0) {
+	if (m_levelManager.getTimeLeft() <= 0) {
 		m_levelManager.resetLevel();
-		m_timeLeft = Config::LEVEL_TIME;
-	}*/
+	}
 }
 
 
@@ -251,17 +249,21 @@ void Game::updatePlayerData() {
 	if (playerIt != gameObjects.end()) {
 		auto* player = dynamic_cast<Player*>((*playerIt).get());
 
-		uiManager.update(player->getLives(), player->getScore(), 54);
+		uiManager.update(player->getLives(), player->getScore(), m_levelManager.getTimeLeft());
 
 		if (!player->getStatus()) {
 			resetGameState();
 			player->setStatus(true);
+		}
+
+		if (player->getLives() < 0) {
+			m_isRunning = false;
+			m_window.close();
+			// ADD GAME_OVER
 		}
 	}
 }
 //===============================================
 void Game::resetGameState() {
 	resetPositions();
-
-	//m_levelManager.clearAllBombs();
 }

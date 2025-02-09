@@ -32,11 +32,7 @@ private:
     size_t m_cols;
     int m_level;
 
-    std::chrono::time_point<std::chrono::steady_clock> startTime;
-    void updateTime();
-    int getTimeLeft()const;
-    void startLevel();
-    void addTime(int seconds);
+    
 
     sf::Font m_font;
     void clear();
@@ -46,7 +42,7 @@ private:
 public:
     LevelManager();
 
-
+    int remainingTime;
     void loadPlaylist(const std::string& filename);
     bool loadLevel();
     bool loadFromFile(const std::string& filename);
@@ -56,10 +52,15 @@ public:
     size_t getCols();
     size_t getRows()const;
     sf::Font& getFont();
-    void clearAllBombs();
     void draw(sf::RenderWindow& window);
     void removeInactiveObjects();
     void resetLevel();
     void freezeAllEnemies(float duration);
 	std::unique_ptr<GameObject>& getPlayer();
+
+    std::chrono::time_point<std::chrono::steady_clock> startTime;
+    void updateTime();
+    int getTimeLeft()const;
+    void startLevel();
+    void addTime(int seconds);
 };

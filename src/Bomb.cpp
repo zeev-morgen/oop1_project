@@ -19,22 +19,20 @@ bool Bomb::hasExploded() const {
 void Bomb::update(float deltaTime, LevelManager& levelManager) {
 
     float timeLeft = Config::EXPLOSION_TIME - m_timer.getElapsedTime().asSeconds();
-    m_timerText.setString(std::to_string(static_cast<int>(timeLeft))); 
-	m_timerText.setOrigin(m_timerText.getLocalBounds().width / 2, m_timerText.getLocalBounds().height / 2);
+    m_timerText.setString(std::to_string(static_cast<int>(timeLeft)));
+    m_timerText.setOrigin(m_timerText.getLocalBounds().width / 2, m_timerText.getLocalBounds().height / 2);
 
-    if (m_timer.getElapsedTime().asSeconds() >= Config::EXPLOSION_TIME) {
-		m_exploded = true;
+    if (m_isActive && m_timer.getElapsedTime().asSeconds() >= Config::EXPLOSION_TIME) {
+        m_exploded = true;
 
         if (m_exploded) {
             explode(m_position);
-			
-			m_isActive = false;
 
-			if (m_timer.getElapsedTime().asSeconds() >= Config::EXPLOSION_TIME + Config::EXP_LIFE_TIME) {
-				m_explosions.clear();
-			}
-
+            m_isActive = false;
         }
+    }
+    if (m_timer.getElapsedTime().asSeconds() >= Config::EXPLOSION_TIME + Config::EXP_LIFE_TIME) {
+        m_explosions.clear();
     }
 }
 //================================================
@@ -59,6 +57,10 @@ void Bomb::explode(sf::Vector2f position) {
         return;
     }
 
+    SoundManager& saound = SoundManager::instance();
+	saound.playExplosion();
+
+	std::cout << "Explosion!" << std::endl;
 	m_explosions.push_back(std::make_unique<Explosion>(*texture, position));
     m_explosions.push_back(std::make_unique<Explosion>(*texture, sf::Vector2f(position.x + Config::TILE_WIDTH, position.y)));
 	m_explosions.push_back(std::make_unique<Explosion>(*texture, sf::Vector2f(position.x - Config::TILE_WIDTH, position.y)));

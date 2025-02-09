@@ -10,12 +10,8 @@ class Player : public MoveableObject {
 public:
 	Player(const sf::Texture& texture, const sf::Vector2f& position);
 	void update(float deltaTime, LevelManager& levelManager) override;
-
-
-
-    virtual void collide(GameObject& other) override;
-
     bool getFinish()const; // addition
+	virtual void collide(GameObject& other) override;
 
     virtual void collide(Player& other) override;
     virtual void collide(Enemy& other) override;
@@ -30,7 +26,6 @@ public:
 	int getScore()const;
 	void setLives(int lives);
 	int getLives()const;
-    void setTime(float time);
 	void setStatus(bool status);
 	bool getStatus() const;
 	std::vector<std::unique_ptr<Bomb>>& getBombs();
@@ -39,14 +34,13 @@ private:
 	float m_moveSpeed;
     bool m_canPlaceBomb = true;
 	bool m_isMoving = false;
-	int m_lives = 3;
-	int m_score = 0;
-    float m_time;
+	int m_lives;
+	int m_score;
 	bool m_finishLevel = false;
 	bool m_status = true;
 	void createBomb(sf::Vector2f pos);
 	std::vector<std::unique_ptr<Bomb>> m_bombs;
-
+	void handleBombs();
     
 	sf::Vector2f m_startPosition;
     sf::Vector2f m_direction;

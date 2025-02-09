@@ -38,7 +38,7 @@ public:
         int seconds = timer % 60;
 
         std::ostringstream oss;
-        oss << minutes << ":" << std::setw(2) << std::setfill('0') << seconds; // מבטיח תצוגה כמו 1:09
+        oss << minutes << ":" << std::setw(2) << std::setfill('0') << seconds; 
         return oss.str();
     }
 
