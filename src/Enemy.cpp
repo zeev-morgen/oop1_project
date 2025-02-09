@@ -88,9 +88,8 @@ void Enemy::collide(Door& other)  {
 }
 
 void Enemy::collide(Explosion& other)  {
-    this->setActive(false); 
-
-
+    SoundManager::instance().playGuard();
+    this->setActive(false);
 }
 
 void Enemy::draw(sf::RenderWindow& window) const {

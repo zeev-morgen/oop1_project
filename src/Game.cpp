@@ -84,8 +84,6 @@ void Game::draw() {
 void Game::update(float deltaTime, LevelManager& levelManager) {
 
 	m_levelManager.updateTime();
-
-	//uiManager.update(0, 0, m_levelManager.getTimeLeft());
 	
 	for (const auto& object : m_levelManager.getGameObjects()) {
 		if (auto* player = dynamic_cast<Player*>(object.get())) {
@@ -95,7 +93,7 @@ void Game::update(float deltaTime, LevelManager& levelManager) {
 			for (const auto& bomb : bombs) {
 				if (bomb) {
 					bomb->update(deltaTime, levelManager);
-
+					
 					const auto& exp = bomb->getExplosions();
 					for (const auto& explosion : exp) {
 						if (explosion) {

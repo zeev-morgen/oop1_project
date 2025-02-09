@@ -27,14 +27,13 @@ class LevelManager {
 private:
     std::vector<std::unique_ptr<GameObject>> m_gameObjects;
     std::vector<std::string> m_levelFiles;
-
+    
     size_t m_rows;
     size_t m_cols;
     int m_level;
     int m_savedPlayerScore;
     int m_savedPlayerLives;
 
-    
 
     sf::Font m_font;
     void clear();
@@ -45,6 +44,7 @@ public:
     LevelManager();
 
     int remainingTime;
+
     void loadPlaylist(const std::string& filename);
     bool loadLevel();
     bool loadFromFile(const std::string& filename);
@@ -54,6 +54,7 @@ public:
     size_t getCols();
     size_t getRows()const;
     sf::Font& getFont();
+
     void draw(sf::RenderWindow& window);
     void removeInactiveObjects();
     void resetLevel();
@@ -67,4 +68,5 @@ public:
     void addTime(int seconds);
 	void savePlayerData(Player& player);
 	void loadPlayerData(Player& player);
+
 };
