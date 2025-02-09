@@ -68,16 +68,6 @@ bool LevelManager::loadFromFile(const std::string& filename) {
         }
     }
 
-    auto playerIt = std::find_if(m_gameObjects.begin(), m_gameObjects.end(),
-        [](const std::unique_ptr<GameObject>& obj) {
-            return dynamic_cast<Player*>(obj.get()) != nullptr;
-        });
-
-    if (playerIt != m_gameObjects.end()) {
-        auto* player = dynamic_cast<Player*>((*playerIt).get());
-        loadPlayerData(*player);
-    }
-
     startLevel();
     return true;
 }
@@ -91,9 +81,30 @@ bool LevelManager::nextLevel() {
         return false; //no more levels
     }
 
+    auto playerIt = std::find_if(m_gameObjects.begin(), m_gameObjects.end(),
+        [](const std::unique_ptr<GameObject>& obj) {
+            return dynamic_cast<Player*>(obj.get()) != nullptr;
+        });
+
+    if (playerIt != m_gameObjects.end()) {
+        auto* player = dynamic_cast<Player*>((*playerIt).get());
+        savePlayerData(*player);
+    }
+
+
     std::string currentLevelFile = m_levelFiles[m_level];
     if (!loadFromFile(currentLevelFile)) {
         throw std::runtime_error("Failed to load level: " + currentLevelFile);
+    }
+
+    auto playerIt2 = std::find_if(m_gameObjects.begin(), m_gameObjects.end(),
+        [](const std::unique_ptr<GameObject>& obj) {
+            return dynamic_cast<Player*>(obj.get()) != nullptr;
+        });
+
+    if (playerIt2 != m_gameObjects.end()) {
+        auto* player = dynamic_cast<Player*>((*playerIt2).get());
+        loadPlayerData(*player);
     }
 
     return true;

@@ -22,7 +22,6 @@ void Explosion::collide(GameObject& other) {
 
 void Explosion::collide(Enemy& other) {
 	other.setActive(false);
-
 }
 
 void Explosion::collide(Player& other) {

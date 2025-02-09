@@ -88,7 +88,8 @@ void Enemy::collide(Door& other)  {
 }
 
 void Enemy::collide(Explosion& other)  {
-    this->setActive(false); 
+    this->setActive(false);
+	std::cout << "Enemy destroyed" << std::endl;
 
 
 }
