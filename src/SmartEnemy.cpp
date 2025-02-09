@@ -95,13 +95,12 @@ void SmartEnemy::collide(Rock& other) {
 }
 
 void SmartEnemy::collide(Door& other) {
-    // התנהגות כאשר השומר החכם מתנגש בדלת
     undoMove();
 	changeDirection();
 }
 
 void SmartEnemy::collide(Explosion& other) {
-    // התנהגות כאשר השומר החכם מתנגש בפיצוץ
+    SoundManager::instance().playGuard();
     this->setActive(false);
 }
 //===============================================
