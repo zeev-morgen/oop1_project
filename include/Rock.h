@@ -12,13 +12,20 @@ public:
     void update(float deltaTime, LevelManager& levelManager) override;
     void draw(sf::RenderWindow& window) const override;
 
-    void collide(Player& player) override;
-    void collide(Enemy& enemy) override;
-    void collide(Explosion& enemy) override;
     void setGift(std::unique_ptr<Gift> gift);
     void setGiftIndex(size_t index);
     size_t getGiftIndex() const;
 	bool getHasGift() const;
+
+    virtual void collide(GameObject& other) override;
+
+    virtual void collide(Player& player) override;
+    virtual void collide(Enemy& enemy) override;
+    virtual void collide(Wall& wall) override;
+    virtual void collide(Rock& rock) override;
+    virtual void collide(Door& door) override;
+    virtual void collide(Explosion& explosion) override;
+    virtual void collide(SmartEnemy& smartEnemy)override;
 
 private:
     //std::unique_ptr<Gift> m_gift;

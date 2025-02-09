@@ -20,6 +20,7 @@ public:
 	virtual void collide(Rock& other) override;
 	virtual void collide(Door& other) override;
 	virtual void collide(Explosion& other) override;
+	virtual void collide(SmartEnemy& other) override;
 
 	void update(float deltaTime, LevelManager& levelManager) override;
 

@@ -11,8 +11,13 @@ public:
 
 
     void collide(GameObject& other) override;
+
     void collide(Enemy& other) override;
     void collide(Player& other)override;
     void collide(Explosion& other)override;
+	void collide(Rock& other)override;
+	void collide(Wall& other) override;
+	void collide(Door& other) override;
+	void collide(SmartEnemy& other)override;
 };
 

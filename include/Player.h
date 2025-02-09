@@ -4,6 +4,7 @@
 #include <memory>
 class LevelManager;
 class Bomb;
+class SmartEnemy;
 
 class Player : public MoveableObject {
 public:
@@ -22,6 +23,7 @@ public:
     virtual void collide(Rock& other) override;
     virtual void collide(Door& other) override;
     virtual void collide(Explosion& other) override;
+	virtual void collide(SmartEnemy& other)override;
 
     void draw(sf::RenderWindow& window) const override;//?
 	void setScore(int score);
