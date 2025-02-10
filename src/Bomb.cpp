@@ -66,6 +66,7 @@ void Bomb::explode(sf::Vector2f position) {
 	m_explosions.push_back(std::make_unique<Explosion>(*texture, sf::Vector2f(position.x - Config::TILE_WIDTH, position.y)));
 	m_explosions.push_back(std::make_unique<Explosion>(*texture, sf::Vector2f(position.x, position.y + Config::TILE_WIDTH)));
 	m_explosions.push_back(std::make_unique<Explosion>(*texture, sf::Vector2f(position.x, position.y - Config::TILE_WIDTH)));
+    
 }
 //================================================
 std::vector<std::unique_ptr<Explosion>>& Bomb::getExplosions() {

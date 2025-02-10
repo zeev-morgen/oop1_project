@@ -88,10 +88,8 @@ void Enemy::collide(Door& other)  {
 }
 
 void Enemy::collide(Explosion& other)  {
+    SoundManager::instance().playGuard();
     this->setActive(false);
-	//add score to the player
-
-
 }
 //===============================================
 void Enemy::draw(sf::RenderWindow& window) const {
