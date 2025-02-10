@@ -146,32 +146,11 @@ void LevelManager::createObject(char symbol, float x, float y) {
     case '@':  // Rock
     {
         auto rockPtr = std::make_unique<Rock>(*texture, position);
-        Gift* giftPtr = nullptr;
-
-        if (rand() % 4 == 0) {
-            // בחירת סוג מתנה
-			std::cout << "Gift!" << std::endl;
-            char giftSymbols[] = { '$', 'T', 'H', 'F' };
-            char selectedGift = giftSymbols[rand() % 4];
-
-            texture = textureManager.getTexture(selectedGift);
-            auto gift = std::make_unique<Gift>(*texture, position);
-
-            giftPtr = gift.get();  // שמירת מצביע
-            m_gameObjects.push_back(std::move(gift)); // הכנסת המתנה לווקטור
-        }
-
-        // הכנסת הסלע לווקטור
         Rock* rockRawPtr = rockPtr.get();
         m_gameObjects.push_back(std::move(rockPtr));
-
-        // אם יש מתנה, שמור אותה במפה לסלע הזה
-        if (giftPtr) {
-            rockToGift[rockRawPtr] = giftPtr;
-        }
-
-        break;
+        rockToGift[rockRawPtr] = nullptr;  
     }
+	break;
 
 	case '!':  // enemy
     {
@@ -263,13 +242,8 @@ void LevelManager::removeInactiveObjects() {
 
             // אם האובייקט הוא סלע, נבדוק אם יש לו מתנה במפה
             if (auto* rock = dynamic_cast<Rock*>(object.get())) {
-                auto it = rockToGift.find(rock);
-                if (it != rockToGift.end()) {
-                    Gift* gift = it->second;
-                    if (gift) {
-                        gift->setShow(true);  // מציגים את המתנה
-                    }
-                    rockToGift.erase(it); // מוחקים מהמפה כי הסלע נמחק
+                if (!rock->isActive()) {
+                    createGift(rock);
                 }
             }
         }
@@ -283,6 +257,58 @@ void LevelManager::removeInactiveObjects() {
             }),
         m_gameObjects.end()
     );
+}
+//===============================================
+void LevelManager::createGift(Rock* rock){
+
+    int giftChance = rand() % 10;  
+
+    Gift* giftPtr = nullptr;
+    TextureManager& texture = TextureManager::instance();
+
+    if (giftChance < 4) {  
+        std::cout << "Gift!" << std::endl;
+
+        char selectedGiftType;
+        if (giftChance == 0) {
+            selectedGiftType = 'H';  
+            
+            auto* giftTexture = texture.getTexture(selectedGiftType);
+            auto gift = std::make_unique<HealthGift>(*giftTexture, rock->getPosition());
+            giftPtr = gift.get();  
+            m_gameObjects.push_back(std::move(gift)); 
+            rockToGift[rock] = giftPtr;
+        }
+
+        else if (giftChance == 1) {
+            selectedGiftType = 'T';   
+            auto* giftTexture = texture.getTexture(selectedGiftType);
+            auto gift = std::make_unique<TimeGift>(*giftTexture, rock->getPosition());
+            giftPtr = gift.get();  
+            m_gameObjects.push_back(std::move(gift)); 
+            rockToGift[rock] = giftPtr;
+        }
+
+        else if (giftChance == 2) {
+            selectedGiftType = 'F'; 
+            auto* giftTexture = texture.getTexture(selectedGiftType);
+            auto gift = std::make_unique<FreezeGift>(*giftTexture, rock->getPosition());
+            giftPtr = gift.get();  
+            m_gameObjects.push_back(std::move(gift)); 
+            rockToGift[rock] = giftPtr;
+        }
+
+        else {
+            selectedGiftType = '$';   
+            auto* giftTexture = texture.getTexture(selectedGiftType);
+            auto gift = std::make_unique<HealthGift>(*giftTexture, rock->getPosition());
+            giftPtr = gift.get(); 
+            m_gameObjects.push_back(std::move(gift)); 
+            rockToGift[rock] = giftPtr;
+        }
+
+
+    }
 }
 
 //===============================================
