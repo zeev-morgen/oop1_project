@@ -1,7 +1,5 @@
 #include "SmartEnemy.h"
-#include "LevelManager.h"
-#include <cmath>
-#include "MoveableObject.h"
+
 
 SmartEnemy::SmartEnemy(const sf::Texture& texture, const sf::Vector2f& position)
     : MoveableObject(texture, position, Config::ENEMY_SPEED) {
@@ -17,7 +15,7 @@ void SmartEnemy::update(float deltaTime, LevelManager& levelManager) {
     }
 
     if (player) {
-        chasePlayer(*player);
+        chasePlayer(*player,levelManager);
     }
 
     avoidBombs(levelManager.getGameObjects());
@@ -25,27 +23,30 @@ void SmartEnemy::update(float deltaTime, LevelManager& levelManager) {
     move(deltaTime, levelManager);
 }
 //===============================================
-void SmartEnemy::chasePlayer(const Player& player) {
-    sf::Vector2f direction = player.getPosition() - getPosition();
-    if (std::abs(direction.x) >= std::abs(direction.y)) {
-        direction.y = 0;  // נורמליזציה לכיוון אופקי
-    } else {
-        direction.x = 0;  // נורמליזציה לכיוון אנכי
-    }
-    
-    if (direction.x != 0 || direction.y != 0) {
-        float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+void SmartEnemy::chasePlayer(const Player& player, LevelManager& levelManager) {
+    sf::Vector2f diff = player.getPosition() - getPosition();
 
-        // נורמליזציה של הווקטור
-        direction /= length;
+    // close enough
+    const float epsilon = 1.0f;
+
+
+    sf::Vector2f newPositionX = getPosition() + sf::Vector2f((diff.x > 0) ? 1.f : -1.f, 0.f);
+    sf::Vector2f newPositionY = getPosition() + sf::Vector2f(0.f, (diff.y > 0) ? 1.f : -1.f);
+
+    if (std::abs(diff.x) > epsilon && isValidPosition(newPositionX, levelManager)) {
+        m_currentDirection = sf::Vector2f((diff.x > 0) ? 1.f : -1.f, 0.f);
     }
+    else if (std::abs(diff.y) > epsilon && isValidPosition(newPositionY, levelManager)) {
+        m_currentDirection = sf::Vector2f(0.f, (diff.y > 0) ? 1.f : -1.f);
+    }
+    else {
+        m_currentDirection = sf::Vector2f(0.f, 0.f);
     
-    m_currentDirection = direction;
+    }
 }
 //===============================================
 void SmartEnemy::avoidBombs(const std::vector<std::unique_ptr<GameObject>>& gameObjects) {
     if (isNearBomb(getPosition(), gameObjects)) {
-        // שינוי כיוון להימנעות מפצצות
         m_currentDirection = -m_currentDirection;
     }
 }
@@ -72,28 +73,41 @@ void SmartEnemy::collide(GameObject& other) {
 }
 
 void SmartEnemy::collide(Player& other) {
-    // התנהגות כאשר השומר החכם מתנגש בשחקן
     other.setStatus(false);
 }
 
 void SmartEnemy::collide(Enemy& other) {
-    // התנהגות כאשר השומר החכם מתנגש בשומר אחר
 }
 
 void SmartEnemy::collide(SmartEnemy& other) {
-    // התנהגות כאשר השומר החכם מתנגש בשומר אחר
 }
+
+
 
 void SmartEnemy::collide(Wall& other) {
-	undoMove();
-	changeDirection();
-}
+    sf::FloatRect globalBounds = other.getGlobalBounds();
+    sf::Vector2f center(globalBounds.left + globalBounds.width / 2,
+        globalBounds.top + globalBounds.height / 2);
 
+    sf::Vector2f diff = getPosition() - center;
+
+    sf::Vector2f newDiff;
+    do {
+        randomLocation();
+        newDiff = (m_currentDirection - center);
+
+        std::cout << "diff.x = " << diff.x << "m_currentDirection.x = " << m_currentDirection.x <<
+            "diff.y = " << diff.y << "m_currentDirection.y = " << m_currentDirection.y << std::endl;
+
+    } while (diff.x == newDiff.x || diff.y == newDiff.y);
+    std::cout << "diff.x = " << diff.x << "m_currentDirection.x = " << m_currentDirection.x <<
+                 "diff.y = " << diff.y << "m_currentDirection.y = " << m_currentDirection.y << std::endl;
+}
+//==============================================
 void SmartEnemy::collide(Rock& other) {
-	undoMove();
-	changeDirection();
+    changeDirection();
 }
-
+//=========================================
 void SmartEnemy::collide(Door& other) {
     undoMove();
 	changeDirection();
@@ -105,7 +119,6 @@ void SmartEnemy::collide(Explosion& other) {
 }
 //===============================================
 void SmartEnemy::move(float deltaTime, LevelManager& levelManager) {
-
     if (m_isFrozen) {
         m_freezeTimeLeft -= deltaTime;
         if (m_freezeTimeLeft <= 0) {
@@ -120,10 +133,30 @@ void SmartEnemy::move(float deltaTime, LevelManager& levelManager) {
 
     sf::Vector2f newPosition = getPosition() + movement;
 
-    if (!MoveableObject::isValidPosition(newPosition, levelManager)) {
+    int attempts = 0;
+    const int maxAttempts = 4;
+
+    while (!MoveableObject::isValidPosition(newPosition, levelManager) && attempts < maxAttempts) {
         changeDirection();
-        return;
+        movement = m_currentDirection * getSpeed() * deltaTime;
+        newPosition = getPosition() + movement;
+        attempts++;
     }
 
-    tryMove(movement, levelManager);
+    if (attempts < maxAttempts) {
+        tryMove(movement, levelManager);
+    }
+    else {
+        m_currentDirection = -m_currentDirection;
+    }
+}
+//===============================================
+void SmartEnemy::randomLocation() {
+	
+		const sf::Vector2f possibleDirections[] = {
+				{1.0f, 0.0f}, {-1.0f, 0.0f},
+				{0.0f, 1.0f}, {0.0f, -1.0f}
+		};
+		m_currentDirection = possibleDirections[rand() % 4];
+	
 }
