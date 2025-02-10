@@ -4,7 +4,7 @@
 #include <FreezeGift.h>
 
 LevelManager::LevelManager()
-: m_level(0), m_rows(0), m_cols(0), remainingTime(Config::LEVEL_TIME), m_savedPlayerScore(0), m_savedPlayerLives(Config::PLAYER_LIVES)
+: m_level(0), m_rows(0), m_cols(0), remainingTime(Config::LEVEL_TIME), m_savedPlayerScore(0), m_savedPlayerLives(Config::PLAYER_LIVES), m_numEnemies(0)
 
 {
     TextureManager& textureManager = TextureManager::instance();
@@ -68,16 +68,6 @@ bool LevelManager::loadFromFile(const std::string& filename) {
         }
     }
 
-    auto playerIt = std::find_if(m_gameObjects.begin(), m_gameObjects.end(),
-        [](const std::unique_ptr<GameObject>& obj) {
-            return dynamic_cast<Player*>(obj.get()) != nullptr;
-        });
-
-    if (playerIt != m_gameObjects.end()) {
-        auto* player = dynamic_cast<Player*>((*playerIt).get());
-        loadPlayerData(*player);
-    }
-
     startLevel();
     return true;
 }
@@ -91,9 +81,31 @@ bool LevelManager::nextLevel() {
         return false; //no more levels
     }
 
+    auto playerIt = std::find_if(m_gameObjects.begin(), m_gameObjects.end(),
+        [](const std::unique_ptr<GameObject>& obj) {
+            return dynamic_cast<Player*>(obj.get()) != nullptr;
+        });
+
+    if (playerIt != m_gameObjects.end()) {
+        auto* player = dynamic_cast<Player*>((*playerIt).get());
+        player->setScore(player->getScore() + m_numEnemies * 3 + 25);
+        savePlayerData(*player);
+    }
+
+
     std::string currentLevelFile = m_levelFiles[m_level];
     if (!loadFromFile(currentLevelFile)) {
         throw std::runtime_error("Failed to load level: " + currentLevelFile);
+    }
+
+    auto playerIt2 = std::find_if(m_gameObjects.begin(), m_gameObjects.end(),
+        [](const std::unique_ptr<GameObject>& obj) {
+            return dynamic_cast<Player*>(obj.get()) != nullptr;
+        });
+
+    if (playerIt2 != m_gameObjects.end()) {
+        auto* player = dynamic_cast<Player*>((*playerIt2).get());
+        loadPlayerData(*player);
     }
 
     return true;
@@ -131,47 +143,14 @@ void LevelManager::createObject(char symbol, float x, float y) {
     sf::Vector2f position(x, y);
 
     switch (symbol) {
-    case '@':  // rock
+    case '@':  // Rock
     {
         auto rockPtr = std::make_unique<Rock>(*texture, position);
-
-        if (rand() % 4 == 0) { 
-            int giftType = rand() % 4;
-
-            switch (giftType) {
-
-            case 0:
-                texture = textureManager.getTexture('$');
-                m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
-				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
-				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
-                break;
-
-            case 1:
-                texture = textureManager.getTexture('T');
-                m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
-				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
-				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
-                break;
-
-            case 2:
-                texture = textureManager.getTexture('H');
-                m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
-				rockPtr->setGiftIndex(m_gameObjects.size() - 1);
-				std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
-                break;
-            
-            case 3:
-				texture = textureManager.getTexture('F');
-                m_gameObjects.push_back(std::make_unique<Gift>(*texture, position));
-                rockPtr->setGiftIndex(m_gameObjects.size() - 1);
-                std::cout << "gift index: " << m_gameObjects.size() - 1 << std::endl;
-                break;
-            }  
-        }
+        Rock* rockRawPtr = rockPtr.get();
         m_gameObjects.push_back(std::move(rockPtr));
-        break;
+        rockToGift[rockRawPtr] = nullptr;  
     }
+	break;
 
 	case '!':  // enemy
     {
@@ -186,7 +165,10 @@ void LevelManager::createObject(char symbol, float x, float y) {
         case 1:
             m_gameObjects.push_back(std::make_unique<Enemy>(*texture, position));
             break;
+
+			
         }
+        m_numEnemies++;
     }
     break;
 
@@ -251,39 +233,82 @@ sf::Font& LevelManager::getFont() {
 }
 //===============================================
 void LevelManager::removeInactiveObjects() {
-    auto& objects = m_gameObjects;
-	
-    for (size_t i = 0; i < objects.size(); i++) {
-        if (!objects[i]->isActive()) {
-            if (auto* rock = dynamic_cast<Rock*>(objects[i].get())) {
-                size_t giftIndex = rock->getGiftIndex();
+    for (const auto& object : m_gameObjects) {
+        if (!object->isActive()) {
+            // אם האובייקט הוא אויב, נוסיף נקודות
+            if (dynamic_cast<Enemy*>(object.get()) || dynamic_cast<SmartEnemy*>(object.get())) {
+                increaseScore(Config::SCORE_GUARD);
+            }
 
-                
-                if (rock->getHasGift() && giftIndex < objects.size()) {
-					/*if (auto* gift = dynamic_cast<Gift*>(objects[giftIndex].get())) {
-						gift->setShow(true);
-					}*/
-
-                    objects[giftIndex-2]->setShow(true);
-                    objects[giftIndex-1]->setShow(true);
-                    objects[giftIndex]->setShow(true);
-                    objects[giftIndex+1]->setShow(true);
-                    objects[giftIndex+2]->setShow(true);
-					
-					
+            // אם האובייקט הוא סלע, נבדוק אם יש לו מתנה במפה
+            if (auto* rock = dynamic_cast<Rock*>(object.get())) {
+                if (!rock->isActive()) {
+                    createGift(rock);
                 }
             }
         }
     }
 
-    objects.erase(
-        std::remove_if(objects.begin(), objects.end(),
+    // מחיקת אובייקטים לא פעילים מהווקטור
+    m_gameObjects.erase(
+        std::remove_if(m_gameObjects.begin(), m_gameObjects.end(),
             [](const std::unique_ptr<GameObject>& obj) {
                 return obj && !obj->isActive();
             }),
-        objects.end()
+        m_gameObjects.end()
     );
+}
+//===============================================
+void LevelManager::createGift(Rock* rock){
 
+    int giftChance = rand() % 10;  
+
+    Gift* giftPtr = nullptr;
+    TextureManager& texture = TextureManager::instance();
+
+    if (giftChance < 4) {  
+        std::cout << "Gift!" << std::endl;
+
+        char selectedGiftType;
+        if (giftChance == 0) {
+            selectedGiftType = 'H';  
+            
+            auto* giftTexture = texture.getTexture(selectedGiftType);
+            auto gift = std::make_unique<HealthGift>(*giftTexture, rock->getPosition());
+            giftPtr = gift.get();  
+            m_gameObjects.push_back(std::move(gift)); 
+            rockToGift[rock] = giftPtr;
+        }
+
+        else if (giftChance == 1) {
+            selectedGiftType = 'T';   
+            auto* giftTexture = texture.getTexture(selectedGiftType);
+            auto gift = std::make_unique<TimeGift>(*giftTexture, rock->getPosition());
+            giftPtr = gift.get();  
+            m_gameObjects.push_back(std::move(gift)); 
+            rockToGift[rock] = giftPtr;
+        }
+
+        else if (giftChance == 2) {
+            selectedGiftType = 'F'; 
+            auto* giftTexture = texture.getTexture(selectedGiftType);
+            auto gift = std::make_unique<FreezeGift>(*giftTexture, rock->getPosition());
+            giftPtr = gift.get();  
+            m_gameObjects.push_back(std::move(gift)); 
+            rockToGift[rock] = giftPtr;
+        }
+
+        else {
+            selectedGiftType = '$';   
+            auto* giftTexture = texture.getTexture(selectedGiftType);
+            auto gift = std::make_unique<HealthGift>(*giftTexture, rock->getPosition());
+            giftPtr = gift.get(); 
+            m_gameObjects.push_back(std::move(gift)); 
+            rockToGift[rock] = giftPtr;
+        }
+
+
+    }
 }
 
 //===============================================
@@ -345,4 +370,15 @@ void LevelManager::savePlayerData(Player& player) {
 void LevelManager::loadPlayerData(Player& player) {
 	player.setScore(m_savedPlayerScore);
 	player.setLives(m_savedPlayerLives);
+}
+//===============================================
+void LevelManager::increaseScore(int points) {
+	auto playerIt = std::find_if(m_gameObjects.begin(), m_gameObjects.end(),
+		[](const std::unique_ptr<GameObject>& obj) {
+			return dynamic_cast<Player*>(obj.get()) != nullptr;
+		});
+	if (playerIt != m_gameObjects.end()) {
+		auto* player = dynamic_cast<Player*>((*playerIt).get());
+		player->setScore(player->getScore() + points);
+	}
 }

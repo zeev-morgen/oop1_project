@@ -23,7 +23,6 @@ void Explosion::collide(GameObject& other) {
 void Explosion::collide(Enemy& other) {
 	SoundManager::instance().playGuard();
 	other.setActive(false);
-
 }
 
 void Explosion::collide(Player& other) {

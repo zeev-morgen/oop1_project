@@ -91,11 +91,11 @@ void Enemy::collide(Explosion& other)  {
     SoundManager::instance().playGuard();
     this->setActive(false);
 }
-
+//===============================================
 void Enemy::draw(sf::RenderWindow& window) const {
     window.draw(m_sprite);
 }
-
+//===============================================
 
 void Enemy::resetLocation() {
     for (Enemy* enemy : allEnemies) {
@@ -104,10 +104,10 @@ void Enemy::resetLocation() {
         }
     }
 }
-
+//===============================================
 
 void Enemy::freeze(float duration) {
     m_isFrozen = true;
     m_freezeTimeLeft = duration;
 }
-
+//===============================================
