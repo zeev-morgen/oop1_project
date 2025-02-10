@@ -69,4 +69,5 @@ public:
 	void savePlayerData(Player& player);
 	void loadPlayerData(Player& player);
     void increaseScore(int points);
+    void createGift(Rock* rock);
 };
