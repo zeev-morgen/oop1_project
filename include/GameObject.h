@@ -19,11 +19,6 @@ protected:
 	bool m_isActive;
 	bool m_show;
 
-    sf::Vector2i m_currentFrame;     // מיקום הפריים הנוכחי
-    sf::IntRect m_frameRect;         // מלבן שמגדיר את החלק הנוכחי מהטקסטורה
-    float m_animationTimer;          // טיימר לאנימציה
-    static constexpr float ANIMATION_SPEED = 0.1f; // מהירות האנימציה
-
 public:
     GameObject(const sf::Texture& texture, const sf::Vector2f& position);
     //virtual void update(float deltaTime) {}

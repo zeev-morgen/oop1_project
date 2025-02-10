@@ -32,7 +32,7 @@ void TextureManager::loadGameTextures() {
     loadTexture('/', "player.jpg");
     loadTexture('$', "gift.jpg");
     loadTexture('D', "door.jpg");
-    loadTexture('T', "healthGift.jpg");
-    loadTexture('H', "timeGift.jpg");
+    loadTexture('H', "healthGift.jpg");
+    loadTexture('T', "timeGift.jpg");
 	loadTexture('F', "frozenGift.jpg");
 }

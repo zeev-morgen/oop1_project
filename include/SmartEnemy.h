@@ -2,6 +2,9 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "Bomb.h"
+#include "LevelManager.h"
+#include <cmath>
+#include "MoveableObject.h"
 
 class SmartEnemy : public MoveableObject {
 public:
@@ -22,10 +25,10 @@ public:
 
 
 private:
-    void chasePlayer(const Player& player);
+    void randomLocation();
+    void chasePlayer(const Player& player,LevelManager& levelManager);
     void avoidBombs(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
     bool isNearBomb(const sf::Vector2f& position, const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 	sf::Vector2f m_currentDirection;
-	void move(float deltaTime, LevelManager& levelManager);
-
+    void move(float deltaTime, LevelManager& levelManager);
 };
