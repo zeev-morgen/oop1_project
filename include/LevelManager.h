@@ -21,7 +21,7 @@
 #include <iomanip>
 #include <sstream>
 #include "SmartEnemy.h"
-
+#include <unordered_map>
 
 class LevelManager {
 private:
@@ -33,6 +33,7 @@ private:
     int m_level;
     int m_savedPlayerScore;
     int m_savedPlayerLives;
+	int m_numEnemies;
 
     
 
@@ -43,7 +44,7 @@ private:
 
 public:
     LevelManager();
-
+    std::unordered_map<Rock*, Gift*> rockToGift;
     int remainingTime;
     void loadPlaylist(const std::string& filename);
     bool loadLevel();
@@ -67,4 +68,5 @@ public:
     void addTime(int seconds);
 	void savePlayerData(Player& player);
 	void loadPlayerData(Player& player);
+    void increaseScore(int points);
 };

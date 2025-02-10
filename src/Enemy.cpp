@@ -88,15 +88,16 @@ void Enemy::collide(Door& other)  {
 }
 
 void Enemy::collide(Explosion& other)  {
-    this->setActive(false); 
+    this->setActive(false);
+	//add score to the player
 
 
 }
-
+//===============================================
 void Enemy::draw(sf::RenderWindow& window) const {
     window.draw(m_sprite);
 }
-
+//===============================================
 
 void Enemy::resetLocation() {
     for (Enemy* enemy : allEnemies) {
@@ -105,10 +106,10 @@ void Enemy::resetLocation() {
         }
     }
 }
-
+//===============================================
 
 void Enemy::freeze(float duration) {
     m_isFrozen = true;
     m_freezeTimeLeft = duration;
 }
-
+//===============================================
